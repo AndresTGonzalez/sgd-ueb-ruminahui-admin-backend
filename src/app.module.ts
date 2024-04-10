@@ -14,7 +14,7 @@ import { TestModule } from './test/test.module';
     AuthModule,
     CryptoModule,
     PrismaModule,
-    // TestModule,
+    TestModule,
   ],
   controllers: [],
   providers: [],
