@@ -33,9 +33,7 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    // const password = this.crypto.decrypt(user.password);
-    const password = user.password;
-    if (password !== data.password) {
+    if (user.password !== data.password) {
       throw new UnauthorizedException('Invalid credentials');
     }
     const payload = { email: user.email, sub: user.id };

@@ -4,7 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { CryptoModule } from './crypto/crypto.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { TestModule } from './test/test.module';
+import { ProvincesModule } from './provinces/provinces.module';
+import { CitiesModule } from './cities/cities.module';
 
 @Module({
   imports: [
@@ -14,7 +15,8 @@ import { TestModule } from './test/test.module';
     AuthModule,
     CryptoModule,
     PrismaModule,
-    TestModule,
+    ProvincesModule,
+    CitiesModule,
   ],
   controllers: [],
   providers: [],
