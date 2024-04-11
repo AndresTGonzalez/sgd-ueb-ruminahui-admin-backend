@@ -3,7 +3,7 @@ import { ProvincesService } from './provinces.service';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @ApiTags('Provinces')
 @Controller('provinces')
 export class ProvincesController {

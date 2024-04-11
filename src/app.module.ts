@@ -6,6 +6,8 @@ import { CryptoModule } from './crypto/crypto.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { ProvincesModule } from './provinces/provinces.module';
 import { CitiesModule } from './cities/cities.module';
+import { GendersModule } from './genders/genders.module';
+import { MaritalStatusesModule } from './marital-statuses/marital-statuses.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { CitiesModule } from './cities/cities.module';
     PrismaModule,
     ProvincesModule,
     CitiesModule,
+    GendersModule,
+    MaritalStatusesModule,
   ],
   controllers: [],
   providers: [],

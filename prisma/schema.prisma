@@ -28,3 +28,13 @@ model City {
   Province   Province @relation(fields: [provinceId], references: [id])
   provinceId Int
 }
+
+model Gender {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model MaritalStatus {
+  id   Int    @id @default(autoincrement())
+  name String
+}
