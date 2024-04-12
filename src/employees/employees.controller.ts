@@ -3,6 +3,7 @@ import {
   UseGuards,
   Get,
   Post,
+  Put,
   Delete,
   Param,
   Body,
@@ -32,7 +33,14 @@ export class EmployeesController {
   async create(@Body() createEmployeeDto: CreateEmployeeDto) {
     return this.employeesService.create(createEmployeeDto);
   }
-  
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateEmployeeDto: CreateEmployeeDto,
+  ) {
+    return this.employeesService.update(+id, updateEmployeeDto);
+  }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
