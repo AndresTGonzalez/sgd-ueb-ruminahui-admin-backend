@@ -23,18 +23,39 @@ model Province {
 }
 
 model City {
-  id         Int      @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   name       String
-  Province   Province @relation(fields: [provinceId], references: [id])
+  Province   Province   @relation(fields: [provinceId], references: [id])
   provinceId Int
+  Employee   Employee[]
 }
 
 model Gender {
-  id   Int    @id @default(autoincrement())
-  name String
+  id       Int        @id @default(autoincrement())
+  name     String
+  Employee Employee[]
 }
 
 model MaritalStatus {
-  id   Int    @id @default(autoincrement())
-  name String
+  id       Int        @id @default(autoincrement())
+  name     String
+  Employee Employee[]
+}
+
+model Employee {
+  id                 Int           @id @default(autoincrement())
+  identificationCard String
+  names              String
+  lastNames          String
+  phone              String
+  email              String
+  birthdate          DateTime
+  childrens          Int
+  address            String
+  genderId           Int
+  gender             Gender        @relation(fields: [genderId], references: [id])
+  maritalStatusId    Int
+  maritalStatus      MaritalStatus @relation(fields: [maritalStatusId], references: [id])
+  cityId             Int
+  City               City          @relation(fields: [cityId], references: [id])
 }

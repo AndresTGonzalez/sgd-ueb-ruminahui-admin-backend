@@ -8,6 +8,7 @@ import { ProvincesModule } from './provinces/provinces.module';
 import { CitiesModule } from './cities/cities.module';
 import { GendersModule } from './genders/genders.module';
 import { MaritalStatusesModule } from './marital-statuses/marital-statuses.module';
+import { EmployeesModule } from './employees/employees.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { MaritalStatusesModule } from './marital-statuses/marital-statuses.modul
     CitiesModule,
     GendersModule,
     MaritalStatusesModule,
+    EmployeesModule,
   ],
   controllers: [],
   providers: [],
