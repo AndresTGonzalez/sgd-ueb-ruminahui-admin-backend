@@ -43,19 +43,46 @@ model MaritalStatus {
 }
 
 model Employee {
-  id                 Int           @id @default(autoincrement())
-  identificationCard String
-  names              String
-  lastNames          String
-  phone              String
-  email              String
-  birthdate          DateTime
-  childrens          Int
-  address            String
-  genderId           Int
-  gender             Gender        @relation(fields: [genderId], references: [id])
-  maritalStatusId    Int
-  maritalStatus      MaritalStatus @relation(fields: [maritalStatusId], references: [id])
-  cityId             Int
-  City               City          @relation(fields: [cityId], references: [id])
+  id                              Int                               @id @default(autoincrement())
+  identificationCard              String
+  names                           String
+  lastNames                       String
+  phone                           String
+  email                           String
+  birthdate                       DateTime
+  childrens                       Int
+  address                         String
+  genderId                        Int
+  gender                          Gender                            @relation(fields: [genderId], references: [id])
+  maritalStatusId                 Int
+  maritalStatus                   MaritalStatus                     @relation(fields: [maritalStatusId], references: [id])
+  cityId                          Int
+  City                            City                              @relation(fields: [cityId], references: [id])
+  AssistanceEmployeeIdentificator AssistanceEmployeeIdentificator[]
+}
+
+model Campus {
+  id                    Int                     @id @default(autoincrement())
+  name                  String
+  secondaryName         String
+  address               String
+  AssistanceDispositive AssistanceDispositive[]
+}
+
+model AssistanceDispositive {
+  id                              Int                               @id @default(autoincrement())
+  name                            String
+  campusId                        Int
+  Campus                          Campus                            @relation(fields: [campusId], references: [id])
+  serial                          String                            @unique
+  AssistanceEmployeeIdentificator AssistanceEmployeeIdentificator[]
+}
+
+model AssistanceEmployeeIdentificator {
+  id                      Int                   @id @default(autoincrement())
+  code                    String
+  employeeId              Int
+  Employee                Employee              @relation(fields: [employeeId], references: [id])
+  assistanceDispositiveId Int
+  AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
 }

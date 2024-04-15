@@ -4,12 +4,17 @@ import { Employee } from '@prisma/client';
 import { CreateEmployeeDto } from './employees.model';
 import { createClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
+import { AssistanceEmployeeIdentificatorService } from 'src/assistance-employee-identificator/assistance-employee-identificator.service';
+import { CreateAssistanceEmployeeIdentificatorDto } from '../assistance-employee-identificator/assistance-employee-identificator.model';
+import { AssistanceDispositiveService } from 'src/assistance-dispositive/assistance-dispositive.service';
 
 @Injectable()
 export class EmployeesService {
   constructor(
     private readonly prismaService: PrismaService,
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
+    private readonly assistanceEmployeeIdentificatorService: AssistanceEmployeeIdentificatorService,
+    private readonly assistanceDispositiveService: AssistanceDispositiveService,
   ) {}
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
@@ -48,7 +53,6 @@ export class EmployeesService {
       this.configService.get<string>('SUPABASE_KEY'),
     );
 
-    // Crear el email del usuario con la primera letra del nombre y el primer apellido
     const user = employee.names.charAt(0) + employee.lastNames.split(' ')[0];
     const email = `${user.toLowerCase()}@sgdruminahui.com`;
 
@@ -68,7 +72,33 @@ export class EmployeesService {
       if (error) {
         console.error(error);
         throw new Error('Error al crear el usuario en Supabase');
+      } else {
+        await this.registerEmployeAssistanceIdentificator(
+          data.user.id,
+          employee.id,
+        );
       }
     }
+  }
+
+  private async registerEmployeAssistanceIdentificator(
+    uuid: string,
+    employeeId: number,
+  ) {
+    const assistanceDispositive =
+      await this.assistanceDispositiveService.getBySerial(
+        this.configService.get<string>('VIRTUAL_ASSISTANT_IDENTIFICATOR'),
+      );
+
+    const createAssistanceEmployeeIdentificatorDto: CreateAssistanceEmployeeIdentificatorDto =
+      {
+        assistanceDispositiveId: assistanceDispositive.id,
+        code: uuid,
+        employeId: employeeId,
+      };
+
+    await this.assistanceEmployeeIdentificatorService.create(
+      createAssistanceEmployeeIdentificatorDto,
+    );
   }
 }

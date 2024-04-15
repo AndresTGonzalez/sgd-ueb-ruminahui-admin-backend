@@ -9,6 +9,9 @@ import { CitiesModule } from './cities/cities.module';
 import { GendersModule } from './genders/genders.module';
 import { MaritalStatusesModule } from './marital-statuses/marital-statuses.module';
 import { EmployeesModule } from './employees/employees.module';
+import { AssistanceDispositiveModule } from './assistance-dispositive/assistance-dispositive.module';
+import { AssistanceEmployeeIdentificatorModule } from './assistance-employee-identificator/assistance-employee-identificator.module';
+import { CampusModule } from './campus/campus.module';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { EmployeesModule } from './employees/employees.module';
     GendersModule,
     MaritalStatusesModule,
     EmployeesModule,
+    AssistanceDispositiveModule,
+    AssistanceEmployeeIdentificatorModule,
+    CampusModule,
   ],
   controllers: [],
   providers: [],
