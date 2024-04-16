@@ -43,7 +43,7 @@ model MaritalStatus {
 }
 
 model Employee {
-  id                              Int                               @id @default(autoincrement())
+  id                              String                            @id @default(uuid())
   identificationCard              String
   names                           String
   lastNames                       String
@@ -80,9 +80,17 @@ model AssistanceDispositive {
 
 model AssistanceEmployeeIdentificator {
   id                      Int                   @id @default(autoincrement())
-  code                    String
-  employeeId              Int
+  code                    String                @unique
+  employeeId              String
   Employee                Employee              @relation(fields: [employeeId], references: [id])
   assistanceDispositiveId Int
   AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
+  Assistance              Assistance[]
+}
+
+model Assistance {
+  id                                Int                             @id @default(autoincrement())
+  check                             DateTime
+  assistanceEmployeeIdentificatorId Int
+  AssistanceEmployeeIdentificator   AssistanceEmployeeIdentificator @relation(fields: [assistanceEmployeeIdentificatorId], references: [id])
 }
