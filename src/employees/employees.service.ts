@@ -53,8 +53,7 @@ export class EmployeesService {
       this.configService.get<string>('SUPABASE_KEY'),
     );
 
-    let user = employee.names.charAt(0) + employee.lastNames.split(' ')[0];
-    user = this.replaceAccent(user);
+    const user = employee.names.charAt(0) + employee.lastNames.split(' ')[0];
     const email = `${user.toLowerCase()}@sgdruminahui.com`;
 
     const { data, error } = await supabase.auth.signUp({
@@ -95,15 +94,11 @@ export class EmployeesService {
       {
         assistanceDispositiveId: assistanceDispositive.id,
         code: uuid,
-        employeeId: employeeId,
+        employeId: employeeId,
       };
 
     await this.assistanceEmployeeIdentificatorService.create(
       createAssistanceEmployeeIdentificatorDto,
     );
-  }
-
-  private replaceAccent(str: string) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   }
 }

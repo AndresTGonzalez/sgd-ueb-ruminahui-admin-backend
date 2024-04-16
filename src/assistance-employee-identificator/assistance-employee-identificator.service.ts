@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateAssistanceEmployeeIdentificatorDto } from './assistance-employee-identificator.model';
 
 @Injectable()
 export class AssistanceEmployeeIdentificatorService {
@@ -16,20 +15,7 @@ export class AssistanceEmployeeIdentificatorService {
     });
   }
 
-  async create(
-    createAssistanceEmployeeIdentificatorDto: CreateAssistanceEmployeeIdentificatorDto,
-  ) {
-    return this.prismaService.assistanceEmployeeIdentificator.create({
-      data: createAssistanceEmployeeIdentificatorDto,
-    });
-  }
-
-  async getAssistanceEmployeeIdentificatorByCode(
-    code: string,
-    assistanceDispositiveId: number,
-  ) {
-    return this.prismaService.assistanceEmployeeIdentificator.findFirst({
-      where: { assistanceDispositiveId, code },
-    });
+  async create(data: any) {
+    return this.prismaService.assistanceEmployeeIdentificator.create({ data });
   }
 }
