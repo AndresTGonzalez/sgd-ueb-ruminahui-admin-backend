@@ -42,8 +42,27 @@ model MaritalStatus {
   Employee Employee[]
 }
 
+model Function {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Employee Employee[]
+}
+
+model LaboralRegime {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Employee Employee[]
+}
+
+model LaboralRelationship {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Employee Employee[]
+}
+
 model Employee {
   id                              Int                               @id @default(autoincrement())
+  uuid                            String                            @unique
   identificationCard              String
   names                           String
   lastNames                       String
@@ -58,6 +77,12 @@ model Employee {
   maritalStatus                   MaritalStatus                     @relation(fields: [maritalStatusId], references: [id])
   cityId                          Int
   City                            City                              @relation(fields: [cityId], references: [id])
+  functionId                      Int
+  Function                        Function                          @relation(fields: [functionId], references: [id])
+  LaboralRegime                   LaboralRegime?                    @relation(fields: [laboralRegimeId], references: [id])
+  laboralRegimeId                 Int?
+  LaboralRelationship             LaboralRelationship?              @relation(fields: [laboralRelationshipId], references: [id])
+  laboralRelationshipId           Int?
   AssistanceEmployeeIdentificator AssistanceEmployeeIdentificator[]
 }
 

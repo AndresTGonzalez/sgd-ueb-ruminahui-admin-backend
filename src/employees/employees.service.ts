@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Employee } from '@prisma/client';
-import { CreateEmployeeDto } from './employees.model';
 import { createClient } from '@supabase/supabase-js';
 import { ConfigService } from '@nestjs/config';
 import { AssistanceEmployeeIdentificatorService } from 'src/assistance-employee-identificator/assistance-employee-identificator.service';
 import { CreateAssistanceEmployeeIdentificatorDto } from '../assistance-employee-identificator/assistance-employee-identificator.model';
 import { AssistanceDispositiveService } from 'src/assistance-dispositive/assistance-dispositive.service';
+import { CreateEmployeeDto } from './employees.model';
 
 @Injectable()
 export class EmployeesService {
@@ -19,9 +19,18 @@ export class EmployeesService {
 
   async create(createEmployeeDto: CreateEmployeeDto): Promise<Employee> {
     const employee = await this.prismaService.employee.create({
-      data: createEmployeeDto,
+      data: {
+        ...createEmployeeDto,
+        maritalStatusId: createEmployeeDto.maritalStatusId,
+        cityId: createEmployeeDto.cityId,
+        laboralRegimeId: createEmployeeDto.laboralRegimeId,
+        functionId: createEmployeeDto.positionId,
+        genderId: createEmployeeDto.genderId,
+      },
     });
+
     await this.createEmployeeUser(employee);
+
     return employee;
   }
 

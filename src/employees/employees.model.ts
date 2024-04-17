@@ -5,6 +5,9 @@ export class CreateEmployeeDto {
   identificationCard: string;
 
   @ApiProperty()
+  uuid: string;
+
+  @ApiProperty()
   names: string;
 
   @ApiProperty()
@@ -33,4 +36,13 @@ export class CreateEmployeeDto {
 
   @ApiProperty()
   cityId: number;
+
+  @ApiProperty()
+  laboralRegimeId: number;
+
+  @ApiProperty()
+  positionId: number;
+
+  @ApiProperty()
+  laboralRelationshipId: number;
 }
