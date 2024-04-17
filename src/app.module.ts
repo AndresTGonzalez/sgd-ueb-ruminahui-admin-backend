@@ -12,6 +12,9 @@ import { EmployeesModule } from './employees/employees.module';
 import { AssistanceDispositiveModule } from './assistance-dispositive/assistance-dispositive.module';
 import { AssistanceEmployeeIdentificatorModule } from './assistance-employee-identificator/assistance-employee-identificator.module';
 import { CampusModule } from './campus/campus.module';
+import { FunctionModule } from './function/function.module';
+import { LaboralRegimeModule } from './laboral-regime/laboral-regime.module';
+import { LaboralRelationshipModule } from './laboral-relationship/laboral-relationship.module';
 
 @Module({
   imports: [
@@ -29,6 +32,9 @@ import { CampusModule } from './campus/campus.module';
     AssistanceDispositiveModule,
     AssistanceEmployeeIdentificatorModule,
     CampusModule,
+    FunctionModule,
+    LaboralRegimeModule,
+    LaboralRelationshipModule,
   ],
   controllers: [],
   providers: [],

@@ -84,6 +84,7 @@ model Employee {
   LaboralRelationship             LaboralRelationship?              @relation(fields: [laboralRelationshipId], references: [id])
   laboralRelationshipId           Int?
   AssistanceEmployeeIdentificator AssistanceEmployeeIdentificator[]
+  CampusEmployee                  CampusEmployee[]
 }
 
 model Campus {
@@ -92,6 +93,15 @@ model Campus {
   secondaryName         String
   address               String
   AssistanceDispositive AssistanceDispositive[]
+  CampusEmployee        CampusEmployee[]
+}
+
+model CampusEmployee {
+  id         Int      @id @default(autoincrement())
+  campusId   Int
+  Campus     Campus   @relation(fields: [campusId], references: [id])
+  employeeId Int
+  Employee   Employee @relation(fields: [employeeId], references: [id])
 }
 
 model AssistanceDispositive {
