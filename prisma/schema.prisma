@@ -27,64 +27,72 @@ model City {
   name       String
   Province   Province   @relation(fields: [provinceId], references: [id])
   provinceId Int
-  Employee   Employee[]
+  Personal   Personal[]
 }
 
-model Gender {
+model Sex {
   id       Int        @id @default(autoincrement())
   name     String
-  Employee Employee[]
+  Personal Personal[]
 }
 
 model MaritalStatus {
   id       Int        @id @default(autoincrement())
   name     String
-  Employee Employee[]
+  Personal Personal[]
 }
 
 model Function {
   id       Int        @id @default(autoincrement())
   name     String
-  Employee Employee[]
+  Personal Personal[]
 }
 
 model LaboralRegime {
   id       Int        @id @default(autoincrement())
   name     String
-  Employee Employee[]
+  Personal Personal[]
 }
 
 model LaboralRelationship {
   id       Int        @id @default(autoincrement())
   name     String
-  Employee Employee[]
+  Personal Personal[]
 }
 
-model Employee {
+model Journal {
+  id       Int        @id @default(autoincrement())
+  name     String
+  Personal Personal[]
+}
+
+model Personal {
   id                              Int                               @id @default(autoincrement())
   uuid                            String                            @unique
   identificationCard              String
   names                           String
   lastNames                       String
-  phone                           String
-  email                           String
-  birthdate                       DateTime
-  childrens                       Int
-  address                         String
-  genderId                        Int
-  gender                          Gender                            @relation(fields: [genderId], references: [id])
-  maritalStatusId                 Int
-  maritalStatus                   MaritalStatus                     @relation(fields: [maritalStatusId], references: [id])
-  cityId                          Int
-  City                            City                              @relation(fields: [cityId], references: [id])
-  functionId                      Int
-  Function                        Function                          @relation(fields: [functionId], references: [id])
+  phone                           String?
+  email                           String?
+  birthdate                       DateTime?
+  childrens                       Int?
+  address                         String?
+  sexId                           Int?
+  Sex                             Sex?                              @relation(fields: [sexId], references: [id])
+  maritalStatusId                 Int?
+  maritalStatus                   MaritalStatus?                    @relation(fields: [maritalStatusId], references: [id])
+  cityId                          Int?
+  City                            City?                             @relation(fields: [cityId], references: [id])
+  functionId                      Int?
+  Function                        Function?                         @relation(fields: [functionId], references: [id])
   LaboralRegime                   LaboralRegime?                    @relation(fields: [laboralRegimeId], references: [id])
   laboralRegimeId                 Int?
   LaboralRelationship             LaboralRelationship?              @relation(fields: [laboralRelationshipId], references: [id])
   laboralRelationshipId           Int?
-  AssistanceEmployeeIdentificator AssistanceEmployeeIdentificator[]
-  CampusEmployee                  CampusEmployee[]
+  Journal                         Journal?                          @relation(fields: [journalId], references: [id])
+  journalId                       Int?
+  AssistancePersonalIdentificator AssistancePersonalIdentificator[]
+  CampusPersonal                  CampusPersonal[]
 }
 
 model Campus {
@@ -93,15 +101,15 @@ model Campus {
   secondaryName         String
   address               String
   AssistanceDispositive AssistanceDispositive[]
-  CampusEmployee        CampusEmployee[]
+  CampusPersonal        CampusPersonal[]
 }
 
-model CampusEmployee {
+model CampusPersonal {
   id         Int      @id @default(autoincrement())
   campusId   Int
   Campus     Campus   @relation(fields: [campusId], references: [id])
-  employeeId Int
-  Employee   Employee @relation(fields: [employeeId], references: [id])
+  PersonalId Int
+  Personal   Personal @relation(fields: [PersonalId], references: [id])
 }
 
 model AssistanceDispositive {
@@ -110,14 +118,14 @@ model AssistanceDispositive {
   campusId                        Int
   Campus                          Campus                            @relation(fields: [campusId], references: [id])
   serial                          String                            @unique
-  AssistanceEmployeeIdentificator AssistanceEmployeeIdentificator[]
+  AssistancePersonalIdentificator AssistancePersonalIdentificator[]
 }
 
-model AssistanceEmployeeIdentificator {
+model AssistancePersonalIdentificator {
   id                      Int                   @id @default(autoincrement())
   code                    String
-  employeeId              Int
-  Employee                Employee              @relation(fields: [employeeId], references: [id])
+  PersonalId              Int
+  Personal                Personal              @relation(fields: [PersonalId], references: [id])
   assistanceDispositiveId Int
   AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
 }

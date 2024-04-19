@@ -269,7 +269,7 @@ VALUES
 
 -- Add Gender
 INSERT INTO
-  public."Gender"(id, name)
+  public."Sex"(id, name)
 VALUES
   (1, 'Masculino'),
   (2, 'Femenino');
@@ -302,3 +302,10 @@ VALUES
   (1, 'Nombramiento Definitivo'),
   (2, 'Nombramiento Provisional'),
   (3, 'Contrato');
+
+-- Add Journal
+INSERT INTO
+  public."Journal"(id, name)
+VALUES
+  (1, 'Matutina'),
+  (2, 'Vespertina');
