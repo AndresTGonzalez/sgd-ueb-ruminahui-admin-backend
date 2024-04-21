@@ -309,3 +309,24 @@ INSERT INTO
 VALUES
   (1, 'Matutina'),
   (2, 'Vespertina');
+
+-- Add Campus
+INSERT INTO
+  public."Campus"(id, name, address, "secondaryName")
+VALUES
+  (
+    1,
+    'Campus Principal',
+    'Av. Rodrigo Pachano',
+    'Colegio Rumiñahui'
+  );
+
+INSERT INTO
+  public."AssistanceDispositive"(id, name, "campusId", serial)
+VALUES
+  (
+    1,
+    'Asistencia no presencial',
+    1,
+    'ruminahui_NP'
+  );
