@@ -330,3 +330,19 @@ VALUES
     1,
     'ruminahui_NP'
   );
+
+-- Add Categories
+-- Categories A to J
+INSERT INTO
+  public."Category"(id, name, salary)
+VALUES
+  (1, 'A', 2034),
+  (2, 'B', 1760),
+  (3, 'C', 1676),
+  (4, 'D', 1412),
+  (5, 'E', 1212),
+  (6, 'F', 1086),
+  (7, 'G', 986),
+  (8, 'H', 817),
+  (9, 'I', 817),
+  (10, 'J', 817);

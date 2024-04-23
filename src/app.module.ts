@@ -15,6 +15,9 @@ import { LaboralRegimeModule } from './laboral-regime/laboral-regime.module';
 import { LaboralRelationshipModule } from './laboral-relationship/laboral-relationship.module';
 import { SexsModule } from './sexs/sexs.module';
 import { PersonalModule } from './personal/personal.module';
+import { CategoriesModule } from './categories/categories.module';
+import { AssistanceModule } from './assistance/assistance.module';
+import { JournalModule } from './journal/journal.module';
 
 @Module({
   imports: [
@@ -35,6 +38,9 @@ import { PersonalModule } from './personal/personal.module';
     LaboralRelationshipModule,
     SexsModule,
     PersonalModule,
+    CategoriesModule,
+    AssistanceModule,
+    JournalModule,
   ],
   controllers: [],
   providers: [],

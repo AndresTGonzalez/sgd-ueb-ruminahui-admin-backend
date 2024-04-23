@@ -66,6 +66,13 @@ model Journal {
   Personal Personal[]
 }
 
+model Category {
+  id       Int        @id @default(autoincrement())
+  name     String
+  salary   Float
+  Personal Personal[]
+}
+
 model Personal {
   id                              Int                               @id @default(autoincrement())
   uuid                            String                            @unique
@@ -93,6 +100,8 @@ model Personal {
   journalId                       Int?
   AssistancePersonalIdentificator AssistancePersonalIdentificator[]
   CampusPersonal                  CampusPersonal[]
+  Category                        Category?                         @relation(fields: [categoryId], references: [id])
+  categoryId                      Int?
 }
 
 model Campus {
@@ -128,4 +137,12 @@ model AssistancePersonalIdentificator {
   Personal                Personal              @relation(fields: [PersonalId], references: [id])
   assistanceDispositiveId Int
   AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
+  Assistance              Assistance[]
+}
+
+model Assistance {
+  id                                Int                             @id @default(autoincrement())
+  date                              DateTime
+  assistancePersonalIdentificatorId Int
+  AssistancePersonalIdentificator   AssistancePersonalIdentificator @relation(fields: [assistancePersonalIdentificatorId], references: [id])
 }
