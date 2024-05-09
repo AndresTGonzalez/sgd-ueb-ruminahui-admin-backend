@@ -7,6 +7,7 @@ import {
   Delete,
   Param,
   Body,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -25,7 +26,7 @@ export class CampusController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.campusService.findOne(id);
   }
 
@@ -35,12 +36,15 @@ export class CampusController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data: CreateCampusDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() data: CreateCampusDto,
+  ) {
     return this.campusService.update(id, data);
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: number) {
+  async remove(@Param('id', ParseIntPipe) id: number) {
     return this.campusService.remove(id);
   }
 }
