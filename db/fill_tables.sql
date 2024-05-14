@@ -269,7 +269,7 @@ VALUES
 
 -- Add Gender
 INSERT INTO
-  public."Sex"(id, name)
+  public."Gender"(id, name)
 VALUES
   (1, 'Masculino'),
   (2, 'Femenino');

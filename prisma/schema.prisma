@@ -30,7 +30,7 @@ model City {
   Personal   Personal[]
 }
 
-model Sex {
+model Gender {
   id       Int        @id @default(autoincrement())
   name     String
   Personal Personal[]
@@ -84,8 +84,8 @@ model Personal {
   birthdate                       DateTime?
   childrens                       Int?
   address                         String?
-  sexId                           Int?
-  Sex                             Sex?                              @relation(fields: [sexId], references: [id])
+  genderId                        Int?
+  Gender                          Gender?                           @relation(fields: [genderId], references: [id])
   maritalStatusId                 Int?
   maritalStatus                   MaritalStatus?                    @relation(fields: [maritalStatusId], references: [id])
   cityId                          Int?
@@ -102,6 +102,7 @@ model Personal {
   CampusPersonal                  CampusPersonal[]
   Category                        Category?                         @relation(fields: [categoryId], references: [id])
   categoryId                      Int?
+  PersonalSchedule                PersonalSchedule[]
 }
 
 model Campus {
@@ -119,6 +120,14 @@ model CampusPersonal {
   Campus     Campus   @relation(fields: [campusId], references: [id])
   PersonalId Int
   Personal   Personal @relation(fields: [PersonalId], references: [id])
+}
+
+model PersonalSchedule {
+  id         Int      @id @default(autoincrement())
+  personalId Int
+  Personal   Personal @relation(fields: [personalId], references: [id])
+  start      DateTime
+  end        DateTime
 }
 
 model AssistanceDispositive {

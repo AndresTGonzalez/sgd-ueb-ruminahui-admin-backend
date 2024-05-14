@@ -1,26 +1,26 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { CitiesService } from './cities.service';
+import { CityService } from './city.service';
 
 @UseGuards(AuthGuard)
 @ApiTags('Cities')
-@Controller('cities')
-export class CitiesController {
-  constructor(private readonly citiesService: CitiesService) {}
+@Controller('city')
+export class CityController {
+  constructor(private readonly cityService: CityService) {}
 
   @Get()
   async findAll() {
-    return this.citiesService.findAll();
+    return this.cityService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.citiesService.findOne(+id);
+    return this.cityService.findOne(+id);
   }
 
   @Get('province/:provinceId')
   async findByProvinceId(@Param('provinceId') provinceId: string) {
-    return this.citiesService.findByProvinceId(+provinceId);
+    return this.cityService.findByProvinceId(+provinceId);
   }
 }

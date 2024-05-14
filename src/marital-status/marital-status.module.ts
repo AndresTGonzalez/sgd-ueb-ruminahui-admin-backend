@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { MaritalStatusesService } from './marital-statuses.service';
-import { MaritalStatusesController } from './marital-statuses.controller';
+import { MaritalStatusService } from './marital-status.service';
+import { MaritalStatusesController } from './marital-status.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
   imports: [PrismaModule],
-  providers: [MaritalStatusesService],
+  providers: [MaritalStatusService],
   controllers: [MaritalStatusesController],
 })
 export class MaritalStatusesModule {}

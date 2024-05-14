@@ -3,7 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Province } from '@prisma/client';
 
 @Injectable()
-export class ProvincesService {
+export class ProvinceService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<Province[]> {

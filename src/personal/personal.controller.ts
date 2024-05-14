@@ -7,12 +7,13 @@ import {
   Delete,
   Param,
   Body,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PersonalService } from './personal.service';
 
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @ApiTags('personal')
 @Controller('personal')
 export class PersonalController {
@@ -24,7 +25,7 @@ export class PersonalController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
+  async findOne(@Param('id', ParseIntPipe) id: number) {
     return this.personalService.findOne(id);
   }
 
@@ -34,7 +35,7 @@ export class PersonalController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() data) {
+  async update(@Param('id', ParseIntPipe) id: number, @Body() data) {
     return this.personalService.update(id, data);
   }
 

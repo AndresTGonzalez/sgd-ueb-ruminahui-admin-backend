@@ -1,23 +1,21 @@
 import { Controller, Get, UseGuards, Param } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
-import { MaritalStatusesService } from './marital-statuses.service';
+import { MaritalStatusService } from './marital-status.service';
 
 @UseGuards(AuthGuard)
 @ApiTags('Marital Statuses')
-@Controller('marital-statuses')
+@Controller('marital-status')
 export class MaritalStatusesController {
-  constructor(
-    private readonly maritalStatusesService: MaritalStatusesService,
-  ) {}
+  constructor(private readonly maritalStatusService: MaritalStatusService) {}
 
   @Get()
   async findAll() {
-    return this.maritalStatusesService.findAll();
+    return this.maritalStatusService.findAll();
   }
 
   @Get(':id')
   async findOne(@Param('id') id: string) {
-    return this.maritalStatusesService.findOne(+id);
+    return this.maritalStatusService.findOne(+id);
   }
 }
