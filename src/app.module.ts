@@ -18,6 +18,7 @@ import { CategoryModule } from './category/category.module';
 import { AssistanceModule } from './assistance/assistance.module';
 import { JournalModule } from './journal/journal.module';
 import { GenderModule } from './gender/gender.module';
+import { CampusPersonalModule } from './campus-personal/campus-personal.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { GenderModule } from './gender/gender.module';
     AssistanceModule,
     JournalModule,
     GenderModule,
+    CampusPersonalModule,
   ],
   controllers: [],
   providers: [],

@@ -118,8 +118,8 @@ model CampusPersonal {
   id         Int      @id @default(autoincrement())
   campusId   Int
   Campus     Campus   @relation(fields: [campusId], references: [id])
-  PersonalId Int
-  Personal   Personal @relation(fields: [PersonalId], references: [id])
+  personalId Int
+  Personal   Personal @relation(fields: [personalId], references: [id])
 }
 
 model PersonalSchedule {
