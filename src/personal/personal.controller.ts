@@ -13,7 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { PersonalService } from './personal.service';
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @ApiTags('personal')
 @Controller('personal')
 export class PersonalController {
@@ -40,7 +40,7 @@ export class PersonalController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
+  async delete(@Param('id', ParseIntPipe) id: number) {
     return this.personalService.delete(id);
   }
 }

@@ -142,8 +142,8 @@ model AssistanceDispositive {
 model AssistancePersonalIdentificator {
   id                      Int                   @id @default(autoincrement())
   code                    String
-  PersonalId              Int
-  Personal                Personal              @relation(fields: [PersonalId], references: [id])
+  personalId              Int
+  Personal                Personal              @relation(fields: [personalId], references: [id])
   assistanceDispositiveId Int
   AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
   Assistance              Assistance[]
