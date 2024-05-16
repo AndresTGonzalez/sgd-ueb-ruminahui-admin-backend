@@ -83,6 +83,7 @@ model Personal {
   email                           String?
   birthdate                       DateTime?
   childrens                       Int?
+  hasMinorChildren                Boolean?
   address                         String?
   genderId                        Int?
   Gender                          Gender?                           @relation(fields: [genderId], references: [id])
@@ -103,6 +104,50 @@ model Personal {
   Category                        Category?                         @relation(fields: [categoryId], references: [id])
   categoryId                      Int?
   PersonalSchedule                PersonalSchedule[]
+  Curriculum                      Curriculum[]
+  Justification                   Justification[]
+}
+
+model Justification {
+  id                  Int               @id @default(autoincrement())
+  personalId          Int
+  Personal            Personal          @relation(fields: [personalId], references: [id])
+  date                DateTime
+  justificationData   String
+  Type                JustificationType @relation(fields: [justificationTypeId], references: [id])
+  justificationTypeId Int
+}
+
+model JustificationType {
+  id            Int             @id @default(autoincrement())
+  name          String
+  Justification Justification[]
+}
+
+model Curriculum {
+  id            Int             @id @default(autoincrement())
+  personalId    Int
+  Personal      Personal        @relation(fields: [personalId], references: [id])
+  Title         Title[]
+  Certification Certification[]
+}
+
+model Title {
+  id               Int        @id @default(autoincrement())
+  curriculumId     Int
+  Curriculum       Curriculum @relation(fields: [curriculumId], references: [id])
+  title            String
+  institution      String
+  completitionYear Int
+}
+
+model Certification {
+  id               Int        @id @default(autoincrement())
+  curriculumId     Int
+  Curriculum       Curriculum @relation(fields: [curriculumId], references: [id])
+  cetficate        String
+  institution      String
+  completitionYear Int
 }
 
 model Campus {

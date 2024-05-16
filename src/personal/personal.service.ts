@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Personal, AssistancePersonalIdentificator } from '@prisma/client';
+import {
+  Personal,
+  AssistancePersonalIdentificator,
+  Assistance,
+} from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 import { AssistanceEmployeeIdentificatorService } from 'src/assistance-employee-identificator/assistance-employee-identificator.service';
@@ -125,8 +129,6 @@ export class PersonalService {
       },
     );
 
-    const adminAuthClient = supabase.auth.admin;
-
     const { data, error } = await supabase.auth.admin.deleteUser(uuid);
     if (error) {
       console.log(error);
@@ -162,4 +164,7 @@ export class PersonalService {
       where: { id: identificator.id },
     });
   }
+
+  // TODO: Implementar
+  private deleteAllAssistance() {}
 }
