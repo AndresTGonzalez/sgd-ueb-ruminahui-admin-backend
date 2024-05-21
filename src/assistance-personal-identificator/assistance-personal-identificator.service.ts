@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { AssistancePersonalIdentificator } from '@prisma/client';
 
 @Injectable()
-export class AssistanceEmployeeIdentificatorService {
+export class AssistancePersonalIdentificatorService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll() {
@@ -12,10 +13,17 @@ export class AssistanceEmployeeIdentificatorService {
   async findOne(id: number) {
     return this.prismaService.assistancePersonalIdentificator.findUnique({
       where: { id },
+      include: {Personal: true}
     });
   }
 
   async create(data: any) {
     return this.prismaService.assistancePersonalIdentificator.create({ data });
+  }
+
+  async findByCode(code: string) {
+    return this.prismaService.assistancePersonalIdentificator.findFirst({
+      where: { code },
+    });
   }
 }

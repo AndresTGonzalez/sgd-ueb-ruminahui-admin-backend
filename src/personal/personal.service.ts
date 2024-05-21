@@ -7,18 +7,24 @@ import {
 } from '@prisma/client';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
-import { AssistanceEmployeeIdentificatorService } from 'src/assistance-employee-identificator/assistance-employee-identificator.service';
+import { AssistancePersonalIdentificatorService } from 'src/assistance-personal-identificator/assistance-personal-identificator.service';
 
 @Injectable()
 export class PersonalService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
-    private readonly assistanceEmployeeIdentificatorService: AssistanceEmployeeIdentificatorService,
+    private readonly assistancePersonalIdentificatorService: AssistancePersonalIdentificatorService,
   ) {}
 
-  async findAll() {
-    return this.prismaService.personal.findMany();
+  async findAll(): Promise<Personal[]> {
+    return this.prismaService.personal.findMany({
+      include: {
+        Gender: true,
+        MaritalStatus: true,
+        City: true,
+      },
+    });
   }
 
   async findOne(id: number) {
@@ -67,9 +73,9 @@ export class PersonalService {
     const identificator = {
       assistanceDispositiveId: 1,
       code: employee.uuid,
-      PersonalId: employee.id,
+      personalId: employee.id,
     };
-    await this.assistanceEmployeeIdentificatorService.create(identificator);
+    await this.assistancePersonalIdentificatorService.create(identificator);
 
     return employee;
   }
