@@ -33,6 +33,7 @@ export class MedicalPersonalDataService {
   }
 
   async create(data: MedicalPersonalData) {
+    console.log(data);
     return this.prismaService.medicalPersonalData.create({ data });
   }
 

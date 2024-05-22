@@ -25,6 +25,7 @@ import { MedicalPersonalDataModule } from './medical-personal-data/medical-perso
 import { TitleModule } from './title/title.module';
 import { CertificationModule } from './certification/certification.module';
 import { PersonalSupabaseModule } from './personal-supabase/personal-supabase.module';
+import { BloodTypeModule } from './blood-type/blood-type.module';
 
 @Module({
   imports: [
@@ -55,6 +56,7 @@ import { PersonalSupabaseModule } from './personal-supabase/personal-supabase.mo
     TitleModule,
     CertificationModule,
     PersonalSupabaseModule,
+    BloodTypeModule,
   ],
   controllers: [],
   providers: [],

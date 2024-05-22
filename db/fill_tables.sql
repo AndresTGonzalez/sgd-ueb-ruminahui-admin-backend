@@ -346,3 +346,16 @@ VALUES
   (8, 'H', 817),
   (9, 'I', 817),
   (10, 'J', 817);
+
+-- BLood Types
+INSERT INTO
+  public."BloodType" (id, name)
+VALUES
+  (1, 'A+'),
+  (2, 'A-'),
+  (3, 'B+'),
+  (4, 'B-'),
+  (5, 'AB+'),
+  (6, 'AB-'),
+  (7, 'O+'),
+  (8, 'O-');
