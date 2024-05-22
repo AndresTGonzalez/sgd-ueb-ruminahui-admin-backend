@@ -52,4 +52,11 @@ export class PersonalScheduleService {
       where: { id },
     });
   }
+
+  // Delete by personalId
+  async deleteByPersonalId(personalId: number) {
+    return this.prismaService.personalSchedule.deleteMany({
+      where: { personalId },
+    });
+  }
 }

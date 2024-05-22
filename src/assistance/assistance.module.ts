@@ -11,6 +11,7 @@ import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.
     AssistancePersonalIdentificatorModule,
     PersonalScheduleModule,
   ],
+  exports: [AssistanceService],
   providers: [AssistanceService],
   controllers: [AssistanceController],
 })

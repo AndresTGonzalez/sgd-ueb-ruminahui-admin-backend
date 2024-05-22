@@ -20,6 +20,11 @@ import { JournalModule } from './journal/journal.module';
 import { GenderModule } from './gender/gender.module';
 import { CampusPersonalModule } from './campus-personal/campus-personal.module';
 import { PersonalScheduleModule } from './personal-schedule/personal-schedule.module';
+import { InstitutionalPersonalDataModule } from './institutional-personal-data/institutional-personal-data.module';
+import { MedicalPersonalDataModule } from './medical-personal-data/medical-personal-data.module';
+import { TitleModule } from './title/title.module';
+import { CertificationModule } from './certification/certification.module';
+import { PersonalSupabaseModule } from './personal-supabase/personal-supabase.module';
 
 @Module({
   imports: [
@@ -45,6 +50,11 @@ import { PersonalScheduleModule } from './personal-schedule/personal-schedule.mo
     GenderModule,
     CampusPersonalModule,
     PersonalScheduleModule,
+    InstitutionalPersonalDataModule,
+    MedicalPersonalDataModule,
+    TitleModule,
+    CertificationModule,
+    PersonalSupabaseModule,
   ],
   controllers: [],
   providers: [],

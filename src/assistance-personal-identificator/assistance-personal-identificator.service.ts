@@ -13,7 +13,7 @@ export class AssistancePersonalIdentificatorService {
   async findOne(id: number) {
     return this.prismaService.assistancePersonalIdentificator.findUnique({
       where: { id },
-      include: {Personal: true}
+      include: { Personal: true },
     });
   }
 
@@ -24,6 +24,13 @@ export class AssistancePersonalIdentificatorService {
   async findByCode(code: string) {
     return this.prismaService.assistancePersonalIdentificator.findFirst({
       where: { code },
+    });
+  }
+
+  // Delete by personalId
+  async deleteByPersonalId(personalId: number) {
+    return this.prismaService.assistancePersonalIdentificator.deleteMany({
+      where: { personalId },
     });
   }
 }

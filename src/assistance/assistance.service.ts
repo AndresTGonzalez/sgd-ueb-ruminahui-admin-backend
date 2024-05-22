@@ -42,16 +42,6 @@ export class AssistanceService {
       clockCheck: record.clockCheck,
       onTime: record.onTime,
     }));
-
-    // return this.prismaService.assistance.findMany({
-    //   include: {
-    //     AssistancePersonalIdentificator: {
-    //       include: {
-    //         Personal: true,
-    //       },
-    //     },
-    //   },
-    // });
   }
 
   async findOne(id: number): Promise<Assistance> {
@@ -165,6 +155,22 @@ export class AssistanceService {
     return this.prismaService.assistance.delete({
       where: { id },
     });
+  }
+
+  // Delete by personalId
+  async deleteByPersonalId(personalId: number) {
+    const assistancePersonalIdentificators =
+      await this.prismaService.assistancePersonalIdentificator.findMany({
+        where: { personalId },
+      });
+
+    for (const assistancePersonalIdentificator of assistancePersonalIdentificators) {
+      await this.prismaService.assistance.deleteMany({
+        where: {
+          assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
+        },
+      });
+    }
   }
 
   async syncFromSupabase(): Promise<Boolean> {

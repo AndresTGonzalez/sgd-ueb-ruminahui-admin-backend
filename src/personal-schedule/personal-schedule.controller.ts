@@ -48,6 +48,13 @@ export class PersonalScheduleController {
     return this.personalScheduleService.remove(id);
   }
 
+  @Delete('by-personal-id/:personalId')
+  async deleteByPersonalId(
+    @Param('personalId', ParseIntPipe) personalId: number,
+  ) {
+    return this.personalScheduleService.deleteByPersonalId(personalId);
+  }
+
   @Get('by-personal-id/:personalId')
   async findOneByPersonalId(
     @Param('personalId', ParseIntPipe) personalId: number,

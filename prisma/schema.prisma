@@ -91,12 +91,14 @@ model Personal {
   MaritalStatus                   MaritalStatus?                    @relation(fields: [maritalStatusId], references: [id])
   cityId                          Int?
   City                            City?                             @relation(fields: [cityId], references: [id])
+  medicalPersonalDataId           Int?
   AssistancePersonalIdentificator AssistancePersonalIdentificator[]
   PersonalSchedule                PersonalSchedule[]
-  Curriculum                      Curriculum[]
   Justification                   Justification[]
-  MedicalPersonalData             MedicalPersonalData[]
   InstitutionalPersonalData       InstitutionalPersonalData[]
+  Title                           Title[]
+  Certification                   Certification[]
+  MedicalPersonalData             MedicalPersonalData[]
 }
 
 model InstitutionalPersonalData {
@@ -117,20 +119,20 @@ model InstitutionalPersonalData {
 }
 
 model MedicalPersonalData {
-  id                 Int         @id @default(autoincrement())
-  Personal           Personal?   @relation(fields: [personalId], references: [id])
-  personalId         Int?
-  BloodType          BloodType[]
+  id                 Int        @id @default(autoincrement())
+  personalId         Int
+  Personal           Personal   @relation(fields: [personalId], references: [id])
+  bloodTypeId        Int?
+  BloodType          BloodType? @relation(fields: [bloodTypeId], references: [id])
   personalMedication String
   personalDisease    String
   personalAllergy    String
 }
 
 model BloodType {
-  id                    Int                 @id @default(autoincrement())
-  name                  String
-  medicalPersonalDataId Int
-  MedicalPersonalData   MedicalPersonalData @relation(fields: [medicalPersonalDataId], references: [id])
+  id                  Int                   @id @default(autoincrement())
+  name                String
+  MedicalPersonalData MedicalPersonalData[]
 }
 
 model Justification {
@@ -149,27 +151,19 @@ model JustificationType {
   Justification Justification[]
 }
 
-model Curriculum {
-  id            Int             @id @default(autoincrement())
-  personalId    Int
-  Personal      Personal        @relation(fields: [personalId], references: [id])
-  Title         Title[]
-  Certification Certification[]
-}
-
 model Title {
-  id               Int        @id @default(autoincrement())
-  curriculumId     Int
-  Curriculum       Curriculum @relation(fields: [curriculumId], references: [id])
+  id               Int      @id @default(autoincrement())
+  personalId       Int
+  Personal         Personal @relation(fields: [personalId], references: [id])
   title            String
   institution      String
   completitionYear Int
 }
 
 model Certification {
-  id               Int        @id @default(autoincrement())
-  curriculumId     Int
-  Curriculum       Curriculum @relation(fields: [curriculumId], references: [id])
+  id               Int      @id @default(autoincrement())
+  personalId       Int
+  Personal         Personal @relation(fields: [personalId], references: [id])
   cetficate        String
   institution      String
   completitionYear Int

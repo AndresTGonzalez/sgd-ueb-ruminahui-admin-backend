@@ -1,20 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import {
-  Personal,
-  AssistancePersonalIdentificator,
-  Assistance,
-} from '@prisma/client';
-import { ConfigService } from '@nestjs/config';
-import { createClient } from '@supabase/supabase-js';
+import { Personal } from '@prisma/client';
 import { AssistancePersonalIdentificatorService } from 'src/assistance-personal-identificator/assistance-personal-identificator.service';
+import { InstitutionalPersonalDataService } from 'src/institutional-personal-data/institutional-personal-data.service';
+import { MedicalPersonalDataService } from 'src/medical-personal-data/medical-personal-data.service';
+import { AssistanceService } from 'src/assistance/assistance.service';
+import { TitleService } from 'src/title/title.service';
+import { CertificationService } from 'src/certification/certification.service';
+import { PersonalSupabaseService } from 'src/personal-supabase/personal-supabase.service';
 
 @Injectable()
 export class PersonalService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
     private readonly assistancePersonalIdentificatorService: AssistancePersonalIdentificatorService,
+    private readonly institutionalPersonalDataService: InstitutionalPersonalDataService,
+    private readonly medicalPersonalDataService: MedicalPersonalDataService,
+    private readonly assistanceService: AssistanceService,
+    private readonly titleService: TitleService,
+    private readonly certificationService: CertificationService,
+    private readonly personalSupabaseService: PersonalSupabaseService,
   ) {}
 
   async findAll(): Promise<Personal[]> {
@@ -46,11 +51,23 @@ export class PersonalService {
       throw new Error('Empleado no encontrado');
     }
     // Eliminar en Supabase
-    await this.deleteUserPersonalInSupabase(employee.uuid);
-    await this.deletePersonalInSupabase(employee.uuid);
+    await this.personalSupabaseService.deleteAssistanceInSupabase(
+      employee.uuid,
+    );
+    await this.personalSupabaseService.deleteUserPersonalUserInSupabase(
+      employee.uuid,
+    );
+    await this.personalSupabaseService.deletePersonalInSupabase(employee.uuid);
 
-    // Eliminar identificador de empleado
-    await this.deleteEmployeeIdentificator(employee.uuid);
+    // Eliminar en cascada en Backend
+    await this.assistanceService.deleteByPersonalId(employee.id);
+    await this.assistancePersonalIdentificatorService.deleteByPersonalId(
+      employee.id,
+    );
+    await this.institutionalPersonalDataService.deleteByPersonalId(employee.id);
+    await this.medicalPersonalDataService.deleteByPersonalId(employee.id);
+    await this.titleService.deleteByPersonalId(employee.id);
+    await this.certificationService.deleteByPersonalId(employee.id);
 
     return this.prismaService.personal.delete({ where: { id } });
   }
@@ -59,14 +76,17 @@ export class PersonalService {
     // TODO: Manejar excepciones en caso de error
 
     // Registrar en Supabase
-    const uuid = await this.registerInSupabase(data);
+    // const uuid = await this.registerInSupabase(data);
+    const uuid = await this.personalSupabaseService.registerInSupabase(data);
     data.uuid = uuid;
 
     if (!data.uuid) {
       throw new Error('Error registrando en Supabase');
     }
     // Agregar usuario en Supabase
-    const response = await this.addPersonalToSupabase(data);
+    // const response = await this.addPersonalToSupabase(data);
+    const response =
+      await this.personalSupabaseService.addPersonalToSupabase(data);
     // Agregar el empleado en la base de datos
     const employee = await this.prismaService.personal.create({ data });
     // Agregar el identificador del empleado en la base de datos
@@ -78,97 +98,6 @@ export class PersonalService {
     await this.assistancePersonalIdentificatorService.create(identificator);
 
     return employee;
-  }
-
-  private async registerInSupabase(employee: Personal): Promise<string> {
-    const supabase = createClient(
-      this.configService.get('SUPABASE_URL'),
-      this.configService.get('SUPABASE_KEY'),
-    );
-    const user = this.removeAccents(
-      employee.names.charAt(0) + employee.lastNames.split(' ')[0],
-    );
-
-    const firstNumbersIdentificationCard =
-      employee.identificationCard.substring(0, 5);
-
-    const email = `${user.toLowerCase() + firstNumbersIdentificationCard}@sgdruminahui.com`;
-
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: employee.identificationCard,
-    });
-
-    if (error) {
-      throw new Error('Error registrando en Supabase' + error);
-    }
-    return data.user.id;
-  }
-
-  private async addPersonalToSupabase(employee: Personal) {
-    const supabase = createClient(
-      this.configService.get('SUPABASE_URL'),
-      this.configService.get('SUPABASE_KEY'),
-    );
-    const { data, error } = await supabase.from('users').insert({
-      uuid: employee.uuid,
-    });
-    if (error) {
-      throw new Error('Error registrando en Supabase');
-    }
-    return true;
-  }
-
-  private removeAccents(str: string) {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  }
-
-  private async deleteUserPersonalInSupabase(uuid: string) {
-    const supabase = createClient(
-      this.configService.get('SUPABASE_URL'),
-      this.configService.get('SUPABASE_SERVICE_ROLE_KEY'),
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false,
-        },
-      },
-    );
-
-    const { data, error } = await supabase.auth.admin.deleteUser(uuid);
-    if (error) {
-      console.log(error);
-      throw new Error('Error eliminando en Supabase el usuario');
-    }
-    return true;
-  }
-
-  private async deletePersonalInSupabase(uuid: string) {
-    const supabase = createClient(
-      this.configService.get('SUPABASE_URL'),
-      this.configService.get('SUPABASE_KEY'),
-    );
-    const { data, error } = await supabase
-      .from('users')
-      .delete()
-      .eq('uuid', uuid);
-    if (error) {
-      throw new Error('Error eliminando en Supabase');
-    }
-    return true;
-  }
-
-  private async deleteEmployeeIdentificator(uuid: string) {
-    const identificator =
-      await this.prismaService.assistancePersonalIdentificator.findFirst({
-        where: { code: uuid },
-      });
-    if (!identificator) {
-      throw new Error('Identificador no encontrado');
-    }
-    return this.prismaService.assistancePersonalIdentificator.delete({
-      where: { id: identificator.id },
-    });
   }
 
   // TODO: Implementar
