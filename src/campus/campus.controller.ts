@@ -14,7 +14,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { CreateCampusDto } from './campus.model';
 import { CampusService } from './campus.service';
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @ApiTags('Campus')
 @Controller('campus')
 export class CampusController {

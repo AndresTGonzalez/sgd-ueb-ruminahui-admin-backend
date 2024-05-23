@@ -91,7 +91,6 @@ model Personal {
   MaritalStatus                   MaritalStatus?                    @relation(fields: [maritalStatusId], references: [id])
   cityId                          Int?
   City                            City?                             @relation(fields: [cityId], references: [id])
-  medicalPersonalDataId           Int?
   AssistancePersonalIdentificator AssistancePersonalIdentificator[]
   PersonalSchedule                PersonalSchedule[]
   Justification                   Justification[]
@@ -206,12 +205,12 @@ model AssistanceDispositive {
 }
 
 model AssistancePersonalIdentificator {
-  id                      Int                   @id @default(autoincrement())
+  id                      Int                    @id @default(autoincrement())
   code                    String
   personalId              Int
-  Personal                Personal              @relation(fields: [personalId], references: [id])
+  Personal                Personal?              @relation(fields: [personalId], references: [id])
   assistanceDispositiveId Int
-  AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
+  AssistanceDispositive   AssistanceDispositive? @relation(fields: [assistanceDispositiveId], references: [id])
   Assistance              Assistance[]
 }
 

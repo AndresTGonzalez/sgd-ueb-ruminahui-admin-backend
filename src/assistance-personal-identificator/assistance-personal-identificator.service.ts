@@ -7,7 +7,16 @@ export class AssistancePersonalIdentificatorService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll() {
-    return this.prismaService.assistancePersonalIdentificator.findMany();
+    const records =
+      await this.prismaService.assistancePersonalIdentificator.findMany({
+        include: { Personal: true, AssistanceDispositive: true },
+      });
+
+    return records.map((record) => ({
+      id: record.id,
+      code: record.code,
+      dispositive: record.AssistanceDispositive.name,
+    }));
   }
 
   async findOne(id: number) {
