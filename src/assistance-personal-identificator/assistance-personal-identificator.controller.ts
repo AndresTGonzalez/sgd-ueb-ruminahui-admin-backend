@@ -38,4 +38,9 @@ export class AssistancePersonalIdentificatorController {
   async create(@Body() data: any): Promise<AssistancePersonalIdentificator> {
     return this.assistancePersonalIdentificatorService.create(data);
   }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number): Promise<any> {
+    return this.assistancePersonalIdentificatorService.delete(id);
+  }
 }

@@ -27,7 +27,10 @@ export class AssistancePersonalIdentificatorService {
   }
 
   async create(data: any) {
-    return this.prismaService.assistancePersonalIdentificator.create({ data });
+    return this.prismaService.assistancePersonalIdentificator.create({
+      data,
+      include: { AssistanceDispositive: true },
+    });
   }
 
   async findByCode(code: string) {
@@ -40,6 +43,12 @@ export class AssistancePersonalIdentificatorService {
   async deleteByPersonalId(personalId: number) {
     return this.prismaService.assistancePersonalIdentificator.deleteMany({
       where: { personalId },
+    });
+  }
+
+  async delete(id: number) {
+    return this.prismaService.assistancePersonalIdentificator.delete({
+      where: { id },
     });
   }
 }

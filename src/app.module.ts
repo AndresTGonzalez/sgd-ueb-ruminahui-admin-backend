@@ -26,6 +26,8 @@ import { TitleModule } from './title/title.module';
 import { CertificationModule } from './certification/certification.module';
 import { PersonalSupabaseModule } from './personal-supabase/personal-supabase.module';
 import { BloodTypeModule } from './blood-type/blood-type.module';
+import { JustificationModule } from './justification/justification.module';
+import { JustificationFileModule } from './justification-file/justification-file.module';
 
 @Module({
   imports: [
@@ -57,6 +59,8 @@ import { BloodTypeModule } from './blood-type/blood-type.module';
     CertificationModule,
     PersonalSupabaseModule,
     BloodTypeModule,
+    JustificationModule,
+    JustificationFileModule,
   ],
   controllers: [],
   providers: [],

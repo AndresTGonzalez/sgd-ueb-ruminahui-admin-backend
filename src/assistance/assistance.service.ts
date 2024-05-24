@@ -173,6 +173,12 @@ export class AssistanceService {
     }
   }
 
+  async sync() {
+    await this.syncFromSupabase();
+    await this.syncFromZKTeco();
+    await this.syncFromHikvision();
+  }
+
   async syncFromSupabase(): Promise<Boolean> {
     const supabase = createClient(
       this.configService.get('SUPABASE_URL'),
@@ -186,6 +192,7 @@ export class AssistanceService {
     if (error) {
       throw new Error('Error al obtener los registros de asistencias' + error);
     }
+    console.log(data);
     const assistances: AssistanceSupabaseFetch[] = data;
 
     for (const assistance of assistances) {
@@ -193,10 +200,14 @@ export class AssistanceService {
         await this.assistancePersonalIdentificatorService.findByCode(
           assistance.user_uuid,
         );
+      console.log(assistancePersonalIdentificator);
       const newAssistance = {
         assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
         clockCheck: new Date(assistance.clock_check),
-        onTime: true,
+        onTime: await this.verifyOnTime(
+          new Date(assistance.clock_check),
+          assistancePersonalIdentificator.personalId,
+        ),
       };
       const response = await this.create(newAssistance);
 

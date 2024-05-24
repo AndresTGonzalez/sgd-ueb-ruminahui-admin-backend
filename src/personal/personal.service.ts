@@ -25,15 +25,26 @@ export class PersonalService {
   async findAll(): Promise<Personal[]> {
     return this.prismaService.personal.findMany({
       include: {
-        Gender: true,
-        MaritalStatus: true,
-        City: true,
+        City: {
+          include: {
+            Province: true,
+          },
+        },
       },
     });
   }
 
   async findOne(id: number) {
-    return this.prismaService.personal.findUnique({ where: { id } });
+    return this.prismaService.personal.findUnique({
+      where: { id },
+      include: {
+        City: {
+          include: {
+            Province: true,
+          },
+        },
+      },
+    });
   }
 
   async update(id: number, data: Personal) {

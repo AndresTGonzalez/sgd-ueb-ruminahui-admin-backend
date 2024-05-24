@@ -7,7 +7,10 @@ export class CityService {
   constructor(private readonly prismaService: PrismaService) {}
 
   async findAll(): Promise<City[]> {
-    return this.prismaService.city.findMany();
+    return this.prismaService.city.findMany({
+      orderBy: { name: 'asc' },
+      include: { Province: true },
+    });
   }
 
   async findOne(id: number): Promise<City> {

@@ -322,13 +322,20 @@ VALUES
   );
 
 INSERT INTO
-  public."AssistanceDispositive"(id, name, "campusId", serial)
+  public."AssistanceDispositive"(name, "campusId", serial)
 VALUES
   (
-    1,
     'Asistencia no presencial',
     1,
     'ruminahui_NP'
+  );
+INSERT INTO
+  public."AssistanceDispositive"(name, "campusId", serial)
+VALUES
+  (
+    'Asistencia manual',
+    1,
+    'asistencia_manual'
   );
 
 -- Add Categories

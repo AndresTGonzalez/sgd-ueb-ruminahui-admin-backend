@@ -112,9 +112,9 @@ export class AssistanceController {
     return this.assistanceService.create(data);
   }
 
-  @Post('/sync-from-supabase')
+  @Post('/sync')
   async syncFromSupabase() {
-    return this.assistanceService.syncFromSupabase();
+    return this.assistanceService.sync();
   }
 
   @Get('test/:clockCheck/:personalId')

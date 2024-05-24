@@ -123,9 +123,9 @@ model MedicalPersonalData {
   Personal           Personal   @relation(fields: [personalId], references: [id])
   bloodTypeId        Int?
   BloodType          BloodType? @relation(fields: [bloodTypeId], references: [id])
-  personalMedication String
-  personalDisease    String
-  personalAllergy    String
+  personalMedication String?
+  personalDisease    String?
+  personalAllergy    String?
 }
 
 model BloodType {
@@ -135,19 +135,27 @@ model BloodType {
 }
 
 model Justification {
-  id                  Int               @id @default(autoincrement())
+  id                  Int                 @id @default(autoincrement())
   personalId          Int
-  Personal            Personal          @relation(fields: [personalId], references: [id])
+  Personal            Personal            @relation(fields: [personalId], references: [id])
   date                DateTime
   justificationData   String
-  Type                JustificationType @relation(fields: [justificationTypeId], references: [id])
+  Type                JustificationType   @relation(fields: [justificationTypeId], references: [id])
   justificationTypeId Int
+  JustificationFile   JustificationFile[]
 }
 
 model JustificationType {
   id            Int             @id @default(autoincrement())
   name          String
   Justification Justification[]
+}
+
+model JustificationFile {
+  id              Int           @id @default(autoincrement())
+  justificationId Int
+  Justification   Justification @relation(fields: [justificationId], references: [id])
+  file            String
 }
 
 model Title {
@@ -163,7 +171,7 @@ model Certification {
   id               Int      @id @default(autoincrement())
   personalId       Int
   Personal         Personal @relation(fields: [personalId], references: [id])
-  cetficate        String
+  certification    String
   institution      String
   completitionYear Int
 }
