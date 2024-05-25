@@ -138,8 +138,13 @@ model Justification {
   id                  Int                 @id @default(autoincrement())
   personalId          Int
   Personal            Personal            @relation(fields: [personalId], references: [id])
-  date                DateTime
-  justificationData   String
+  affair              String
+  fromDate            DateTime
+  toDate              DateTime
+  applicationDate     DateTime
+  exitHour            String
+  returnHour          String
+  extraInfo           String
   Type                JustificationType   @relation(fields: [justificationTypeId], references: [id])
   justificationTypeId Int
   JustificationFile   JustificationFile[]
@@ -147,7 +152,7 @@ model Justification {
 
 model JustificationType {
   id            Int             @id @default(autoincrement())
-  name          String
+  type          String
   Justification Justification[]
 }
 
@@ -155,7 +160,7 @@ model JustificationFile {
   id              Int           @id @default(autoincrement())
   justificationId Int
   Justification   Justification @relation(fields: [justificationId], references: [id])
-  file            String
+  documentRout    String
 }
 
 model Title {
