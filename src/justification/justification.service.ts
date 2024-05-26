@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Justification } from '@prisma/client';
 import { JustificationSupabaseService } from 'src/justification-supabase/justification-supabase.service';
+import { application } from 'express';
 
 @Injectable()
 export class JustificationService {
@@ -15,7 +16,51 @@ export class JustificationService {
   }
 
   async findAll() {
-    return this.prisma.justification.findMany();
+    const data = await this.prisma.justification.findMany({
+      include: { Personal: true, JustificationStatus: true, Type: true },
+    });
+
+    // Armar el JSON de respuesta
+    const response = data.map((item) => {
+      return {
+        id: item.id,
+        names: item.Personal.names,
+        lastNames: item.Personal.lastNames,
+        applicationDate: item.applicationDate,
+        justificationStatusId: item.statusId,
+        justificationStatus: item.JustificationStatus.name,
+        type: item.Type.type,
+      };
+    });
+
+    return response;
+  }
+
+  async findeBetweenDates(startDate: Date, endDate: Date) {
+    const data = await this.prisma.justification.findMany({
+      where: {
+        applicationDate: {
+          gte: startDate,
+          lte: endDate,
+        },
+      },
+      include: { Personal: true, JustificationStatus: true, Type: true },
+    });
+
+    // Armar el JSON de respuesta
+    const response = data.map((item) => {
+      return {
+        id: item.id,
+        names: item.Personal.names,
+        lastNames: item.Personal.lastNames,
+        applicationDate: item.applicationDate,
+        justificationStatusId: item.statusId,
+        justificationStatus: item.JustificationStatus.name,
+        type: item.Type.type,
+      };
+    });
+
+    return response;
   }
 
   async findOne(id: number) {

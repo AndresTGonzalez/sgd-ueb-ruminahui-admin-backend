@@ -368,6 +368,7 @@ VALUES
   (7, 'O+'),
   (8, 'O-');
 
+-- Justification Types
 INSERT INTO
   public."JustificationType"(id, type)
 VALUES
@@ -377,3 +378,11 @@ INSERT INTO
   public."JustificationType"(id, type)
 VALUES
   (2, 'licencia');
+
+-- Justification status
+INSERT INTO
+  public."JustificationStatus"(id, name)
+VALUES
+  (1, 'pendiente'),
+  (2, 'aprobada'),
+  (3, 'rechazada');

@@ -42,16 +42,19 @@ export class JustificationSupabaseService {
         throw new Error('Empleado no encontrado');
       }
 
+      const aplicationDateISO = new Date(justification.applicationDate);
+
       const newJustification = {
         personalId: employee.id,
         affair: justification.affair,
         fromDate: justification.fromDate.toString(),
         toDate: justification.toDate.toString(),
-        applicationDate: justification.applicationDate.toString(),
+        applicationDate: aplicationDateISO,
         exitHour: justification.exitHour,
         returnHour: justification.returnHour,
         extraInfo: justification.extraInfo,
         justificationTypeId: justification.justificationTypeId,
+        statusId: 1,
       };
 
       const response = await this.prisma.justification.create({

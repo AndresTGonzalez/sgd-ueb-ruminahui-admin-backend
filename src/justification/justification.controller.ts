@@ -8,6 +8,7 @@ import {
   Param,
   Body,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
@@ -20,20 +21,32 @@ import { Justification } from '@prisma/client';
 export class JustificationController {
   constructor(private readonly justificationService: JustificationService) {}
 
-  @Post()
-  create(@Body() data: Justification) {
-    return this.justificationService.create(data);
-  }
-
   @Get()
   findAll() {
     return this.justificationService.findAll();
-    
+  }
+
+  @Get('between-dates')
+  findeBetweenDates(
+    @Query('startDate') startDate: Date,
+    @Query('endDate') endDate: Date,
+  ) {
+    const startDateISO = new Date(startDate);
+    const endDateISO = new Date(endDate);
+    return this.justificationService.findeBetweenDates(
+      startDateISO,
+      endDateISO,
+    );
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.justificationService.findOne(id);
+  }
+
+  @Post()
+  create(@Body() data: Justification) {
+    return this.justificationService.create(data);
   }
 
   @Put(':id')

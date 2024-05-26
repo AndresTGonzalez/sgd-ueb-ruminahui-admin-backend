@@ -141,13 +141,15 @@ model Justification {
   affair              String
   fromDate            String
   toDate              String
-  applicationDate     String
+  applicationDate     DateTime
   exitHour            String
   returnHour          String
   extraInfo           String
   Type                JustificationType   @relation(fields: [justificationTypeId], references: [id])
   justificationTypeId Int
   JustificationFile   JustificationFile[]
+  statusId            Int
+  JustificationStatus JustificationStatus @relation(fields: [statusId], references: [id])
 }
 
 model JustificationType {
@@ -161,6 +163,12 @@ model JustificationFile {
   justificationId Int
   Justification   Justification @relation(fields: [justificationId], references: [id])
   documentRout    String
+}
+
+model JustificationStatus {
+  id            Int             @id @default(autoincrement())
+  name          String
+  Justification Justification[]
 }
 
 model Title {
