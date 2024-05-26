@@ -51,6 +51,10 @@ export class PersonalService {
     return this.prismaService.personal.update({ where: { id }, data });
   }
 
+  async findByUuid(uuid: string) {
+    return this.prismaService.personal.findUnique({ where: { uuid } });
+  }
+
   async delete(id: number) {
     // TODO: Manejar excepciones en caso de error
 

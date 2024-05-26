@@ -28,6 +28,7 @@ import { PersonalSupabaseModule } from './personal-supabase/personal-supabase.mo
 import { BloodTypeModule } from './blood-type/blood-type.module';
 import { JustificationModule } from './justification/justification.module';
 import { JustificationFileModule } from './justification-file/justification-file.module';
+import { JustificationSupabaseModule } from './justification-supabase/justification-supabase.module';
 
 @Module({
   imports: [
@@ -61,6 +62,7 @@ import { JustificationFileModule } from './justification-file/justification-file
     BloodTypeModule,
     JustificationModule,
     JustificationFileModule,
+    JustificationSupabaseModule,
   ],
   controllers: [],
   providers: [],

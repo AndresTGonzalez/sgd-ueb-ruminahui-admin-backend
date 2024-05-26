@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Justification" ALTER COLUMN "applicationDate" SET DATA TYPE TEXT,
+ALTER COLUMN "fromDate" SET DATA TYPE TEXT,
+ALTER COLUMN "toDate" SET DATA TYPE TEXT;

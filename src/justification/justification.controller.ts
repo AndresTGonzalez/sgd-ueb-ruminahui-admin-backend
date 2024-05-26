@@ -28,6 +28,7 @@ export class JustificationController {
   @Get()
   findAll() {
     return this.justificationService.findAll();
+    
   }
 
   @Get(':id')
@@ -43,5 +44,10 @@ export class JustificationController {
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.justificationService.remove(id);
+  }
+
+  @Post('sync')
+  syncJustifications() {
+    return this.justificationService.syncJustifications();
   }
 }

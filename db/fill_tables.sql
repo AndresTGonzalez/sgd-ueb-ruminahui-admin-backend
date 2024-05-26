@@ -329,6 +329,7 @@ VALUES
     1,
     'ruminahui_NP'
   );
+
 INSERT INTO
   public."AssistanceDispositive"(name, "campusId", serial)
 VALUES
@@ -366,3 +367,13 @@ VALUES
   (6, 'AB-'),
   (7, 'O+'),
   (8, 'O-');
+
+INSERT INTO
+  public."JustificationType"(id, type)
+VALUES
+  (1, 'temporal');
+
+INSERT INTO
+  public."JustificationType"(id, type)
+VALUES
+  (2, 'licencia');

@@ -139,9 +139,9 @@ model Justification {
   personalId          Int
   Personal            Personal            @relation(fields: [personalId], references: [id])
   affair              String
-  fromDate            DateTime
-  toDate              DateTime
-  applicationDate     DateTime
+  fromDate            String
+  toDate              String
+  applicationDate     String
   exitHour            String
   returnHour          String
   extraInfo           String

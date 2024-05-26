@@ -16,3 +16,4 @@ import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.
   controllers: [AssistanceController],
 })
 export class AssistanceModule {}
+

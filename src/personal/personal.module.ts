@@ -21,6 +21,7 @@ import { PersonalSupabaseModule } from 'src/personal-supabase/personal-supabase.
     CertificationModule,
     PersonalSupabaseModule,
   ],
+  exports: [PersonalService],
   providers: [PersonalService],
   controllers: [PersonalController],
 })
