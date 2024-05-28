@@ -1,0 +1,2891 @@
+// generator client {
+//   provider = "prisma-client-js"
+//   output   = "../node_modules/@prisma-biotime/prisma/client"
+// }
+
+// datasource db {
+//   provider = "postgresql"
+//   url      = env("DATABASE_BIOTIME_URL")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model acc_acccombination {
+//   id               Int            @id @default(autoincrement())
+//   create_time      DateTime?      @db.Timestamptz(6)
+//   create_user      String?        @db.VarChar(150)
+//   change_time      DateTime?      @db.Timestamptz(6)
+//   change_user      String?        @db.VarChar(150)
+//   status           Int            @db.SmallInt
+//   combination_no   Int
+//   combination_name String         @db.VarChar(100)
+//   group1           Int?
+//   group2           Int?
+//   group3           Int?
+//   group4           Int?
+//   group5           Int?
+//   remark           String?        @db.VarChar(999)
+//   update_time      DateTime?      @db.Timestamptz(6)
+//   area_id          Int
+//   personnel_area   personnel_area @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_acccombination_area_id_0d22c34e_fk_personnel_area_id")
+
+//   @@unique([area_id, combination_no], map: "acc_acccombination_area_id_combination_no_619eb4f5_uniq")
+//   @@index([area_id], map: "acc_acccombination_area_id_0d22c34e")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model acc_accgroups {
+//   id                 Int                @id @default(autoincrement())
+//   create_time        DateTime?          @db.Timestamptz(6)
+//   create_user        String?            @db.VarChar(150)
+//   change_time        DateTime?          @db.Timestamptz(6)
+//   change_user        String?            @db.VarChar(150)
+//   status             Int                @db.SmallInt
+//   group_no           Int
+//   group_name         String             @db.VarChar(100)
+//   verify_mode        Int
+//   timezone1          Int?
+//   timezone2          Int?
+//   timezone3          Int?
+//   is_include_holiday Int                @db.SmallInt
+//   update_time        DateTime?          @db.Timestamptz(6)
+//   area_id            Int
+//   personnel_area     personnel_area     @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accgroups_area_id_b83745c3_fk_personnel_area_id")
+//   acc_accprivilege   acc_accprivilege[]
+
+//   @@unique([area_id, group_no], map: "acc_accgroups_area_id_group_no_5130a89c_uniq")
+//   @@index([area_id], map: "acc_accgroups_area_id_b83745c3")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model acc_accholiday {
+//   id              Int             @id @default(autoincrement())
+//   create_time     DateTime?       @db.Timestamptz(6)
+//   create_user     String?         @db.VarChar(150)
+//   change_time     DateTime?       @db.Timestamptz(6)
+//   change_user     String?         @db.VarChar(150)
+//   status          Int             @db.SmallInt
+//   update_time     DateTime?       @db.Timestamptz(6)
+//   area_id         Int
+//   holiday_id      Int
+//   timezone_id     Int
+//   personnel_area  personnel_area  @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accholiday_area_id_d15c19da_fk_personnel_area_id")
+//   att_holiday     att_holiday     @relation(fields: [holiday_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accholiday_holiday_id_a9efe924_fk_att_holiday_id")
+//   acc_acctimezone acc_acctimezone @relation(fields: [timezone_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accholiday_timezone_id_450d2d1e_fk_acc_acctimezone_id")
+
+//   @@unique([area_id, holiday_id], map: "acc_accholiday_area_id_holiday_id_6630c2eb_uniq")
+//   @@index([area_id], map: "acc_accholiday_area_id_d15c19da")
+//   @@index([holiday_id], map: "acc_accholiday_holiday_id_a9efe924")
+//   @@index([timezone_id], map: "acc_accholiday_timezone_id_450d2d1e")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model acc_accprivilege {
+//   id                  Int                @id @default(autoincrement())
+//   create_time         DateTime?          @db.Timestamptz(6)
+//   create_user         String?            @db.VarChar(150)
+//   change_time         DateTime?          @db.Timestamptz(6)
+//   change_user         String?            @db.VarChar(150)
+//   status              Int                @db.SmallInt
+//   is_group_timezone   Int                @db.SmallInt
+//   timezone1           Int?
+//   timezone2           Int?
+//   timezone3           Int?
+//   is_group_verifycode Int                @db.SmallInt
+//   verify_mode         Int?
+//   update_time         DateTime?          @db.Timestamptz(6)
+//   area_id             Int
+//   employee_id         Int
+//   group_id            Int
+//   personnel_area      personnel_area     @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accprivilege_area_id_2123ff6f_fk_personnel_area_id")
+//   personnel_employee  personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accprivilege_employee_id_5fc55f95_fk_personnel_employee_id")
+//   acc_accgroups       acc_accgroups      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accprivilege_group_id_c5ed7003_fk_acc_accgroups_id")
+
+//   @@unique([area_id, employee_id, group_id], map: "acc_accprivilege_area_id_employee_id_group_id_f3b297d8_uniq")
+//   @@index([area_id], map: "acc_accprivilege_area_id_2123ff6f")
+//   @@index([employee_id], map: "acc_accprivilege_employee_id_5fc55f95")
+//   @@index([group_id], map: "acc_accprivilege_group_id_c5ed7003")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model acc_accterminal {
+//   id                  Int             @id @default(autoincrement())
+//   create_time         DateTime?       @db.Timestamptz(6)
+//   create_user         String?         @db.VarChar(150)
+//   change_time         DateTime?       @db.Timestamptz(6)
+//   change_user         String?         @db.VarChar(150)
+//   status              Int             @db.SmallInt
+//   door_name           String?         @db.VarChar(50)
+//   door_lock_delay     Int
+//   door_sensor_delay   Int
+//   door_sensor_type    Int             @db.SmallInt
+//   door_alarm_delay    Int
+//   retry_times         Int             @db.SmallInt
+//   valid_holiday       Int             @db.SmallInt
+//   nc_time_period      Int
+//   no_time_period      Int
+//   speaker_alarm       Int             @db.SmallInt
+//   duress_fun_on       Int             @db.SmallInt
+//   alarm_1_1           Int             @db.SmallInt
+//   alarm_1_n           Int             @db.SmallInt
+//   alarm_password      Int             @db.SmallInt
+//   duress_alarm_delay  Int
+//   anti_passback_mode  Int             @db.SmallInt
+//   anti_door_direction Int             @db.SmallInt
+//   verify_mode_485     Int             @db.SmallInt
+//   push_time           DateTime?       @db.Timestamptz(6)
+//   terminal_id         Int
+//   iclock_terminal     iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_accterminal_terminal_id_fc92cce2_fk_iclock_terminal_id")
+
+//   @@index([terminal_id], map: "acc_accterminal_terminal_id_fc92cce2")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model acc_acctimezone {
+//   id             Int              @id @default(autoincrement())
+//   create_time    DateTime?        @db.Timestamptz(6)
+//   create_user    String?          @db.VarChar(150)
+//   change_time    DateTime?        @db.Timestamptz(6)
+//   change_user    String?          @db.VarChar(150)
+//   status         Int              @db.SmallInt
+//   timezone_no    Int
+//   timezone_name  String           @db.VarChar(100)
+//   sun_start      DateTime         @db.Time(6)
+//   sun_end        DateTime         @db.Time(6)
+//   sun_on         Int?             @db.SmallInt
+//   mon_start      DateTime         @db.Time(6)
+//   mon_end        DateTime         @db.Time(6)
+//   mon_on         Int?             @db.SmallInt
+//   tue_start      DateTime         @db.Time(6)
+//   tue_end        DateTime         @db.Time(6)
+//   tue_on         Int?             @db.SmallInt
+//   wed_start      DateTime         @db.Time(6)
+//   wed_end        DateTime         @db.Time(6)
+//   wed_on         Int?             @db.SmallInt
+//   thu_start      DateTime         @db.Time(6)
+//   thu_end        DateTime         @db.Time(6)
+//   thu_on         Int?             @db.SmallInt
+//   fri_start      DateTime         @db.Time(6)
+//   fri_end        DateTime         @db.Time(6)
+//   fri_on         Int?             @db.SmallInt
+//   sat_start      DateTime         @db.Time(6)
+//   sat_end        DateTime         @db.Time(6)
+//   sat_on         Int?             @db.SmallInt
+//   remark         String?          @db.VarChar(999)
+//   update_time    DateTime?        @db.Timestamptz(6)
+//   area_id        Int
+//   acc_accholiday acc_accholiday[]
+//   personnel_area personnel_area   @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "acc_acctimezone_area_id_e9ce7a7a_fk_personnel_area_id")
+
+//   @@unique([area_id, timezone_no], map: "acc_acctimezone_area_id_timezone_no_0cb8250f_uniq")
+//   @@index([area_id], map: "acc_acctimezone_area_id_e9ce7a7a")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model accounts_adminbiodata {
+//   id          Int       @id @default(autoincrement())
+//   create_time DateTime? @db.Timestamptz(6)
+//   create_user String?   @db.VarChar(150)
+//   change_time DateTime? @db.Timestamptz(6)
+//   change_user String?   @db.VarChar(150)
+//   status      Int       @db.SmallInt
+//   bio_tmp     String
+//   bio_no      Int?
+//   bio_index   Int?
+//   bio_type    Int
+//   major_ver   String    @db.VarChar(30)
+//   minor_ver   String?   @db.VarChar(30)
+//   bio_format  Int?
+//   valid       Boolean
+//   duress      Boolean
+//   admin_id    Int
+//   auth_user   auth_user @relation(fields: [admin_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_adminbiodata_admin_id_1e6d2d45_fk_auth_user_id")
+
+//   @@index([admin_id], map: "accounts_adminbiodata_admin_id_1e6d2d45")
+// }
+
+// model accounts_usersecuritypolicy {
+//   id               Int       @id @default(autoincrement())
+//   account          Int       @db.SmallInt
+//   username         String    @db.VarChar(50)
+//   password_date    DateTime? @db.Date
+//   password_expired Int?      @db.SmallInt
+//   unlock_time      DateTime  @db.Timestamptz(6)
+//   session_key      String?   @db.VarChar(100)
+// }
+
+// model att_attcalclog {
+//   id          Int      @id @default(autoincrement())
+//   dept_id     Int?
+//   emp_id      Int?
+//   start_date  DateTime @db.Timestamptz(6)
+//   end_date    DateTime @db.Timestamptz(6)
+//   update_time DateTime @db.Timestamptz(6)
+//   log_type    Int
+// }
+
+// model att_attreportsetting {
+//   id         Int     @id @default(autoincrement())
+//   resign_emp Int     @db.SmallInt
+//   short_date Int     @db.SmallInt
+//   short_time Int     @db.SmallInt
+//   func_key   String?
+//   att_item   String?
+// }
+
+// model att_attrule {
+//   param_name  String @id @db.VarChar(20)
+//   param_value String
+
+//   @@index([param_name], map: "att_attrule_param_name_406bcfb6_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_attschedule {
+//   id                 Int                @id @default(autoincrement())
+//   start_date         DateTime           @db.Date
+//   end_date           DateTime           @db.Date
+//   employee_id        Int
+//   shift_id           Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_attschedule_employee_id_caa61686_fk_personnel_employee_id")
+//   att_attshift       att_attshift       @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_attschedule_shift_id_13d2db9a_fk_att_attshift_id")
+
+//   @@index([employee_id], map: "att_attschedule_employee_id_caa61686")
+//   @@index([shift_id], map: "att_attschedule_shift_id_13d2db9a")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_attshift {
+//   id                     Int                      @id @default(autoincrement())
+//   create_time            DateTime?                @db.Timestamptz(6)
+//   create_user            String?                  @db.VarChar(150)
+//   change_time            DateTime?                @db.Timestamptz(6)
+//   change_user            String?                  @db.VarChar(150)
+//   status                 Int                      @db.SmallInt
+//   alias                  String                   @db.VarChar(50)
+//   cycle_unit             Int                      @db.SmallInt
+//   shift_cycle            Int
+//   work_weekend           Boolean
+//   weekend_type           Int                      @db.SmallInt
+//   work_day_off           Boolean
+//   day_off_type           Int                      @db.SmallInt
+//   auto_shift             Boolean
+//   company_id             Int?
+//   att_attschedule        att_attschedule[]
+//   personnel_company      personnel_company?       @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_attshift_company_id_2c0a4f56_fk_personnel_company_id")
+//   att_departmentschedule att_departmentschedule[]
+//   att_shiftdetail        att_shiftdetail[]
+
+//   @@index([company_id], map: "att_attshift_company_id_2c0a4f56")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_breaktime {
+//   id                          Int                           @id @default(autoincrement())
+//   create_time                 DateTime?                     @db.Timestamptz(6)
+//   create_user                 String?                       @db.VarChar(150)
+//   change_time                 DateTime?                     @db.Timestamptz(6)
+//   change_user                 String?                       @db.VarChar(150)
+//   status                      Int                           @db.SmallInt
+//   alias                       String                        @db.VarChar(50)
+//   period_start                DateTime                      @db.Time(6)
+//   duration                    Int
+//   end_margin                  Int
+//   func_key                    Int                           @db.SmallInt
+//   available_interval_type     Int                           @db.SmallInt
+//   available_interval          Int
+//   multiple_punch              Int                           @db.SmallInt
+//   calc_type                   Int                           @db.SmallInt
+//   minimum_duration            Int?
+//   early_in                    Int                           @db.SmallInt
+//   min_early_in                Int
+//   late_in                     Int                           @db.SmallInt
+//   min_late_in                 Int
+//   company_id                  Int?
+//   personnel_company           personnel_company?            @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_breaktime_company_id_fbb9a2b7_fk_personnel_company_id")
+//   att_timeinterval_break_time att_timeinterval_break_time[]
+
+//   @@unique([alias, company_id], map: "att_breaktime_alias_company_id_d9efd675_uniq")
+//   @@index([company_id], map: "att_breaktime_company_id_fbb9a2b7")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_changeschedule {
+//   abstractexception_ptr_id   Int                        @id
+//   att_date                   DateTime                   @db.Date
+//   previous_timeinterval      String?                    @db.VarChar(100)
+//   apply_time                 DateTime                   @db.Timestamptz(6)
+//   apply_reason               String?                    @db.VarChar(200)
+//   audit_reason               String?
+//   audit_time                 DateTime                   @db.Timestamptz(6)
+//   approver                   String?                    @db.VarChar(50)
+//   employee_id                Int
+//   timeinterval_id            Int
+//   workflow_abstractexception workflow_abstractexception @relation(fields: [abstractexception_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_changeschedule_abstractexception_pt_6bf48cd8_fk_workflow_")
+//   personnel_employee         personnel_employee         @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_changeschedule_employee_id_7871a2b6_fk_personnel")
+//   att_timeinterval           att_timeinterval           @relation(fields: [timeinterval_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_changeschedule_timeinterval_id_d41ac077_fk_att_timei")
+
+//   @@index([employee_id], map: "att_changeschedule_employee_id_7871a2b6")
+//   @@index([timeinterval_id], map: "att_changeschedule_timeinterval_id_d41ac077")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_departmentschedule {
+//   id                   Int                  @id @default(autoincrement())
+//   create_time          DateTime?            @db.Timestamptz(6)
+//   create_user          String?              @db.VarChar(150)
+//   change_time          DateTime?            @db.Timestamptz(6)
+//   change_user          String?              @db.VarChar(150)
+//   status               Int                  @db.SmallInt
+//   start_date           DateTime             @db.Date
+//   end_date             DateTime             @db.Date
+//   department_id        Int
+//   shift_id             Int
+//   personnel_department personnel_department @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_departmentschedu_department_id_c68fca3d_fk_personnel")
+//   att_attshift         att_attshift         @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_departmentschedule_shift_id_c37d5ade_fk_att_attshift_id")
+
+//   @@index([department_id], map: "att_departmentschedule_department_id_c68fca3d")
+//   @@index([shift_id], map: "att_departmentschedule_shift_id_c37d5ade")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_deptattrule {
+//   id                   Int                  @id @default(autoincrement())
+//   create_time          DateTime?            @db.Timestamptz(6)
+//   create_user          String?              @db.VarChar(150)
+//   change_time          DateTime?            @db.Timestamptz(6)
+//   change_user          String?              @db.VarChar(150)
+//   status               Int                  @db.SmallInt
+//   alias                String               @db.VarChar(50)
+//   rule                 String?
+//   company_id           Int?
+//   department_id        Int
+//   personnel_company    personnel_company?   @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_deptattrule_company_id_420199ab_fk_personnel_company_id")
+//   personnel_department personnel_department @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_deptattrule_department_id_f333c8f0_fk_personnel")
+
+//   @@index([company_id], map: "att_deptattrule_company_id_420199ab")
+//   @@index([department_id], map: "att_deptattrule_department_id_f333c8f0")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_holiday {
+//   id                   Int                   @id @default(autoincrement())
+//   alias                String                @db.VarChar(50)
+//   start_date           DateTime              @db.Date
+//   duration_day         Int                   @db.SmallInt
+//   work_type            Int                   @db.SmallInt
+//   overtime_lv1         Int                   @db.SmallInt
+//   overtime_lv2         Int                   @db.SmallInt
+//   overtime_lv3         Int                   @db.SmallInt
+//   department_id        Int?
+//   acc_accholiday       acc_accholiday[]
+//   personnel_department personnel_department? @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_holiday_department_id_fbbbd185_fk_personnel_department_id")
+
+//   @@index([department_id], map: "att_holiday_department_id_fbbbd185")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_leave {
+//   abstractexception_ptr_id   Int                        @id
+//   start_time                 DateTime                   @db.Timestamptz(6)
+//   end_time                   DateTime                   @db.Timestamptz(6)
+//   type                       Int                        @db.SmallInt
+//   apply_reason               String?
+//   apply_time                 DateTime                   @db.Timestamptz(6)
+//   audit_reason               String?
+//   audit_time                 DateTime                   @db.Timestamptz(6)
+//   approval_level             Int?                       @db.SmallInt
+//   audit_user_id              Int?
+//   approver                   String?                    @db.VarChar(50)
+//   vacation_number            Int                        @db.SmallInt
+//   attachment                 String?                    @db.VarChar(100)
+//   category_id                Int
+//   employee_id                Int
+//   workflow_abstractexception workflow_abstractexception @relation(fields: [abstractexception_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_leave_abstractexception_pt_7d182abd_fk_workflow_")
+//   att_leavecategory          att_leavecategory          @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_leave_category_id_bbba39ba_fk_att_leavecategory_id")
+//   personnel_employee         personnel_employee         @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_leave_employee_id_bb231627_fk_personnel_employee_id")
+//   att_payloadexception       att_payloadexception[]
+//   att_vacationemployee       att_vacationemployee[]
+
+//   @@index([category_id], map: "att_leave_category_id_bbba39ba")
+//   @@index([employee_id], map: "att_leave_employee_id_bb231627")
+// }
+
+// model att_leavecategory {
+//   id                   Int                    @id @default(autoincrement())
+//   category_name        String                 @db.VarChar(50)
+//   minimum_unit         Float
+//   unit                 Int                    @db.SmallInt
+//   round_off            Int                    @db.SmallInt
+//   report_symbol        String                 @db.VarChar(5)
+//   leave_category_type  Int                    @db.SmallInt
+//   att_leave            att_leave[]
+//   payroll_leaveformula payroll_leaveformula[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_manuallog {
+//   abstractexception_ptr_id   Int                        @id
+//   punch_time                 DateTime                   @db.Timestamptz(6)
+//   punch_state                Int
+//   work_code                  String?                    @db.VarChar(20)
+//   temperature                Decimal?                   @db.Decimal(4, 1)
+//   is_mask                    Boolean
+//   apply_reason               String?
+//   apply_time                 DateTime                   @db.Timestamptz(6)
+//   audit_reason               String?
+//   audit_time                 DateTime                   @db.Timestamptz(6)
+//   approval_level             Int?                       @db.SmallInt
+//   audit_user_id              Int?
+//   approver                   String?                    @db.VarChar(50)
+//   attachment                 String?                    @db.VarChar(100)
+//   employee_id                Int
+//   workflow_abstractexception workflow_abstractexception @relation(fields: [abstractexception_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_manuallog_abstractexception_pt_f1e1b292_fk_workflow_")
+//   personnel_employee         personnel_employee         @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_manuallog_employee_id_dc8cc2ad_fk_personnel_employee_id")
+
+//   @@index([employee_id], map: "att_manuallog_employee_id_dc8cc2ad")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_overtime {
+//   abstractexception_ptr_id   Int                        @id
+//   overtime_type              Int                        @db.SmallInt
+//   start_time                 DateTime                   @db.Timestamptz(6)
+//   end_time                   DateTime                   @db.Timestamptz(6)
+//   apply_reason               String?
+//   apply_time                 DateTime                   @db.Timestamptz(6)
+//   audit_reason               String?
+//   audit_time                 DateTime                   @db.Timestamptz(6)
+//   approval_level             Int?                       @db.SmallInt
+//   audit_user_id              Int?
+//   approver                   String?                    @db.VarChar(50)
+//   attachment                 String?                    @db.VarChar(100)
+//   employee_id                Int
+//   workflow_abstractexception workflow_abstractexception @relation(fields: [abstractexception_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_overtime_abstractexception_pt_94834697_fk_workflow_")
+//   personnel_employee         personnel_employee         @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_overtime_employee_id_0c0d39dc_fk_personnel_employee_id")
+
+//   @@index([employee_id], map: "att_overtime_employee_id_0c0d39dc")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_payloadbase {
+//   uuid                                                                String              @id @db.VarChar(36)
+//   att_date                                                            DateTime?           @db.Date
+//   weekday                                                             Int?                @db.SmallInt
+//   check_in                                                            DateTime?           @db.Timestamptz(6)
+//   check_out                                                           DateTime?           @db.Timestamptz(6)
+//   duration                                                            Int?
+//   duty_duration                                                       Int?
+//   work_day                                                            Float
+//   clock_in                                                            DateTime?           @db.Timestamptz(6)
+//   clock_out                                                           DateTime?           @db.Timestamptz(6)
+//   total_time                                                          Int?
+//   duty_worked                                                         Int?
+//   actual_worked                                                       Int?
+//   unscheduled                                                         Int?
+//   remaining                                                           Int?
+//   total_worked                                                        Int?
+//   late                                                                Int?
+//   early_leave                                                         Int?
+//   short                                                               Int?
+//   absent                                                              Int?
+//   leave                                                               Int?
+//   exception                                                           String?             @db.VarChar(50)
+//   day_off                                                             Int                 @db.SmallInt
+//   break_time_id                                                       String?             @unique @db.VarChar(36)
+//   emp_id                                                              Int
+//   overtime_id                                                         String?             @unique @db.VarChar(36)
+//   timetable_id                                                        Int?
+//   trans_in_id                                                         Int?
+//   trans_out_id                                                        Int?
+//   personnel_employee                                                  personnel_employee  @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadbase_emp_id_2c0f6a7b_fk_personnel_employee_id")
+//   att_timeinterval                                                    att_timeinterval?   @relation(fields: [timetable_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadbase_timetable_id_a389e3d8_fk_att_timeinterval_id")
+//   iclock_transaction_att_payloadbase_trans_in_idToiclock_transaction  iclock_transaction? @relation("att_payloadbase_trans_in_idToiclock_transaction", fields: [trans_in_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadbase_trans_in_id_3b8fd648_fk_iclock_transaction_id")
+//   iclock_transaction_att_payloadbase_trans_out_idToiclock_transaction iclock_transaction? @relation("att_payloadbase_trans_out_idToiclock_transaction", fields: [trans_out_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadbase_trans_out_id_ec63bbcc_fk_iclock_transaction_id")
+
+//   @@index([break_time_id], map: "att_payloadbase_break_time_id_022d6fac_like")
+//   @@index([emp_id], map: "att_payloadbase_emp_id_2c0f6a7b")
+//   @@index([overtime_id], map: "att_payloadbase_overtime_id_0e7be795_like")
+//   @@index([timetable_id], map: "att_payloadbase_timetable_id_a389e3d8")
+//   @@index([trans_in_id], map: "att_payloadbase_trans_in_id_3b8fd648")
+//   @@index([trans_out_id], map: "att_payloadbase_trans_out_id_ec63bbcc")
+//   @@index([uuid], map: "att_payloadbase_uuid_60250467_like")
+// }
+
+// model att_payloadbreak {
+//   uuid            String    @id @db.VarChar(36)
+//   break_out       DateTime? @db.Timestamptz(6)
+//   break_in        DateTime? @db.Timestamptz(6)
+//   duration        Int?
+//   taken           Int?
+//   actual_duration Int?
+//   early_in        Int?
+//   late_in         Int?
+//   late            Int?
+//   early_leave     Int?
+//   absent          Int?
+//   work_time       Int?
+//   overtime        Int?
+//   weekend_ot      Int?
+//   holiday_ot      Int?
+
+//   @@index([uuid], map: "att_payloadbreak_uuid_533ea5e2_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_payloadexception {
+//   uuid        String     @id @db.VarChar(36)
+//   start_time  DateTime   @db.Timestamptz(6)
+//   end_time    DateTime   @db.Timestamptz(6)
+//   duration    Int?
+//   days        Float?
+//   data_type   Int        @db.SmallInt
+//   description String?    @db.VarChar(50)
+//   item_id     Int?
+//   skd_id      String?    @db.VarChar(36)
+//   att_leave   att_leave? @relation(fields: [item_id], references: [abstractexception_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadexception_item_id_a08bfe48_fk_att_leave")
+
+//   @@index([item_id], map: "att_payloadexception_item_id_a08bfe48")
+//   @@index([skd_id], map: "att_payloadexception_skd_id_b2e9ecaa")
+//   @@index([skd_id], map: "att_payloadexception_skd_id_b2e9ecaa_like")
+//   @@index([uuid], map: "att_payloadexception_uuid_517a81e8_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_payloadmulpunchset {
+//   id                 Int                @id @default(autoincrement())
+//   att_date           DateTime           @db.Date
+//   weekday            Int?               @db.SmallInt
+//   data_index         Int                @db.SmallInt
+//   clock_in           DateTime?          @db.Timestamptz(6)
+//   in_id              Int?
+//   clock_out          DateTime?          @db.Timestamptz(6)
+//   out_id             Int?
+//   total_time         Int?
+//   worked_time        Int?
+//   data_type          Int                @db.SmallInt
+//   emp_id             Int
+//   timetable_id       Int?
+//   personnel_employee personnel_employee @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadmulpunchset_emp_id_f47610c8_fk_personnel_employee_id")
+
+//   @@index([emp_id], map: "att_payloadmulpunchset_emp_id_f47610c8")
+//   @@index([timetable_id], map: "att_payloadmulpunchset_timetable_id_9a439a09")
+// }
+
+// model att_payloadovertime {
+//   uuid       String @id @db.VarChar(36)
+//   normal_wt  Int?
+//   normal_ot  Int?
+//   weekend_ot Int?
+//   holiday_ot Int?
+//   dayoff_ot  Int?
+//   ot_lv1     Int?
+//   ot_lv2     Int?
+//   ot_lv3     Int?
+//   total_ot   Int?
+
+//   @@index([uuid], map: "att_payloadovertime_uuid_15d7782f_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_payloadpunch {
+//   uuid               String              @id @db.VarChar(36)
+//   att_date           DateTime?           @db.Date
+//   correct_state      String?             @db.VarChar(3)
+//   emp_id             Int
+//   orig_id            Int?
+//   skd_id             String?             @db.VarChar(36)
+//   personnel_employee personnel_employee  @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadpunch_emp_id_053da2f0_fk_personnel_employee_id")
+//   iclock_transaction iclock_transaction? @relation(fields: [orig_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_payloadpunch_orig_id_16b26416_fk_iclock_transaction_id")
+
+//   @@index([emp_id], map: "att_payloadpunch_emp_id_053da2f0")
+//   @@index([orig_id], map: "att_payloadpunch_orig_id_16b26416")
+//   @@index([skd_id], map: "att_payloadpunch_skd_id_17596d82")
+//   @@index([skd_id], map: "att_payloadpunch_skd_id_17596d82_like")
+//   @@index([uuid], map: "att_payloadpunch_uuid_91e722f4_like")
+// }
+
+// model att_reportparam {
+//   param_name  String @id @db.VarChar(20)
+//   param_value String
+
+//   @@index([param_name], map: "att_reportparam_param_name_23bdf026_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_shiftdetail {
+//   id               Int              @id @default(autoincrement())
+//   in_time          DateTime         @db.Time(6)
+//   out_time         DateTime         @db.Time(6)
+//   day_index        Int
+//   shift_id         Int
+//   time_interval_id Int
+//   att_attshift     att_attshift     @relation(fields: [shift_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_shiftdetail_shift_id_7d694501_fk_att_attshift_id")
+//   att_timeinterval att_timeinterval @relation(fields: [time_interval_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_shiftdetail_time_interval_id_777dde8f_fk_att_timei")
+
+//   @@index([shift_id], map: "att_shiftdetail_shift_id_7d694501")
+//   @@index([time_interval_id], map: "att_shiftdetail_time_interval_id_777dde8f")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_tempschedule {
+//   id                 Int                @id @default(autoincrement())
+//   start_time         DateTime           @db.Timestamptz(6)
+//   end_time           DateTime           @db.Timestamptz(6)
+//   rule_flag          Int                @db.SmallInt
+//   work_type          Int                @db.SmallInt
+//   employee_id        Int
+//   time_interval_id   Int?
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_tempschedule_employee_id_b89c7e54_fk_personnel_employee_id")
+
+//   @@index([employee_id], map: "att_tempschedule_employee_id_b89c7e54")
+//   @@index([time_interval_id], map: "att_tempschedule_time_interval_id_08dd8eb3")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_timeinterval {
+//   id                          Int                           @id @default(autoincrement())
+//   create_time                 DateTime?                     @db.Timestamptz(6)
+//   create_user                 String?                       @db.VarChar(150)
+//   change_time                 DateTime?                     @db.Timestamptz(6)
+//   change_user                 String?                       @db.VarChar(150)
+//   status                      Int                           @db.SmallInt
+//   alias                       String                        @db.VarChar(50)
+//   use_mode                    Int                           @db.SmallInt
+//   in_time                     DateTime                      @db.Time(6)
+//   in_ahead_margin             Int
+//   in_above_margin             Int
+//   out_ahead_margin            Int
+//   out_above_margin            Int
+//   duration                    Int
+//   in_required                 Int                           @db.SmallInt
+//   out_required                Int                           @db.SmallInt
+//   allow_late                  Int
+//   allow_leave_early           Int
+//   work_day                    Float
+//   early_in                    Int                           @db.SmallInt
+//   min_early_in                Int
+//   late_out                    Int                           @db.SmallInt
+//   min_late_out                Int
+//   overtime_lv                 Int                           @db.SmallInt
+//   overtime_lv1                Int                           @db.SmallInt
+//   overtime_lv2                Int                           @db.SmallInt
+//   overtime_lv3                Int                           @db.SmallInt
+//   multiple_punch              Int                           @db.SmallInt
+//   available_interval_type     Int                           @db.SmallInt
+//   available_interval          Int
+//   work_time_duration          Int
+//   func_key                    Int                           @db.SmallInt
+//   work_type                   Int                           @db.SmallInt
+//   day_change                  DateTime                      @db.Time(6)
+//   use_24_mode                 Int                           @db.SmallInt
+//   company_id                  Int?
+//   att_changeschedule          att_changeschedule[]
+//   att_payloadbase             att_payloadbase[]
+//   att_shiftdetail             att_shiftdetail[]
+//   personnel_company           personnel_company?            @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_timeinterval_company_id_9824d651_fk_personnel_company_id")
+//   att_timeinterval_break_time att_timeinterval_break_time[]
+
+//   @@index([company_id], map: "att_timeinterval_company_id_9824d651")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_timeinterval_break_time {
+//   id               Int              @id @default(autoincrement())
+//   timeinterval_id  Int
+//   breaktime_id     Int
+//   att_breaktime    att_breaktime    @relation(fields: [breaktime_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_timeinterval_bre_breaktime_id_08462308_fk_att_break")
+//   att_timeinterval att_timeinterval @relation(fields: [timeinterval_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_timeinterval_bre_timeinterval_id_2287017e_fk_att_timei")
+
+//   @@unique([timeinterval_id, breaktime_id], map: "att_timeinterval_break_t_timeinterval_id_breaktim_6e1bfb4e_uniq")
+//   @@index([breaktime_id], map: "att_timeinterval_break_time_breaktime_id_08462308")
+//   @@index([timeinterval_id], map: "att_timeinterval_break_time_timeinterval_id_2287017e")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_training {
+//   abstractexception_ptr_id   Int                        @id
+//   start_time                 DateTime                   @db.Timestamptz(6)
+//   end_time                   DateTime                   @db.Timestamptz(6)
+//   apply_reason               String?
+//   apply_time                 DateTime                   @db.Timestamptz(6)
+//   audit_reason               String?
+//   audit_time                 DateTime                   @db.Timestamptz(6)
+//   approval_level             Int?                       @db.SmallInt
+//   audit_user_id              Int?
+//   approver                   String?                    @db.VarChar(50)
+//   attachment                 String?                    @db.VarChar(100)
+//   category_id                Int
+//   employee_id                Int
+//   workflow_abstractexception workflow_abstractexception @relation(fields: [abstractexception_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_training_abstractexception_pt_60a3e8f3_fk_workflow_")
+//   att_trainingcategory       att_trainingcategory       @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_training_category_id_fb38e891_fk_att_trainingcategory_id")
+//   personnel_employee         personnel_employee         @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_training_employee_id_44af8319_fk_personnel_employee_id")
+
+//   @@index([category_id], map: "att_training_category_id_fb38e891")
+//   @@index([employee_id], map: "att_training_employee_id_44af8319")
+// }
+
+// model att_trainingcategory {
+//   id            Int            @id @default(autoincrement())
+//   category_name String         @db.VarChar(50)
+//   minimum_unit  Float
+//   unit          Int            @db.SmallInt
+//   round_off     Int            @db.SmallInt
+//   report_symbol String         @db.VarChar(5)
+//   att_training  att_training[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_vacationemployee {
+//   id                    Int                @id @default(autoincrement())
+//   days_left             Int                @db.SmallInt
+//   start_time            DateTime           @db.Timestamptz(6)
+//   end_time              DateTime           @db.Timestamptz(6)
+//   employee_id           Int
+//   leave_id              Int
+//   vacation_available_id Int
+//   personnel_employee    personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_vacationemployee_employee_id_05793644_fk_personnel")
+//   att_leave             att_leave          @relation(fields: [leave_id], references: [abstractexception_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "att_vacationemployee_leave_id_b127a4fe_fk_att_leave")
+//   att_vacationtime      att_vacationtime   @relation(fields: [vacation_available_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_vacationemployee_vacation_available_i_04bc7d89_fk_att_vacat")
+
+//   @@index([employee_id], map: "att_vacationemployee_employee_id_05793644")
+//   @@index([leave_id], map: "att_vacationemployee_leave_id_b127a4fe")
+//   @@index([vacation_available_id], map: "att_vacationemployee_vacation_available_id_04bc7d89")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_vacationtime {
+//   id                        Int                         @id @default(autoincrement())
+//   create_time               DateTime?                   @db.Timestamptz(6)
+//   create_user               String?                     @db.VarChar(150)
+//   change_time               DateTime?                   @db.Timestamptz(6)
+//   change_user               String?                     @db.VarChar(150)
+//   status                    Int                         @db.SmallInt
+//   category_code             String                      @db.VarChar(30)
+//   category_name             String                      @db.VarChar(50)
+//   company_id                Int?
+//   att_vacationemployee      att_vacationemployee[]
+//   personnel_company         personnel_company?          @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_vacationtime_company_id_e885043c_fk_personnel_company_id")
+//   att_vacationtimeseniority att_vacationtimeseniority[]
+
+//   @@unique([category_code, company_id], map: "att_vacationtime_category_code_company_id_6be3ea7c_uniq")
+//   @@index([company_id], map: "att_vacationtime_company_id_e885043c")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model att_vacationtimeseniority {
+//   id               Int              @id @default(autoincrement())
+//   seniority        Int              @db.SmallInt
+//   days             Int?             @db.SmallInt
+//   vacation_time_id Int
+//   att_vacationtime att_vacationtime @relation(fields: [vacation_time_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "att_vacationtimeseni_vacation_time_id_803f6e65_fk_att_vacat")
+
+//   @@index([vacation_time_id], map: "att_vacationtimeseniority_vacation_time_id_803f6e65")
+// }
+
+// model attparam {
+//   id        Int     @id @default(autoincrement())
+//   paraname  String  @db.VarChar(30)
+//   paratype  String? @db.VarChar(10)
+//   paravalue String? @db.VarChar(250)
+
+//   @@unique([paraname, paratype], map: "attparam_paraname_paratype_6f176d25_uniq")
+// }
+
+// model auth_group {
+//   id                             Int                              @id @default(autoincrement())
+//   name                           String                           @unique @db.VarChar(80)
+//   auth_group_permissions         auth_group_permissions[]
+//   auth_user_groups               auth_user_groups[]
+//   guardian_groupobjectpermission guardian_groupobjectpermission[]
+
+//   @@index([name], map: "auth_group_name_a6ea08ec_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_group_permissions {
+//   id              Int             @id @default(autoincrement())
+//   group_id        Int
+//   permission_id   Int
+//   auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissio_permission_id_84c5c92e_fk_auth_perm")
+//   auth_group      auth_group      @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_group_permissions_group_id_b120cbf9_fk_auth_group_id")
+
+//   @@unique([group_id, permission_id], map: "auth_group_permissions_group_id_permission_id_0cd325b0_uniq")
+//   @@index([group_id], map: "auth_group_permissions_group_id_b120cbf9")
+//   @@index([permission_id], map: "auth_group_permissions_permission_id_84c5c92e")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_permission {
+//   id                             Int                              @id @default(autoincrement())
+//   name                           String                           @db.VarChar(255)
+//   content_type_id                Int
+//   codename                       String                           @db.VarChar(100)
+//   auth_group_permissions         auth_group_permissions[]
+//   django_content_type            django_content_type              @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_permission_content_type_id_2f476e4b_fk_django_co")
+//   auth_user_user_permissions     auth_user_user_permissions[]
+//   guardian_groupobjectpermission guardian_groupobjectpermission[]
+//   guardian_userobjectpermission  guardian_userobjectpermission[]
+
+//   @@unique([content_type_id, codename], map: "auth_permission_content_type_id_codename_01ab375a_uniq")
+//   @@index([content_type_id], map: "auth_permission_content_type_id_2f476e4b")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_user {
+//   id                            Int                             @id @default(autoincrement())
+//   username                      String                          @unique @db.VarChar(30)
+//   password                      String                          @db.VarChar(128)
+//   update_time                   DateTime?                       @db.Timestamptz(6)
+//   first_name                    String                          @db.VarChar(30)
+//   last_name                     String                          @db.VarChar(30)
+//   emp_pin                       String?                         @db.VarChar(30)
+//   email                         String                          @db.VarChar(254)
+//   tele_phone                    String?                         @db.VarChar(30)
+//   auth_time_dept                Int?
+//   login_id                      Int?
+//   login_type                    Int?
+//   login_count                   Int?
+//   is_staff                      Boolean
+//   is_active                     Boolean
+//   is_superuser                  Boolean
+//   is_public                     Boolean
+//   can_manage_all_dept           Boolean
+//   del_flag                      Int?
+//   date_joined                   DateTime                        @db.Timestamptz(6)
+//   last_login                    DateTime?                       @db.Timestamptz(6)
+//   auth_company_id               Int?
+//   is_test                       Boolean
+//   accounts_adminbiodata         accounts_adminbiodata[]
+//   personnel_company             personnel_company?              @relation(fields: [auth_company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_auth_company_id_30b74281_fk_personnel_company_id")
+//   auth_user_auth_area           auth_user_auth_area[]
+//   auth_user_auth_dept           auth_user_auth_dept[]
+//   auth_user_groups              auth_user_groups[]
+//   auth_user_profile             auth_user_profile?
+//   auth_user_user_permissions    auth_user_user_permissions[]
+//   authtoken_token               authtoken_token?
+//   base_adminlog                 base_adminlog[]
+//   base_bookmark                 base_bookmark[]
+//   base_messengersentlog         base_messengersentlog[]
+//   django_admin_log              django_admin_log[]
+//   guardian_userobjectpermission guardian_userobjectpermission[]
+//   workflow_nodeinstance         workflow_nodeinstance[]
+
+//   @@index([auth_company_id], map: "auth_user_auth_company_id_30b74281")
+//   @@index([username], map: "auth_user_username_6821ab7c_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_user_auth_area {
+//   id             Int            @id @default(autoincrement())
+//   myuser_id      Int
+//   area_id        Int
+//   personnel_area personnel_area @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_auth_area_area_id_d1e54c70_fk_personnel_area_id")
+//   auth_user      auth_user      @relation(fields: [myuser_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_auth_area_myuser_id_5fb9a803_fk_auth_user_id")
+
+//   @@unique([myuser_id, area_id], map: "auth_user_auth_area_myuser_id_area_id_02a19d63_uniq")
+//   @@index([area_id], map: "auth_user_auth_area_area_id_d1e54c70")
+//   @@index([myuser_id], map: "auth_user_auth_area_myuser_id_5fb9a803")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_user_auth_dept {
+//   id                   Int                  @id @default(autoincrement())
+//   myuser_id            Int
+//   department_id        Int
+//   personnel_department personnel_department @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_auth_dept_department_id_5866c514_fk_personnel")
+//   auth_user            auth_user            @relation(fields: [myuser_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_auth_dept_myuser_id_18a51b27_fk_auth_user_id")
+
+//   @@unique([myuser_id, department_id], map: "auth_user_auth_dept_myuser_id_department_id_61d83386_uniq")
+//   @@index([department_id], map: "auth_user_auth_dept_department_id_5866c514")
+//   @@index([myuser_id], map: "auth_user_auth_dept_myuser_id_18a51b27")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_user_groups {
+//   id         Int        @id @default(autoincrement())
+//   myuser_id  Int
+//   group_id   Int
+//   auth_group auth_group @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_group_id_97559544_fk_auth_group_id")
+//   auth_user  auth_user  @relation(fields: [myuser_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_groups_myuser_id_d03e8dcc_fk_auth_user_id")
+
+//   @@unique([myuser_id, group_id], map: "auth_user_groups_myuser_id_group_id_664bdfc3_uniq")
+//   @@index([group_id], map: "auth_user_groups_group_id_97559544")
+//   @@index([myuser_id], map: "auth_user_groups_myuser_id_d03e8dcc")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_user_profile {
+//   id              Int       @id @default(autoincrement())
+//   login_name      String    @db.VarChar(30)
+//   pin_tabs        String
+//   disabled_fields String
+//   column_order    String
+//   preferences     String
+//   pwd_update_time DateTime? @db.Timestamptz(6)
+//   user_id         Int       @unique
+//   auth_user       auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_profile_user_id_f9aded29_fk_auth_user_id")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model auth_user_user_permissions {
+//   id              Int             @id @default(autoincrement())
+//   myuser_id       Int
+//   permission_id   Int
+//   auth_permission auth_permission @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permi_permission_id_1fbb5f2c_fk_auth_perm")
+//   auth_user       auth_user       @relation(fields: [myuser_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "auth_user_user_permissions_myuser_id_679b1527_fk_auth_user_id")
+
+//   @@unique([myuser_id, permission_id], map: "auth_user_user_permissio_myuser_id_permission_id_a558717f_uniq")
+//   @@index([myuser_id], map: "auth_user_user_permissions_myuser_id_679b1527")
+//   @@index([permission_id], map: "auth_user_user_permissions_permission_id_1fbb5f2c")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model authtoken_token {
+//   key       String    @id @db.VarChar(40)
+//   created   DateTime  @db.Timestamptz(6)
+//   user_id   Int       @unique
+//   auth_user auth_user @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "authtoken_token_user_id_35299eff_fk_auth_user_id")
+
+//   @@index([key], map: "authtoken_token_key_10f0b77e_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_adminlog {
+//   id                  Int                  @id @default(autoincrement())
+//   action              String               @db.VarChar(50)
+//   targets             String?
+//   targets_repr        String?
+//   action_status       Int                  @db.SmallInt
+//   description         String?
+//   ip_address          String?              @db.Inet
+//   can_routable        Boolean
+//   op_time             DateTime             @db.Timestamptz(6)
+//   content_type_id     Int?
+//   user_id             Int
+//   django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_adminlog_content_type_id_3e553c30_fk_django_co")
+//   auth_user           auth_user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_adminlog_user_id_ecf659f8_fk_auth_user_id")
+
+//   @@index([content_type_id], map: "base_adminlog_content_type_id_3e553c30")
+//   @@index([user_id], map: "base_adminlog_user_id_ecf659f8")
+// }
+
+// model base_attparamdepts {
+//   id       Int       @id @default(autoincrement())
+//   rulename String    @unique @db.VarChar(40)
+//   deptid   Int
+//   operator String?   @db.VarChar(20)
+//   optime   DateTime? @db.Timestamptz(6)
+
+//   @@index([rulename], map: "base_attparamdepts_rulename_922e6bf3_like")
+// }
+
+// model base_autoexporttask {
+//   id          Int       @id @default(autoincrement())
+//   create_time DateTime? @db.Timestamptz(6)
+//   create_user String?   @db.VarChar(150)
+//   change_time DateTime? @db.Timestamptz(6)
+//   change_user String?   @db.VarChar(150)
+//   status      Int       @db.SmallInt
+//   task_code   String    @unique @db.VarChar(30)
+//   task_name   String    @db.VarChar(30)
+//   params      String?
+
+//   @@index([task_code], map: "base_autoexporttask_task_code_b7fa7d4e_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_bookmark {
+//   id                  Int                 @id @default(autoincrement())
+//   title               String              @db.VarChar(128)
+//   filters             String              @db.VarChar(1000)
+//   is_share            Boolean
+//   time_saved          DateTime            @db.Timestamptz(6)
+//   content_type_id     Int
+//   user_id             Int?
+//   django_content_type django_content_type @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_bookmark_content_type_id_b6a0e799_fk_django_co")
+//   auth_user           auth_user?          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_bookmark_user_id_5f2d5ca2_fk_auth_user_id")
+
+//   @@index([content_type_id], map: "base_bookmark_content_type_id_b6a0e799")
+//   @@index([user_id], map: "base_bookmark_user_id_5f2d5ca2")
+// }
+
+// model base_dbbackuplog {
+//   id            Int       @id @default(autoincrement())
+//   create_time   DateTime? @db.Timestamptz(6)
+//   create_user   String?   @db.VarChar(150)
+//   change_time   DateTime? @db.Timestamptz(6)
+//   change_user   String?   @db.VarChar(150)
+//   status        Int       @db.SmallInt
+//   db_type       String    @db.VarChar(50)
+//   db_name       String    @db.VarChar(50)
+//   operator      String?   @db.VarChar(50)
+//   backup_file   String    @db.VarChar(100)
+//   backup_time   DateTime  @db.Timestamptz(6)
+//   backup_status Int       @db.SmallInt
+//   remark        String?
+// }
+
+// model base_dbmigrate {
+//   id          Int       @id @default(autoincrement())
+//   create_time DateTime? @db.Timestamptz(6)
+//   create_user String?   @db.VarChar(150)
+//   change_time DateTime? @db.Timestamptz(6)
+//   change_user String?   @db.VarChar(150)
+//   status      Int       @db.SmallInt
+//   name        String    @db.VarChar(30)
+//   value       String
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_departmentalert {
+//   personalalert_ptr_id            Int                               @id
+//   departmentalert_code            String                            @db.VarChar(116)
+//   email                           String?                           @db.VarChar(50)
+//   emplist_id                      Int?                              @unique
+//   personnel_employee              personnel_employee?               @relation(fields: [emplist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_departmentalert_emplist_id_b3f5ef6d_fk_personnel")
+//   base_personalalert              base_personalalert                @relation(fields: [personalalert_ptr_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_departmentalert_personalalert_ptr_id_d1912ed0_fk_base_pers")
+//   base_departmentalert_department base_departmentalert_department[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_departmentalert_department {
+//   id                   Int                  @id @default(autoincrement())
+//   departmentalert_id   Int
+//   department_id        Int
+//   personnel_department personnel_department @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_departmentalert_department_id_33b76e92_fk_personnel")
+//   base_departmentalert base_departmentalert @relation(fields: [departmentalert_id], references: [personalalert_ptr_id], onDelete: NoAction, onUpdate: NoAction, map: "base_departmentalert_departmentalert_id_79d27d1d_fk_base_depa")
+
+//   @@unique([departmentalert_id, department_id], map: "base_departmentalert_dep_departmentalert_id_depar_42613c80_uniq")
+//   @@index([department_id], map: "base_departmentalert_department_department_id_33b76e92")
+//   @@index([departmentalert_id], map: "base_departmentalert_department_departmentalert_id_79d27d1d")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_linenotifysetting {
+//   id                     Int                   @id @default(autoincrement())
+//   include_sub_department Int?
+//   line_notify_token      String?               @db.VarChar(200)
+//   message_type           Int?
+//   message_head           String?               @db.VarChar(100)
+//   message_tail           String?               @db.VarChar(100)
+//   push_time              DateTime?             @db.Time(6)
+//   is_valid               Int?
+//   remark                 String?               @db.VarChar(200)
+//   line_notify_dept_id    Int?
+//   personnel_department   personnel_department? @relation(fields: [line_notify_dept_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_linenotifysetti_line_notify_dept_id_0643a5ed_fk_personnel")
+
+//   @@unique([line_notify_dept_id, line_notify_token, message_type], map: "base_linenotifysetting_line_notify_dept_id_line_dd79374f_uniq")
+//   @@index([line_notify_dept_id], map: "base_linenotifysetting_line_notify_dept_id_0643a5ed")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_messengersentlog {
+//   id                  BigInt               @id @default(autoincrement())
+//   action              Int                  @db.SmallInt
+//   targets             String?
+//   targets_repr        String?
+//   action_status       Int                  @db.SmallInt
+//   description         String?
+//   ip_address          String?              @db.Inet
+//   can_routable        Boolean
+//   op_time             DateTime             @db.Timestamptz(6)
+//   bot_uid             String?              @db.VarChar(100)
+//   content_type_id     Int?
+//   emp_id              Int?
+//   user_id             Int
+//   django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_messengersentlo_content_type_id_e6e9b3d5_fk_django_co")
+//   personnel_employee  personnel_employee?  @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_messengersentlog_emp_id_44eba15e_fk_personnel_employee_id")
+//   auth_user           auth_user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_messengersentlog_user_id_64034c70_fk_auth_user_id")
+
+//   @@index([content_type_id], map: "base_messengersentlog_content_type_id_e6e9b3d5")
+//   @@index([emp_id], map: "base_messengersentlog_emp_id_44eba15e")
+//   @@index([user_id], map: "base_messengersentlog_user_id_64034c70")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_messengersetting {
+//   id                      Int                 @id @default(autoincrement())
+//   create_time             DateTime?           @db.Timestamptz(6)
+//   create_user             String?             @db.VarChar(150)
+//   change_time             DateTime?           @db.Timestamptz(6)
+//   change_user             String?             @db.VarChar(150)
+//   status                  Int                 @db.SmallInt
+//   messenger_token         String?             @db.VarChar(200)
+//   messenger_authorization String?             @db.VarChar(200)
+//   message_type            Int?
+//   message_head            String?             @db.VarChar(100)
+//   message_tail            String?             @db.VarChar(100)
+//   push_time               DateTime?           @db.Time(6)
+//   is_valid                Int?
+//   remark                  String?             @db.VarChar(200)
+//   bot_id                  String?             @db.VarChar(100)
+//   bot_uid                 String?             @db.VarChar(100)
+//   bot_pid                 String?             @db.VarChar(100)
+//   real_time               Int?
+//   summary                 Int?
+//   department_real_time    Int?
+//   receive_app_transaction Int?
+//   receive_photo           Int?
+//   messenger_employee_id   Int?                @unique
+//   personnel_employee      personnel_employee? @relation(fields: [messenger_employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_messengersettin_messenger_employee_i_48b5a44b_fk_personnel")
+
+//   @@unique([messenger_employee_id, bot_uid], map: "base_messengersetting_messenger_employee_id_bo_c3feac73_uniq")
+// }
+
+// model base_personalalert {
+//   id                          Int                           @id @default(autoincrement())
+//   create_time                 DateTime?                     @db.Timestamptz(6)
+//   create_user                 String?                       @db.VarChar(150)
+//   change_time                 DateTime?                     @db.Timestamptz(6)
+//   change_user                 String?                       @db.VarChar(150)
+//   status                      Int                           @db.SmallInt
+//   code                        String                        @unique @db.VarChar(100)
+//   late_exceeds                Int?
+//   early_leave_exceeds         Int?
+//   absent_exceeds              Int?
+//   is_enble_alert              Int?
+//   sending_frequency           Int?
+//   day                         Int?
+//   time                        String?                       @db.VarChar(8)
+//   include_today               Int?
+//   email_alert                 Int?
+//   pop_alert                   Int?
+//   messenger_alert             Int?
+//   alert_type                  Int?
+//   last_activity               DateTime?                     @db.Timestamptz(6)
+//   is_enble_messenger          Int?
+//   bot_id                      String?                       @db.VarChar(100)
+//   bot_uid                     String?                       @db.VarChar(100)
+//   bot_pid                     String?                       @db.VarChar(100)
+//   message_type                Int?
+//   message_head                String?                       @db.VarChar(100)
+//   message_tail                String?                       @db.VarChar(100)
+//   real_time                   Int?
+//   receive_app_transaction     Int?
+//   receive_photo               Int?
+//   summary                     Int?
+//   base_departmentalert        base_departmentalert?
+//   base_personalalert_employee base_personalalert_employee[]
+
+//   @@index([code], map: "base_personalalert_code_299aafe4_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model base_personalalert_employee {
+//   id                 Int                @id @default(autoincrement())
+//   personalalert_id   Int
+//   employee_id        Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_personalalert_e_employee_id_94832616_fk_personnel")
+//   base_personalalert base_personalalert @relation(fields: [personalalert_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "base_personalalert_e_personalalert_id_27743165_fk_base_pers")
+
+//   @@unique([personalalert_id, employee_id], map: "base_personalalert_emplo_personalalert_id_employe_4b3520eb_uniq")
+//   @@index([employee_id], map: "base_personalalert_employee_employee_id_94832616")
+//   @@index([personalalert_id], map: "base_personalalert_employee_personalalert_id_27743165")
+// }
+
+// model base_reportoutputsetting {
+//   id                   Int     @id @default(autoincrement())
+//   agreement_message_id String  @db.VarChar(200)
+//   report_name          String  @db.VarChar(200)
+//   agreement_message    String?
+
+//   @@unique([agreement_message_id, report_name], map: "base_reportoutputsetting_agreement_message_id_rep_a17e86da_uniq")
+// }
+
+// model base_securitypolicy {
+//   id                     Int     @id @default(autoincrement())
+//   single_login           Boolean
+//   security_code          Boolean
+//   code_length            Int
+//   valid_duration         Int
+//   failed_locked          Boolean
+//   lock_failed_count      Int
+//   lock_duration          Int
+//   enforce_pwd_change     Boolean
+//   enforce_pwd_expiration Boolean
+//   validity_period        Int
+//   is_default             Boolean
+// }
+
+// model base_sendemail {
+//   id            Int       @id @default(autoincrement())
+//   purpose       Int
+//   email_to      String
+//   email_cc      String?
+//   email_bcc     String?
+//   email_subject String    @db.VarChar(40)
+//   email_content String?
+//   send_time     DateTime? @db.Timestamptz(6)
+//   send_status   Int?      @db.SmallInt
+// }
+
+// model base_sftpsetting {
+//   id            Int     @id @default(autoincrement())
+//   host          String  @db.Inet
+//   port          Int
+//   auth_method   Int
+//   user_name     String  @db.VarChar(30)
+//   user_password String? @db.VarChar(128)
+//   user_key      String?
+//   key_password  String? @db.VarChar(128)
+
+//   @@unique([user_name, host], map: "base_sftpsetting_user_name_host_f95e6bd9_uniq")
+// }
+
+// model base_sysparam {
+//   id         Int     @id @default(autoincrement())
+//   para_name  String  @db.VarChar(30)
+//   para_type  String? @db.VarChar(10)
+//   para_value String? @db.VarChar(250)
+
+//   @@unique([para_name, para_type], map: "base_sysparam_para_name_para_type_3086789a_uniq")
+// }
+
+// model base_sysparamdept {
+//   id        Int       @id @default(autoincrement())
+//   rule_name String    @unique @db.VarChar(40)
+//   dept_id   Int
+//   operator  String?   @db.VarChar(20)
+//   op_time   DateTime? @db.Timestamptz(6)
+
+//   @@index([rule_name], map: "base_sysparamdept_rule_name_bb46d5af_like")
+// }
+
+// model base_systemsetting {
+//   id          Int       @id @default(autoincrement())
+//   create_time DateTime? @db.Timestamptz(6)
+//   create_user String?   @db.VarChar(150)
+//   change_time DateTime? @db.Timestamptz(6)
+//   change_user String?   @db.VarChar(150)
+//   status      Int       @db.SmallInt
+//   name        String    @db.VarChar(30)
+//   value       String
+// }
+
+// model base_taskresultlog {
+//   id     Int      @id @default(autoincrement())
+//   task   String   @db.VarChar(50)
+//   status String   @db.VarChar(10)
+//   result String   @db.VarChar(500)
+//   time   DateTime @db.Timestamptz(6)
+// }
+
+// model celery_taskmeta {
+//   id        Int      @id @default(autoincrement())
+//   task_id   String   @unique @db.VarChar(255)
+//   status    String   @db.VarChar(50)
+//   result    String?
+//   date_done DateTime @db.Timestamptz(6)
+//   traceback String?
+//   hidden    Boolean
+//   meta      String?
+
+//   @@index([hidden], map: "celery_taskmeta_hidden_23fd02dc")
+//   @@index([task_id], map: "celery_taskmeta_task_id_9558b198_like")
+// }
+
+// model celery_tasksetmeta {
+//   id         Int      @id @default(autoincrement())
+//   taskset_id String   @unique @db.VarChar(255)
+//   result     String
+//   date_done  DateTime @db.Timestamptz(6)
+//   hidden     Boolean
+
+//   @@index([hidden], map: "celery_tasksetmeta_hidden_593cfc24")
+//   @@index([taskset_id], map: "celery_tasksetmeta_taskset_id_a5a1d4ae_like")
+// }
+
+// /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model django_admin_log {
+//   id                  Int                  @id @default(autoincrement())
+//   action_time         DateTime             @db.Timestamptz(6)
+//   object_id           String?
+//   object_repr         String               @db.VarChar(200)
+//   action_flag         Int                  @db.SmallInt
+//   change_message      String
+//   content_type_id     Int?
+//   user_id             Int
+//   django_content_type django_content_type? @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_content_type_id_c4bce8eb_fk_django_co")
+//   auth_user           auth_user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "django_admin_log_user_id_c564eba6_fk_auth_user_id")
+
+//   @@index([content_type_id], map: "django_admin_log_content_type_id_c4bce8eb")
+//   @@index([user_id], map: "django_admin_log_user_id_c564eba6")
+// }
+
+// model django_content_type {
+//   id                             Int                              @id @default(autoincrement())
+//   app_label                      String                           @db.VarChar(100)
+//   model                          String                           @db.VarChar(100)
+//   auth_permission                auth_permission[]
+//   base_adminlog                  base_adminlog[]
+//   base_bookmark                  base_bookmark[]
+//   base_messengersentlog          base_messengersentlog[]
+//   django_admin_log               django_admin_log[]
+//   guardian_groupobjectpermission guardian_groupobjectpermission[]
+//   guardian_userobjectpermission  guardian_userobjectpermission[]
+//   workflow_workflowengine        workflow_workflowengine[]
+
+//   @@unique([app_label, model], map: "django_content_type_app_label_model_76bd3d3b_uniq")
+// }
+
+// model django_migrations {
+//   id      Int      @id @default(autoincrement())
+//   app     String   @db.VarChar(255)
+//   name    String   @db.VarChar(255)
+//   applied DateTime @db.Timestamptz(6)
+// }
+
+// model django_session {
+//   session_key  String   @id @db.VarChar(40)
+//   session_data String
+//   expire_date  DateTime @db.Timestamptz(6)
+
+//   @@index([expire_date], map: "django_session_expire_date_a5c62663")
+//   @@index([session_key], map: "django_session_session_key_c0390e0f_like")
+// }
+
+// model djcelery_crontabschedule {
+//   id                    Int                     @id @default(autoincrement())
+//   minute                String                  @db.VarChar(64)
+//   hour                  String                  @db.VarChar(64)
+//   day_of_week           String                  @db.VarChar(64)
+//   day_of_month          String                  @db.VarChar(64)
+//   month_of_year         String                  @db.VarChar(64)
+//   djcelery_periodictask djcelery_periodictask[]
+// }
+
+// model djcelery_intervalschedule {
+//   id                    Int                     @id @default(autoincrement())
+//   every                 Int
+//   period                String                  @db.VarChar(24)
+//   djcelery_periodictask djcelery_periodictask[]
+// }
+
+// /// This table contains check constraints and requires additional setup for migrations. Visit https://pris.ly/d/check-constraints for more info.
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model djcelery_periodictask {
+//   id                        Int                        @id @default(autoincrement())
+//   name                      String                     @unique @db.VarChar(200)
+//   task                      String                     @db.VarChar(200)
+//   args                      String
+//   kwargs                    String
+//   queue                     String?                    @db.VarChar(200)
+//   exchange                  String?                    @db.VarChar(200)
+//   routing_key               String?                    @db.VarChar(200)
+//   expires                   DateTime?                  @db.Timestamptz(6)
+//   enabled                   Boolean
+//   last_run_at               DateTime?                  @db.Timestamptz(6)
+//   total_run_count           Int
+//   date_changed              DateTime                   @db.Timestamptz(6)
+//   description               String
+//   crontab_id                Int?
+//   interval_id               Int?
+//   djcelery_crontabschedule  djcelery_crontabschedule?  @relation(fields: [crontab_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "djcelery_periodictas_crontab_id_75609bab_fk_djcelery_")
+//   djcelery_intervalschedule djcelery_intervalschedule? @relation(fields: [interval_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "djcelery_periodictas_interval_id_b426ab02_fk_djcelery_")
+
+//   @@index([crontab_id], map: "djcelery_periodictask_crontab_id_75609bab")
+//   @@index([interval_id], map: "djcelery_periodictask_interval_id_b426ab02")
+//   @@index([name], map: "djcelery_periodictask_name_cb62cda9_like")
+// }
+
+// model djcelery_periodictasks {
+//   ident       Int      @id @db.SmallInt
+//   last_update DateTime @db.Timestamptz(6)
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model djcelery_taskstate {
+//   id                   Int                   @id @default(autoincrement())
+//   state                String                @db.VarChar(64)
+//   task_id              String                @unique @db.VarChar(36)
+//   name                 String?               @db.VarChar(200)
+//   tstamp               DateTime              @db.Timestamptz(6)
+//   args                 String?
+//   kwargs               String?
+//   eta                  DateTime?             @db.Timestamptz(6)
+//   expires              DateTime?             @db.Timestamptz(6)
+//   result               String?
+//   traceback            String?
+//   runtime              Float?
+//   retries              Int
+//   hidden               Boolean
+//   worker_id            Int?
+//   djcelery_workerstate djcelery_workerstate? @relation(fields: [worker_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "djcelery_taskstate_worker_id_f7f57a05_fk_djcelery_")
+
+//   @@index([hidden], map: "djcelery_taskstate_hidden_c3905e57")
+//   @@index([name], map: "djcelery_taskstate_name_8af9eded")
+//   @@index([name], map: "djcelery_taskstate_name_8af9eded_like")
+//   @@index([state], map: "djcelery_taskstate_state_53543be4")
+//   @@index([state], map: "djcelery_taskstate_state_53543be4_like")
+//   @@index([task_id], map: "djcelery_taskstate_task_id_9d2efdb5_like")
+//   @@index([tstamp], map: "djcelery_taskstate_tstamp_4c3f93a1")
+//   @@index([worker_id], map: "djcelery_taskstate_worker_id_f7f57a05")
+// }
+
+// model djcelery_workerstate {
+//   id                 Int                  @id @default(autoincrement())
+//   hostname           String               @unique @db.VarChar(255)
+//   last_heartbeat     DateTime?            @db.Timestamptz(6)
+//   djcelery_taskstate djcelery_taskstate[]
+
+//   @@index([hostname], map: "djcelery_workerstate_hostname_b31c7fab_like")
+//   @@index([last_heartbeat], map: "djcelery_workerstate_last_heartbeat_4539b544")
+// }
+
+// model ep_epsetup {
+//   id              Int       @id @default(autoincrement())
+//   create_time     DateTime? @db.Timestamptz(6)
+//   create_user     String?   @db.VarChar(150)
+//   change_time     DateTime? @db.Timestamptz(6)
+//   change_user     String?   @db.VarChar(150)
+//   status          Int       @db.SmallInt
+//   temp_alarm      Boolean
+//   temp_warning    Decimal   @db.Decimal(4, 1)
+//   temp_unit       Int       @db.SmallInt
+//   mask_alarm      Boolean
+//   messenger_alert Boolean
+//   bot_uid         String?   @db.VarChar(100)
+//   bot_uid2        String?   @db.VarChar(100)
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model ep_eptransaction {
+//   id                 Int                 @id @default(autoincrement())
+//   create_time        DateTime?           @db.Timestamptz(6)
+//   create_user        String?             @db.VarChar(150)
+//   change_time        DateTime?           @db.Timestamptz(6)
+//   change_user        String?             @db.VarChar(150)
+//   status             Int                 @db.SmallInt
+//   area               String              @db.VarChar(100)
+//   check_datetime     DateTime?           @db.Timestamptz(6)
+//   check_date         DateTime            @db.Date
+//   check_time         DateTime            @db.Time(6)
+//   temperature        Decimal             @db.Decimal(4, 1)
+//   is_mask            Boolean
+//   upload_time        DateTime            @db.Timestamptz(6)
+//   source             Int                 @db.SmallInt
+//   emp_id             Int?
+//   terminal_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ep_eptransaction_emp_id_1006883f_fk_personnel_employee_id")
+//   iclock_terminal    iclock_terminal?    @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "ep_eptransaction_terminal_id_4490b209_fk_iclock_terminal_id")
+
+//   @@unique([emp_id, check_datetime], map: "ep_eptransaction_emp_id_check_datetime_57cec995_uniq")
+//   @@index([emp_id], map: "ep_eptransaction_emp_id_1006883f")
+//   @@index([terminal_id], map: "ep_eptransaction_terminal_id_4490b209")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model guardian_groupobjectpermission {
+//   id                  Int                 @id @default(autoincrement())
+//   object_pk           String              @db.VarChar(255)
+//   content_type_id     Int
+//   group_id            Int
+//   permission_id       Int
+//   django_content_type django_content_type @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guardian_groupobject_content_type_id_7ade36b8_fk_django_co")
+//   auth_group          auth_group          @relation(fields: [group_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guardian_groupobject_group_id_4bbbfb62_fk_auth_grou")
+//   auth_permission     auth_permission     @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guardian_groupobject_permission_id_36572738_fk_auth_perm")
+
+//   @@unique([group_id, permission_id, object_pk], map: "guardian_groupobjectperm_group_id_permission_id_o_3f189f7c_uniq")
+//   @@index([content_type_id], map: "guardian_groupobjectpermission_content_type_id_7ade36b8")
+//   @@index([group_id], map: "guardian_groupobjectpermission_group_id_4bbbfb62")
+//   @@index([permission_id], map: "guardian_groupobjectpermission_permission_id_36572738")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model guardian_userobjectpermission {
+//   id                  Int                 @id @default(autoincrement())
+//   object_pk           String              @db.VarChar(255)
+//   content_type_id     Int
+//   permission_id       Int
+//   user_id             Int
+//   django_content_type django_content_type @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guardian_userobjectp_content_type_id_2e892405_fk_django_co")
+//   auth_permission     auth_permission     @relation(fields: [permission_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guardian_userobjectp_permission_id_71807bfc_fk_auth_perm")
+//   auth_user           auth_user           @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "guardian_userobjectpermission_user_id_d5c1e964_fk_auth_user_id")
+
+//   @@unique([user_id, permission_id, object_pk], map: "guardian_userobjectpermi_user_id_permission_id_ob_b0b3d2fc_uniq")
+//   @@index([content_type_id], map: "guardian_userobjectpermission_content_type_id_2e892405")
+//   @@index([permission_id], map: "guardian_userobjectpermission_permission_id_71807bfc")
+//   @@index([user_id], map: "guardian_userobjectpermission_user_id_d5c1e964")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_biodata {
+//   id                 Int                @id @default(autoincrement())
+//   create_time        DateTime?          @db.Timestamptz(6)
+//   create_user        String?            @db.VarChar(150)
+//   change_time        DateTime?          @db.Timestamptz(6)
+//   change_user        String?            @db.VarChar(150)
+//   status             Int                @db.SmallInt
+//   bio_tmp            String
+//   bio_no             Int?
+//   bio_index          Int?
+//   bio_type           Int
+//   major_ver          String             @db.VarChar(30)
+//   minor_ver          String?            @db.VarChar(30)
+//   bio_format         Int?
+//   valid              Int
+//   duress             Int
+//   update_time        DateTime?          @db.Timestamptz(6)
+//   sn                 String?            @db.VarChar(50)
+//   employee_id        Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_biodata_employee_id_ff748ea7_fk_personnel_employee_id")
+
+//   @@unique([employee_id, bio_no, bio_index, bio_type, bio_format, major_ver], map: "iclock_biodata_employee_id_bio_no_bio_i_b71b2ca9_uniq")
+//   @@index([employee_id], map: "iclock_biodata_employee_id_ff748ea7")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_biophoto {
+//   id                 Int                @id @default(autoincrement())
+//   create_time        DateTime?          @db.Timestamptz(6)
+//   create_user        String?            @db.VarChar(150)
+//   change_time        DateTime?          @db.Timestamptz(6)
+//   change_user        String?            @db.VarChar(150)
+//   status             Int                @db.SmallInt
+//   first_name         String?            @db.VarChar(24)
+//   last_name          String?            @db.VarChar(24)
+//   email              String?            @db.VarChar(254)
+//   enroll_sn          String?            @db.VarChar(100)
+//   register_photo     String             @db.VarChar(100)
+//   register_time      DateTime           @db.Timestamptz(6)
+//   approval_photo     String?            @db.VarChar(100)
+//   approval_state     Int                @db.SmallInt
+//   approval_time      DateTime?          @db.Timestamptz(6)
+//   remark             String?            @db.VarChar(100)
+//   employee_id        Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_biophoto_employee_id_3dba5819_fk_personnel_employee_id")
+
+//   @@index([employee_id], map: "iclock_biophoto_employee_id_3dba5819")
+// }
+
+// model iclock_deviceconfig {
+//   uuid                   String  @id @db.VarChar(36)
+//   enable_registration    Boolean
+//   enable_resigned_filter Boolean
+//   enable_auto_add        Boolean
+//   enable_name_upload     Boolean
+//   enable_card_upload     Boolean
+//   transaction_retention  Int
+//   command_retention      Int
+//   dev_log_retention      Int
+//   upload_log_retention   Int
+//   edit_policy            Int     @db.SmallInt
+//   import_policy          Int     @db.SmallInt
+//   mobile_policy          Int     @db.SmallInt
+//   device_policy          Int     @db.SmallInt
+
+//   @@index([uuid], map: "iclock_deviceconfig_uuid_d52a3627_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_errorcommandlog {
+//   id              Int             @id @default(autoincrement())
+//   create_time     DateTime?       @db.Timestamptz(6)
+//   create_user     String?         @db.VarChar(150)
+//   change_time     DateTime?       @db.Timestamptz(6)
+//   change_user     String?         @db.VarChar(150)
+//   status          Int             @db.SmallInt
+//   error_code      String?         @db.VarChar(16)
+//   error_msg       String?         @db.VarChar(50)
+//   data_origin     String?
+//   cmd             String?         @db.VarChar(50)
+//   additional      String?
+//   upload_time     DateTime        @db.Timestamptz(6)
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_errorcommandl_terminal_id_3b2d7cbd_fk_iclock_te")
+
+//   @@index([terminal_id], map: "iclock_errorcommandlog_terminal_id_3b2d7cbd")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_privatemessage {
+//   id                 Int                @id @default(autoincrement())
+//   create_time        DateTime?          @db.Timestamptz(6)
+//   create_user        String?            @db.VarChar(150)
+//   change_time        DateTime?          @db.Timestamptz(6)
+//   change_user        String?            @db.VarChar(150)
+//   status             Int                @db.SmallInt
+//   uid                String?            @db.VarChar(36)
+//   start_time         DateTime           @db.Timestamptz(6)
+//   duration           Int
+//   content            String
+//   last_send          DateTime?          @db.Timestamptz(6)
+//   employee_id        Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_privatemessag_employee_id_e84a34c0_fk_personnel")
+
+//   @@index([employee_id], map: "iclock_privatemessage_employee_id_e84a34c0")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_publicmessage {
+//   id              Int             @id @default(autoincrement())
+//   create_time     DateTime?       @db.Timestamptz(6)
+//   create_user     String?         @db.VarChar(150)
+//   change_time     DateTime?       @db.Timestamptz(6)
+//   change_user     String?         @db.VarChar(150)
+//   status          Int             @db.SmallInt
+//   uid             String?         @db.VarChar(36)
+//   start_time      DateTime        @db.Timestamptz(6)
+//   duration        Int
+//   content         String
+//   last_send       DateTime?       @db.Timestamptz(6)
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_publicmessage_terminal_id_c3b5e4cf_fk_iclock_terminal_id")
+
+//   @@index([terminal_id], map: "iclock_publicmessage_terminal_id_c3b5e4cf")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_terminal {
+//   id                         Int                          @id @default(autoincrement())
+//   create_time                DateTime?                    @db.Timestamptz(6)
+//   create_user                String?                      @db.VarChar(150)
+//   change_time                DateTime?                    @db.Timestamptz(6)
+//   change_user                String?                      @db.VarChar(150)
+//   status                     Int                          @db.SmallInt
+//   sn                         String                       @unique @db.VarChar(50)
+//   alias                      String                       @db.VarChar(50)
+//   ip_address                 String                       @db.Inet
+//   real_ip                    String?                      @db.Inet
+//   state                      Int
+//   terminal_tz                Int                          @db.SmallInt
+//   heartbeat                  Int
+//   transfer_mode              Int                          @db.SmallInt
+//   transfer_interval          Int
+//   transfer_time              String                       @db.VarChar(100)
+//   product_type               Int?                         @db.SmallInt
+//   is_attendance              Int                          @db.SmallInt
+//   is_registration            Int                          @db.SmallInt
+//   purpose                    Int?                         @db.SmallInt
+//   controller_type            Int?                         @db.SmallInt
+//   authentication             Int                          @db.SmallInt
+//   style                      String?                      @db.VarChar(20)
+//   upload_flag                String?                      @db.VarChar(10)
+//   fw_ver                     String?                      @db.VarChar(100)
+//   push_protocol              String                       @db.VarChar(30)
+//   push_ver                   String?                      @db.VarChar(30)
+//   language                   Int?
+//   is_tft                     Boolean
+//   terminal_name              String?                      @db.VarChar(30)
+//   platform                   String?                      @db.VarChar(30)
+//   oem_vendor                 String?                      @db.VarChar(50)
+//   log_stamp                  String?                      @db.VarChar(30)
+//   op_log_stamp               String?                      @db.VarChar(30)
+//   capture_stamp              String?                      @db.VarChar(30)
+//   user_count                 Int?
+//   user_capacity              Int?
+//   photo_func_on              Boolean
+//   transaction_count          Int?
+//   transaction_capacity       Int?
+//   fp_func_on                 Boolean
+//   fp_count                   Int?
+//   fp_capacity                Int?
+//   fp_alg_ver                 String?                      @db.VarChar(10)
+//   face_func_on               Boolean
+//   face_count                 Int?
+//   face_capacity              Int?
+//   face_alg_ver               String?                      @db.VarChar(10)
+//   fv_func_on                 Boolean
+//   fv_count                   Int?
+//   fv_capacity                Int?
+//   fv_alg_ver                 String?                      @db.VarChar(10)
+//   palm_func_on               Boolean
+//   palm_count                 Int?
+//   palm_capacity              Int?
+//   palm_alg_ver               String?                      @db.VarChar(10)
+//   lock_func                  Int                          @db.SmallInt
+//   last_activity              DateTime?                    @db.Timestamptz(6)
+//   upload_time                DateTime?                    @db.Timestamptz(6)
+//   push_time                  DateTime?                    @db.Timestamptz(6)
+//   is_access                  Int                          @db.SmallInt
+//   area_id                    Int?
+//   company_id                 Int?
+//   acc_accterminal            acc_accterminal[]
+//   ep_eptransaction           ep_eptransaction[]
+//   iclock_errorcommandlog     iclock_errorcommandlog[]
+//   iclock_publicmessage       iclock_publicmessage[]
+//   personnel_area             personnel_area?              @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminal_area_id_c019c6f0_fk_personnel_area_id")
+//   personnel_company          personnel_company?           @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminal_company_id_f2ecaaba_fk_personnel_company_id")
+//   iclock_terminalcommand     iclock_terminalcommand[]
+//   iclock_terminalcommandlog  iclock_terminalcommandlog[]
+//   iclock_terminallog         iclock_terminallog[]
+//   iclock_terminalparameter   iclock_terminalparameter[]
+//   iclock_terminaluploadlog   iclock_terminaluploadlog[]
+//   iclock_transaction         iclock_transaction[]
+//   iclock_transactionproofcmd iclock_transactionproofcmd[]
+
+//   @@index([area_id], map: "iclock_terminal_area_id_c019c6f0")
+//   @@index([company_id], map: "iclock_terminal_company_id_f2ecaaba")
+//   @@index([sn], map: "iclock_terminal_sn_209168b1_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_terminalcommand {
+//   id              Int             @id @default(autoincrement())
+//   content         String
+//   commit_time     DateTime        @db.Timestamptz(6)
+//   transfer_time   DateTime?       @db.Timestamptz(6)
+//   return_time     DateTime?       @db.Timestamptz(6)
+//   return_value    Int?
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminalcomma_terminal_id_3dcf836f_fk_iclock_te")
+
+//   @@index([terminal_id], map: "iclock_terminalcommand_terminal_id_3dcf836f")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_terminalcommandlog {
+//   id              Int             @id @default(autoincrement())
+//   content         String
+//   commit_time     DateTime        @db.Timestamptz(6)
+//   transfer_time   DateTime?       @db.Timestamptz(6)
+//   return_time     DateTime?       @db.Timestamptz(6)
+//   return_value    Int?
+//   package         Int?
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminalcomma_terminal_id_35ea8b2b_fk_iclock_te")
+
+//   @@index([terminal_id], map: "iclock_terminalcommandlog_terminal_id_35ea8b2b")
+// }
+
+// model iclock_terminalemployee {
+//   id          Int    @id @default(autoincrement())
+//   terminal_sn String @db.VarChar(50)
+//   emp_code    String @db.VarChar(20)
+//   privilege   Int    @db.SmallInt
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_terminallog {
+//   id              Int             @id @default(autoincrement())
+//   terminal_tz     Int?            @db.SmallInt
+//   admin           String?         @db.VarChar(50)
+//   action_name     Int?            @db.SmallInt
+//   action_time     DateTime?       @db.Timestamptz(6)
+//   object          String?         @db.VarChar(50)
+//   param1          Int?
+//   param2          Int?
+//   param3          Int?
+//   upload_time     DateTime?       @db.Timestamptz(6)
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminallog_terminal_id_667b3ea7_fk_iclock_terminal_id")
+
+//   @@index([terminal_id], map: "iclock_terminallog_terminal_id_667b3ea7")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_terminalparameter {
+//   id              Int             @id @default(autoincrement())
+//   param_type      String?         @db.VarChar(10)
+//   param_name      String          @db.VarChar(30)
+//   param_value     String          @db.VarChar(100)
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminalparam_terminal_id_443872e3_fk_iclock_te")
+
+//   @@unique([terminal_id, param_name], map: "iclock_terminalparameter_terminal_id_param_name_8abbb5c0_uniq")
+//   @@index([terminal_id], map: "iclock_terminalparameter_terminal_id_443872e3")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_terminaluploadlog {
+//   id              Int             @id @default(autoincrement())
+//   event           String          @db.VarChar(80)
+//   content         String          @db.VarChar(80)
+//   upload_count    Int
+//   error_count     Int
+//   upload_time     DateTime        @db.Timestamptz(6)
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_terminaluploa_terminal_id_9c9a7664_fk_iclock_te")
+
+//   @@index([terminal_id], map: "iclock_terminaluploadlog_terminal_id_9c9a7664")
+// }
+
+// model iclock_terminalworkcode {
+//   id            Int       @id @default(autoincrement())
+//   create_time   DateTime? @db.Timestamptz(6)
+//   create_user   String?   @db.VarChar(150)
+//   change_time   DateTime? @db.Timestamptz(6)
+//   change_user   String?   @db.VarChar(150)
+//   status        Int       @db.SmallInt
+//   code          String    @unique @db.VarChar(8)
+//   alias         String    @db.VarChar(24)
+//   last_activity DateTime? @db.Timestamptz(6)
+
+//   @@index([code], map: "iclock_terminalworkcode_code_244e0245_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_transaction {
+//   id                                                               Int                 @id @default(autoincrement())
+//   emp_code                                                         String              @db.VarChar(20)
+//   punch_time                                                       DateTime            @db.Timestamptz(6)
+//   punch_state                                                      String              @db.VarChar(5)
+//   verify_type                                                      Int
+//   work_code                                                        String?             @db.VarChar(20)
+//   terminal_sn                                                      String?             @db.VarChar(50)
+//   terminal_alias                                                   String?             @db.VarChar(50)
+//   area_alias                                                       String?             @db.VarChar(100)
+//   longitude                                                        Float?
+//   latitude                                                         Float?
+//   gps_location                                                     String?
+//   mobile                                                           String?             @db.VarChar(50)
+//   source                                                           Int?                @db.SmallInt
+//   purpose                                                          Int?                @db.SmallInt
+//   crc                                                              String?             @db.VarChar(100)
+//   is_attendance                                                    Int?                @db.SmallInt
+//   reserved                                                         String?             @db.VarChar(100)
+//   upload_time                                                      DateTime?           @db.Timestamptz(6)
+//   sync_status                                                      Int?                @db.SmallInt
+//   sync_time                                                        DateTime?           @db.Timestamptz(6)
+//   is_mask                                                          Int?                @db.SmallInt
+//   temperature                                                      Decimal?            @db.Decimal(4, 1)
+//   emp_id                                                           Int?
+//   terminal_id                                                      Int?
+//   att_payloadbase_att_payloadbase_trans_in_idToiclock_transaction  att_payloadbase[]   @relation("att_payloadbase_trans_in_idToiclock_transaction")
+//   att_payloadbase_att_payloadbase_trans_out_idToiclock_transaction att_payloadbase[]   @relation("att_payloadbase_trans_out_idToiclock_transaction")
+//   att_payloadpunch                                                 att_payloadpunch[]
+//   personnel_employee                                               personnel_employee? @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_transaction_emp_id_60fa3521_fk_personnel_employee_id")
+//   iclock_terminal                                                  iclock_terminal?    @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_transaction_terminal_id_451c81c2_fk_iclock_terminal_id")
+
+//   @@unique([emp_code, punch_time], map: "iclock_transaction_emp_code_punch_time_ca282852_uniq")
+//   @@index([emp_id], map: "iclock_transaction_emp_id_60fa3521")
+//   @@index([terminal_id], map: "iclock_transaction_terminal_id_451c81c2")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model iclock_transactionproofcmd {
+//   id              Int             @id @default(autoincrement())
+//   action_time     DateTime        @db.Timestamptz(6)
+//   start_time      DateTime        @db.Timestamptz(6)
+//   end_time        DateTime        @db.Timestamptz(6)
+//   terminal_count  Int?
+//   server_count    Int?
+//   flag            Int?            @db.SmallInt
+//   reserved_init   Int?
+//   reserved_float  Float?
+//   reserved_char   String?         @db.VarChar(30)
+//   terminal_id     Int
+//   iclock_terminal iclock_terminal @relation(fields: [terminal_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "iclock_transactionpr_terminal_id_08b81e1e_fk_iclock_te")
+
+//   @@index([terminal_id], map: "iclock_transactionproofcmd_terminal_id_08b81e1e")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model mobile_announcement {
+//   id                 Int                 @id @default(autoincrement())
+//   subject            String              @db.VarChar(100)
+//   content            String
+//   category           Int                 @db.SmallInt
+//   sender             String?             @db.VarChar(50)
+//   system_sender      String?             @db.VarChar(50)
+//   create_time        DateTime?           @db.Timestamptz(6)
+//   receiver_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [receiver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mobile_announcement_receiver_id_ddf2a860_fk_personnel")
+
+//   @@index([receiver_id], map: "mobile_announcement_receiver_id_ddf2a860")
+// }
+
+// model mobile_appactionlog {
+//   id             Int      @id @default(autoincrement())
+//   user           String   @db.VarChar(20)
+//   client         String?  @db.VarChar(50)
+//   action         String?  @db.VarChar(50)
+//   params         String?
+//   describe       String?
+//   request_status Int      @db.SmallInt
+//   action_time    DateTime @db.Timestamptz(6)
+//   remote_ip      String?  @db.VarChar(20)
+// }
+
+// model mobile_applist {
+//   id              Int      @id @default(autoincrement())
+//   username        String   @db.VarChar(50)
+//   login_time      DateTime @db.Timestamptz(6)
+//   last_active     DateTime @db.Timestamptz(6)
+//   token           String   @db.VarChar(100)
+//   device_token    String
+//   client_id       String   @db.VarChar(100)
+//   client_category Int      @db.SmallInt
+//   active          Int?     @db.SmallInt
+//   enable          Int?     @db.SmallInt
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model mobile_appnotification {
+//   id                 Int                @id @default(autoincrement())
+//   sender             String?            @db.VarChar(50)
+//   system_sender      String?            @db.VarChar(50)
+//   category           Int                @db.SmallInt
+//   sub_category       Int?
+//   content            String?
+//   source             Int?
+//   notification_time  DateTime           @db.Timestamptz(6)
+//   read_status        Int                @db.SmallInt
+//   read_time          DateTime?          @db.Timestamptz(6)
+//   receiver_id        Int
+//   personnel_employee personnel_employee @relation(fields: [receiver_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mobile_appnotificati_receiver_id_90c4a355_fk_personnel")
+
+//   @@index([receiver_id], map: "mobile_appnotification_receiver_id_90c4a355")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model mobile_gpsfordepartment {
+//   id                   Int                  @id @default(autoincrement())
+//   create_time          DateTime?            @db.Timestamptz(6)
+//   create_user          String?              @db.VarChar(150)
+//   change_time          DateTime?            @db.Timestamptz(6)
+//   change_user          String?              @db.VarChar(150)
+//   status               Int                  @db.SmallInt
+//   location             String               @db.VarChar(100)
+//   longitude            Float
+//   latitude             Float
+//   distance             Int
+//   start_date           DateTime             @db.Date
+//   end_date             DateTime             @db.Date
+//   department_id        Int
+//   personnel_department personnel_department @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mobile_gpsfordepartm_department_id_988ccf22_fk_personnel")
+
+//   @@index([department_id], map: "mobile_gpsfordepartment_department_id_988ccf22")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model mobile_gpsforemployee {
+//   id                 Int                @id @default(autoincrement())
+//   create_time        DateTime?          @db.Timestamptz(6)
+//   create_user        String?            @db.VarChar(150)
+//   change_time        DateTime?          @db.Timestamptz(6)
+//   change_user        String?            @db.VarChar(150)
+//   status             Int                @db.SmallInt
+//   location           String             @db.VarChar(100)
+//   longitude          Float
+//   latitude           Float
+//   distance           Int
+//   start_date         DateTime           @db.Date
+//   end_date           DateTime           @db.Date
+//   employee_id        Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "mobile_gpsforemploye_employee_id_982b7cef_fk_personnel")
+
+//   @@index([employee_id], map: "mobile_gpsforemployee_employee_id_982b7cef")
+// }
+
+// model notifications_notification {
+//   id              Int       @id @default(autoincrement())
+//   content         String?   @db.VarChar(999)
+//   is_sent         Boolean
+//   event           Int?      @db.SmallInt
+//   commit_time     DateTime  @db.Date
+//   send_time       DateTime? @db.Date
+//   exception_id    String?   @db.VarChar(255)
+//   content_type_id String?   @db.VarChar(255)
+// }
+
+// model payroll_deductionformula {
+//   id                                       Int                                        @id @default(autoincrement())
+//   name                                     String                                     @db.VarChar(30)
+//   formula                                  String                                     @db.VarChar(100)
+//   remark                                   String?
+//   payroll_salarystructure_deductionformula payroll_salarystructure_deductionformula[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_emploan {
+//   id                 Int                 @id @default(autoincrement())
+//   create_time        DateTime?           @db.Timestamptz(6)
+//   create_user        String?             @db.VarChar(150)
+//   change_time        DateTime?           @db.Timestamptz(6)
+//   change_user        String?             @db.VarChar(150)
+//   status             Int                 @db.SmallInt
+//   loan_amount        Int
+//   loan_time          DateTime            @db.Timestamptz(6)
+//   refund_cycle       Int                 @db.SmallInt
+//   per_cycle_refund   Float
+//   loan_clean_time    DateTime?           @db.Timestamptz(6)
+//   remark             String?             @db.VarChar(300)
+//   employee_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_emploan_employee_id_97a251ef_fk_personnel_employee_id")
+
+//   @@index([employee_id], map: "payroll_emploan_employee_id_97a251ef")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_emppayrollprofile {
+//   id                 Int                @id @default(autoincrement())
+//   payment_mode       Int?               @db.SmallInt
+//   payment_type       Int?               @db.SmallInt
+//   bank_name          String?            @db.VarChar(30)
+//   bank_account       String?            @db.VarChar(30)
+//   personnel_id       String?            @db.VarChar(30)
+//   agent_id           String?            @db.VarChar(30)
+//   agent_account      String?            @db.VarChar(30)
+//   employee_id        Int                @unique
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_emppayrollpr_employee_id_6c97078c_fk_personnel")
+// }
+
+// model payroll_exceptionformula {
+//   id                                       Int                                        @id @default(autoincrement())
+//   name                                     String                                     @db.VarChar(30)
+//   exception_type                           Int                                        @db.SmallInt
+//   formula                                  String                                     @db.VarChar(100)
+//   remark                                   String?
+//   payroll_salarystructure_exceptionformula payroll_salarystructure_exceptionformula[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_extradeduction {
+//   id                 Int                 @id @default(autoincrement())
+//   create_time        DateTime?           @db.Timestamptz(6)
+//   create_user        String?             @db.VarChar(150)
+//   change_time        DateTime?           @db.Timestamptz(6)
+//   change_user        String?             @db.VarChar(150)
+//   status             Int                 @db.SmallInt
+//   amount             Int
+//   issued_time        DateTime            @db.Timestamptz(6)
+//   remark             String?             @db.VarChar(300)
+//   employee_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_extradeducti_employee_id_53072441_fk_personnel")
+
+//   @@index([employee_id], map: "payroll_extradeduction_employee_id_53072441")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_extraincrease {
+//   id                 Int                 @id @default(autoincrement())
+//   create_time        DateTime?           @db.Timestamptz(6)
+//   create_user        String?             @db.VarChar(150)
+//   change_time        DateTime?           @db.Timestamptz(6)
+//   change_user        String?             @db.VarChar(150)
+//   status             Int                 @db.SmallInt
+//   amount             Int
+//   issued_time        DateTime            @db.Timestamptz(6)
+//   remark             String?             @db.VarChar(300)
+//   employee_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_extraincreas_employee_id_f902e6bb_fk_personnel")
+
+//   @@index([employee_id], map: "payroll_extraincrease_employee_id_f902e6bb")
+// }
+
+// model payroll_increasementformula {
+//   id                                          Int                                           @id @default(autoincrement())
+//   name                                        String                                        @db.VarChar(30)
+//   formula                                     String                                        @db.VarChar(100)
+//   remark                                      String?
+//   payroll_salarystructure_increasementformula payroll_salarystructure_increasementformula[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_leaveformula {
+//   id                                   Int                                    @id @default(autoincrement())
+//   name                                 String                                 @db.VarChar(30)
+//   formula                              String                                 @db.VarChar(100)
+//   remark                               String?
+//   category_id                          Int
+//   att_leavecategory                    att_leavecategory                      @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_leaveformula_category_id_945b2054_fk_att_leave")
+//   payroll_salarystructure_leaveformula payroll_salarystructure_leaveformula[]
+
+//   @@index([category_id], map: "payroll_leaveformula_category_id_945b2054")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_monthlysalary {
+//   id                           Int                @id @default(autoincrement())
+//   calc_time                    DateTime?          @db.Date
+//   basic_salary                 Float?
+//   effective_date               DateTime?          @db.Date
+//   format_dict                  String?
+//   ot1                          Float?
+//   ot2                          Float?
+//   ot3                          Float?
+//   normal_ot                    Float?
+//   weekend_ot                   Float?
+//   holiday_ot                   Float?
+//   late_time                    Float?
+//   early_leave                  Float?
+//   absent_time                  Float?
+//   increase                     Float?
+//   deduction                    Float?
+//   leave                        String?
+//   ot1_formula                  String?
+//   ot2_formula                  String?
+//   ot3_formula                  String?
+//   normal_ot_formula            String?
+//   weekend_ot_formula           String?
+//   holiday_ot_formula           String?
+//   late_time_formula            String?
+//   early_leave_formula          String?
+//   absent_time_formula          String?
+//   increase_formula             String?
+//   deduction_formula            String?
+//   leave_formula                String?
+//   ot1_formula_name             String?
+//   ot2_formula_name             String?
+//   ot3_formula_name             String?
+//   normal_ot_formula_name       String?
+//   weekend_ot_formula_name      String?
+//   holiday_ot_formula_name      String?
+//   late_time_formula_name       String?
+//   early_leave_formula_name     String?
+//   absent_time_formula_name     String?
+//   increase_formula_name        String?
+//   deduction_formula_name       String?
+//   leave_formula_name           String?
+//   extra_increase               Float?
+//   extra_deduction              Float?
+//   total_loan_amount            Float?
+//   refund_loan_amount           Float?
+//   unrefund_loan_amount         Float?
+//   loan_deduction               Float?
+//   loan_increase                Float?
+//   advance_increase             Float?
+//   advance_deduction            Float?
+//   reimbursement                Float?
+//   total_increase_formula       String?
+//   total_increase_formula_name  String?
+//   total_increase_expression    String?
+//   total_increase               Float?
+//   total_deduction_formula      String?
+//   total_deduction_formula_name String?
+//   total_deduction_expression   String?
+//   total_deduction              Float?
+//   total_salary_expression      String?
+//   total_salary                 Float?
+//   employee_id                  Int
+//   personnel_employee           personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_monthlysalar_employee_id_97fdc6a9_fk_personnel")
+
+//   @@index([employee_id], map: "payroll_monthlysalary_employee_id_97fdc6a9")
+// }
+
+// model payroll_overtimeformula {
+//   id                                      Int                                       @id @default(autoincrement())
+//   name                                    String                                    @db.VarChar(30)
+//   overtime_level                          Int                                       @db.SmallInt
+//   formula                                 String                                    @db.VarChar(100)
+//   remark                                  String?
+//   payroll_salarystructure_overtimeformula payroll_salarystructure_overtimeformula[]
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_reimbursement {
+//   id                 Int                 @id @default(autoincrement())
+//   rmb_amount         Int
+//   rmb_time           DateTime            @db.Timestamptz(6)
+//   rmb_file           String?             @db.VarChar(200)
+//   rmb_remark         String?             @db.VarChar(300)
+//   employee_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_reimbursemen_employee_id_c4bbde36_fk_personnel")
+
+//   @@index([employee_id], map: "payroll_reimbursement_employee_id_c4bbde36")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salaryadvance {
+//   id                 Int                 @id @default(autoincrement())
+//   advance_amount     Int
+//   advance_time       DateTime            @db.Timestamptz(6)
+//   advance_remark     String?             @db.VarChar(300)
+//   employee_id        Int?
+//   personnel_employee personnel_employee? @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salaryadvanc_employee_id_2abd43e5_fk_personnel")
+
+//   @@index([employee_id], map: "payroll_salaryadvance_employee_id_2abd43e5")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salarystructure {
+//   id                                          Int                                           @id @default(autoincrement())
+//   create_time                                 DateTime?                                     @db.Timestamptz(6)
+//   create_user                                 String?                                       @db.VarChar(150)
+//   change_time                                 DateTime?                                     @db.Timestamptz(6)
+//   change_user                                 String?                                       @db.VarChar(150)
+//   status                                      Int                                           @db.SmallInt
+//   salary_amount                               Int
+//   effective_date                              DateTime                                      @db.Date
+//   salary_remark                               String?                                       @db.VarChar(300)
+//   employee_id                                 Int?
+//   personnel_employee                          personnel_employee?                           @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_employee_id_98996e15_fk_personnel")
+//   payroll_salarystructure_deductionformula    payroll_salarystructure_deductionformula[]
+//   payroll_salarystructure_exceptionformula    payroll_salarystructure_exceptionformula[]
+//   payroll_salarystructure_increasementformula payroll_salarystructure_increasementformula[]
+//   payroll_salarystructure_leaveformula        payroll_salarystructure_leaveformula[]
+//   payroll_salarystructure_overtimeformula     payroll_salarystructure_overtimeformula[]
+
+//   @@index([employee_id], map: "payroll_salarystructure_employee_id_98996e15")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salarystructure_deductionformula {
+//   id                       Int                      @id @default(autoincrement())
+//   salarystructure_id       Int
+//   deductionformula_id      Int
+//   payroll_deductionformula payroll_deductionformula @relation(fields: [deductionformula_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_deductionformula_id_b174d5b6_fk_payroll_d")
+//   payroll_salarystructure  payroll_salarystructure  @relation(fields: [salarystructure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_salarystructure_id_5ca7cdb5_fk_payroll_s")
+
+//   @@unique([salarystructure_id, deductionformula_id], map: "payroll_salarystructure__salarystructure_id_deduc_794e8449_uniq")
+//   @@index([deductionformula_id], map: "payroll_salarystructure_de_deductionformula_id_b174d5b6")
+//   @@index([salarystructure_id], map: "payroll_salarystructure_de_salarystructure_id_5ca7cdb5")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salarystructure_exceptionformula {
+//   id                       Int                      @id @default(autoincrement())
+//   salarystructure_id       Int
+//   exceptionformula_id      Int
+//   payroll_exceptionformula payroll_exceptionformula @relation(fields: [exceptionformula_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_exceptionformula_id_8f6dadb3_fk_payroll_e")
+//   payroll_salarystructure  payroll_salarystructure  @relation(fields: [salarystructure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_salarystructure_id_3c087208_fk_payroll_s")
+
+//   @@unique([salarystructure_id, exceptionformula_id], map: "payroll_salarystructure__salarystructure_id_excep_a5e869ff_uniq")
+//   @@index([exceptionformula_id], map: "payroll_salarystructure_ex_exceptionformula_id_8f6dadb3")
+//   @@index([salarystructure_id], map: "payroll_salarystructure_ex_salarystructure_id_3c087208")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salarystructure_increasementformula {
+//   id                          Int                         @id @default(autoincrement())
+//   salarystructure_id          Int
+//   increasementformula_id      Int
+//   payroll_increasementformula payroll_increasementformula @relation(fields: [increasementformula_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_increasementformula__3cd77082_fk_payroll_i")
+//   payroll_salarystructure     payroll_salarystructure     @relation(fields: [salarystructure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_salarystructure_id_8752401c_fk_payroll_s")
+
+//   @@unique([salarystructure_id, increasementformula_id], map: "payroll_salarystructure__salarystructure_id_incre_749132b3_uniq")
+//   @@index([increasementformula_id], map: "payroll_salarystructure_in_increasementformula_id_3cd77082")
+//   @@index([salarystructure_id], map: "payroll_salarystructure_in_salarystructure_id_8752401c")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salarystructure_leaveformula {
+//   id                      Int                     @id @default(autoincrement())
+//   salarystructure_id      Int
+//   leaveformula_id         Int
+//   payroll_leaveformula    payroll_leaveformula    @relation(fields: [leaveformula_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_leaveformula_id_049f9024_fk_payroll_l")
+//   payroll_salarystructure payroll_salarystructure @relation(fields: [salarystructure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_salarystructure_id_cf98fdd7_fk_payroll_s")
+
+//   @@unique([salarystructure_id, leaveformula_id], map: "payroll_salarystructure__salarystructure_id_leave_4efdce30_uniq")
+//   @@index([salarystructure_id], map: "payroll_salarystructure_le_salarystructure_id_cf98fdd7")
+//   @@index([leaveformula_id], map: "payroll_salarystructure_leaveformula_leaveformula_id_049f9024")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model payroll_salarystructure_overtimeformula {
+//   id                      Int                     @id @default(autoincrement())
+//   salarystructure_id      Int
+//   overtimeformula_id      Int
+//   payroll_overtimeformula payroll_overtimeformula @relation(fields: [overtimeformula_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_overtimeformula_id_40ad89ef_fk_payroll_o")
+//   payroll_salarystructure payroll_salarystructure @relation(fields: [salarystructure_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "payroll_salarystruct_salarystructure_id_64f75042_fk_payroll_s")
+
+//   @@unique([salarystructure_id, overtimeformula_id], map: "payroll_salarystructure__salarystructure_id_overt_0d0a0e81_uniq")
+//   @@index([overtimeformula_id], map: "payroll_salarystructure_ov_overtimeformula_id_40ad89ef")
+//   @@index([salarystructure_id], map: "payroll_salarystructure_ov_salarystructure_id_64f75042")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_area {
+//   id                           Int                            @id @default(autoincrement())
+//   area_code                    String                         @unique @db.VarChar(30)
+//   area_name                    String                         @db.VarChar(100)
+//   is_default                   Boolean
+//   company_id                   Int?
+//   parent_area_id               Int?
+//   acc_acccombination           acc_acccombination[]
+//   acc_accgroups                acc_accgroups[]
+//   acc_accholiday               acc_accholiday[]
+//   acc_accprivilege             acc_accprivilege[]
+//   acc_acctimezone              acc_acctimezone[]
+//   auth_user_auth_area          auth_user_auth_area[]
+//   iclock_terminal              iclock_terminal[]
+//   personnel_company            personnel_company?             @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_area_company_id_59750eb5_fk_personnel_company_id")
+//   personnel_area               personnel_area?                @relation("personnel_areaTopersonnel_area", fields: [parent_area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_area_parent_area_id_39028fda_fk_personnel_area_id")
+//   other_personnel_area         personnel_area[]               @relation("personnel_areaTopersonnel_area")
+//   personnel_assignareaemployee personnel_assignareaemployee[]
+//   personnel_employee_area      personnel_employee_area[]
+
+//   @@index([area_code], map: "personnel_area_area_code_16aa7c34_like")
+//   @@index([company_id], map: "personnel_area_company_id_59750eb5")
+//   @@index([parent_area_id], map: "personnel_area_parent_area_id_39028fda")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_assignareaemployee {
+//   id                 Int                @id @default(autoincrement())
+//   assigned_time      DateTime           @db.Timestamptz(6)
+//   area_id            Int
+//   employee_id        Int
+//   personnel_area     personnel_area     @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_assignarea_area_id_6f049d6a_fk_personnel")
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_assignarea_employee_id_a3d4dd25_fk_personnel")
+
+//   @@index([area_id], map: "personnel_assignareaemployee_area_id_6f049d6a")
+//   @@index([employee_id], map: "personnel_assignareaemployee_employee_id_a3d4dd25")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_certification {
+//   id                              Int                               @id @default(autoincrement())
+//   create_time                     DateTime?                         @db.Timestamptz(6)
+//   create_user                     String?                           @db.VarChar(150)
+//   change_time                     DateTime?                         @db.Timestamptz(6)
+//   change_user                     String?                           @db.VarChar(150)
+//   status                          Int                               @db.SmallInt
+//   cert_code                       String                            @db.VarChar(20)
+//   cert_name                       String                            @db.VarChar(50)
+//   company_id                      Int?
+//   personnel_company               personnel_company?                @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_certificat_company_id_c1b1bd00_fk_personnel")
+//   personnel_employeecertification personnel_employeecertification[]
+
+//   @@unique([cert_code, cert_name, company_id], map: "personnel_certification_cert_code_cert_name_comp_10ee81ab_uniq")
+//   @@index([company_id], map: "personnel_certification_company_id_c1b1bd00")
+// }
+
+// model personnel_company {
+//   id                      Int                       @id @default(autoincrement())
+//   company_name            String                    @db.VarChar(100)
+//   company_code            String                    @unique @db.VarChar(11)
+//   logo                    String?                   @db.VarChar(200)
+//   country                 String?                   @db.VarChar(10)
+//   city                    String?                   @db.VarChar(10)
+//   fax                     String?                   @db.VarChar(20)
+//   email                   String?                   @db.VarChar(50)
+//   state                   String?                   @db.VarChar(20)
+//   phone                   String?                   @db.VarChar(20)
+//   website                 String?                   @db.VarChar(50)
+//   postal_code             String?                   @db.VarChar(20)
+//   address                 String?                   @db.VarChar(200)
+//   address2                String?                   @db.VarChar(200)
+//   show_in_report          Boolean
+//   is_default              Boolean
+//   log_position            Int?
+//   name_position           Int?
+//   employee_number_gt      BigInt
+//   employee_number_lt      BigInt
+//   area_number_gt          BigInt
+//   area_number_lt          BigInt
+//   position_number_gt      BigInt
+//   position_number_lt      BigInt
+//   department_number_gt    BigInt
+//   department_number_lt    BigInt
+//   att_attshift            att_attshift[]
+//   att_breaktime           att_breaktime[]
+//   att_deptattrule         att_deptattrule[]
+//   att_timeinterval        att_timeinterval[]
+//   att_vacationtime        att_vacationtime[]
+//   auth_user               auth_user[]
+//   iclock_terminal         iclock_terminal[]
+//   personnel_area          personnel_area[]
+//   personnel_certification personnel_certification[]
+//   personnel_department    personnel_department[]
+//   personnel_employee      personnel_employee[]
+//   personnel_position      personnel_position[]
+//   personnel_resign        personnel_resign[]
+//   workflow_workflowengine workflow_workflowengine[]
+//   workflow_workflownode   workflow_workflownode[]
+//   workflow_workflowrole   workflow_workflowrole[]
+
+//   @@index([company_code], map: "personnel_company_company_code_537dca09_like")
+// }
+
+// model personnel_companyregister {
+//   id                         Int       @id @default(autoincrement())
+//   create_time                DateTime? @db.Timestamptz(6)
+//   create_user                String?   @db.VarChar(150)
+//   change_time                DateTime? @db.Timestamptz(6)
+//   change_user                String?   @db.VarChar(150)
+//   status                     Int       @db.SmallInt
+//   company_code               String    @unique @db.VarChar(100)
+//   company_name               String    @db.VarChar(200)
+//   company_address            String    @db.VarChar(200)
+//   country_name               String    @db.VarChar(200)
+//   contact_name               String    @db.VarChar(50)
+//   area_name                  String    @db.VarChar(100)
+//   email                      String    @db.VarChar(50)
+//   mobile                     String    @db.VarChar(30)
+//   desired_license_version    Int?      @db.SmallInt
+//   desired_optional_functions String?   @db.VarChar(200)
+//   security_code              String    @db.VarChar(20)
+//   send_mail                  Boolean
+
+//   @@index([company_code], map: "personnel_companyregister_company_code_3d5ba9dd_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_department {
+//   id                              Int                               @id @default(autoincrement())
+//   dept_code                       String                            @unique @db.VarChar(50)
+//   dept_name                       String                            @db.VarChar(100)
+//   is_default                      Boolean
+//   company_id                      Int?
+//   parent_dept_id                  Int?
+//   att_departmentschedule          att_departmentschedule[]
+//   att_deptattrule                 att_deptattrule[]
+//   att_holiday                     att_holiday[]
+//   auth_user_auth_dept             auth_user_auth_dept[]
+//   base_departmentalert_department base_departmentalert_department[]
+//   base_linenotifysetting          base_linenotifysetting[]
+//   mobile_gpsfordepartment         mobile_gpsfordepartment[]
+//   personnel_company               personnel_company?                @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_department_company_id_00867fd8_fk_personnel")
+//   personnel_department            personnel_department?             @relation("personnel_departmentTopersonnel_department", fields: [parent_dept_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_department_parent_dept_id_d0b44024_fk_personnel")
+//   other_personnel_department      personnel_department[]            @relation("personnel_departmentTopersonnel_department")
+//   personnel_employee              personnel_employee[]
+//   workflow_nodeinstance           workflow_nodeinstance[]
+//   workflow_workflowengine         workflow_workflowengine[]
+
+//   @@index([company_id], map: "personnel_department_company_id_00867fd8")
+//   @@index([dept_code], map: "personnel_department_dept_code_215a9448_like")
+//   @@index([parent_dept_id], map: "personnel_department_parent_dept_id_d0b44024")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_employee {
+//   id                               Int                                @id @default(autoincrement())
+//   create_time                      DateTime?                          @db.Timestamptz(6)
+//   create_user                      String?                            @db.VarChar(150)
+//   change_time                      DateTime?                          @db.Timestamptz(6)
+//   change_user                      String?                            @db.VarChar(150)
+//   status                           Int                                @db.SmallInt
+//   emp_code                         BigInt                             @unique
+//   first_name                       String?                            @db.VarChar(50)
+//   last_name                        String?                            @db.VarChar(25)
+//   nickname                         String?                            @db.VarChar(25)
+//   passport                         String?                            @db.VarChar(30)
+//   driver_license_automobile        String?                            @db.VarChar(30)
+//   driver_license_motorcycle        String?                            @db.VarChar(30)
+//   photo                            String?                            @db.VarChar(200)
+//   self_password                    String?                            @db.VarChar(128)
+//   device_password                  String?                            @db.VarChar(20)
+//   dev_privilege                    Int?
+//   card_no                          String?                            @db.VarChar(20)
+//   acc_group                        String?                            @db.VarChar(5)
+//   acc_timezone                     String?                            @db.VarChar(20)
+//   gender                           String?                            @db.VarChar(1)
+//   birthday                         DateTime?                          @db.Date
+//   address                          String?                            @db.VarChar(200)
+//   postcode                         String?                            @db.VarChar(10)
+//   office_tel                       String?                            @db.VarChar(20)
+//   contact_tel                      String?                            @db.VarChar(20)
+//   mobile                           String?                            @db.VarChar(30)
+//   national_num                     String?                            @db.VarChar(50)
+//   payroll_num                      String?                            @db.VarChar(50)
+//   internal_emp_num                 String?                            @db.VarChar(50)
+//   national                         String?                            @db.VarChar(50)
+//   religion                         String?                            @db.VarChar(20)
+//   title                            String?                            @db.VarChar(20)
+//   enroll_sn                        String?                            @db.VarChar(20)
+//   ssn                              String?                            @db.VarChar(20)
+//   update_time                      DateTime?                          @db.Timestamptz(6)
+//   hire_date                        DateTime?                          @db.Date
+//   verify_mode                      Int?
+//   city                             String?                            @db.VarChar(20)
+//   is_admin                         Boolean
+//   emp_type                         Int?
+//   enable_att                       Boolean
+//   enable_payroll                   Boolean
+//   enable_overtime                  Boolean
+//   enable_holiday                   Boolean
+//   deleted                          Boolean
+//   reserved                         Int?
+//   del_tag                          Int?
+//   app_status                       Int?                               @db.SmallInt
+//   app_role                         Int?                               @db.SmallInt
+//   email                            String?                            @db.VarChar(50)
+//   last_login                       DateTime?                          @db.Timestamptz(6)
+//   is_active                        Boolean
+//   vacation_rule                    Int?                               @db.SmallInt
+//   company_id                       Int?
+//   department_id                    Int?
+//   position_id                      Int?
+//   acc_accprivilege                 acc_accprivilege[]
+//   att_attschedule                  att_attschedule[]
+//   att_changeschedule               att_changeschedule[]
+//   att_leave                        att_leave[]
+//   att_manuallog                    att_manuallog[]
+//   att_overtime                     att_overtime[]
+//   att_payloadbase                  att_payloadbase[]
+//   att_payloadmulpunchset           att_payloadmulpunchset[]
+//   att_payloadpunch                 att_payloadpunch[]
+//   att_tempschedule                 att_tempschedule[]
+//   att_training                     att_training[]
+//   att_vacationemployee             att_vacationemployee[]
+//   base_departmentalert             base_departmentalert?
+//   base_messengersentlog            base_messengersentlog[]
+//   base_messengersetting            base_messengersetting?
+//   base_personalalert_employee      base_personalalert_employee[]
+//   ep_eptransaction                 ep_eptransaction[]
+//   iclock_biodata                   iclock_biodata[]
+//   iclock_biophoto                  iclock_biophoto[]
+//   iclock_privatemessage            iclock_privatemessage[]
+//   iclock_transaction               iclock_transaction[]
+//   mobile_announcement              mobile_announcement[]
+//   mobile_appnotification           mobile_appnotification[]
+//   mobile_gpsforemployee            mobile_gpsforemployee[]
+//   payroll_emploan                  payroll_emploan[]
+//   payroll_emppayrollprofile        payroll_emppayrollprofile?
+//   payroll_extradeduction           payroll_extradeduction[]
+//   payroll_extraincrease            payroll_extraincrease[]
+//   payroll_monthlysalary            payroll_monthlysalary[]
+//   payroll_reimbursement            payroll_reimbursement[]
+//   payroll_salaryadvance            payroll_salaryadvance[]
+//   payroll_salarystructure          payroll_salarystructure[]
+//   personnel_assignareaemployee     personnel_assignareaemployee[]
+//   personnel_company                personnel_company?                 @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_company_id_95b3fd72_fk_personnel_company_id")
+//   personnel_department             personnel_department?              @relation(fields: [department_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_department_id_068bbd08_fk_personnel")
+//   personnel_position               personnel_position?                @relation(fields: [position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_position_id_c9321343_fk_personnel")
+//   personnel_employee_area          personnel_employee_area[]
+//   personnel_employee_flow_role     personnel_employee_flow_role[]
+//   personnel_employeecertification  personnel_employeecertification[]
+//   personnel_employeeprofile        personnel_employeeprofile?
+//   personnel_resign                 personnel_resign?
+//   staff_stafftoken                 staff_stafftoken?
+//   workflow_nodeinstance            workflow_nodeinstance[]
+//   workflow_workflowengine_employee workflow_workflowengine_employee[]
+//   workflow_workflowinstance        workflow_workflowinstance[]
+
+//   @@index([company_id], map: "personnel_employee_company_id_95b3fd72")
+//   @@index([department_id], map: "personnel_employee_department_id_068bbd08")
+//   @@index([position_id], map: "personnel_employee_position_id_c9321343")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_employee_area {
+//   id                 Int                @id @default(autoincrement())
+//   employee_id        Int
+//   area_id            Int
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_a_employee_id_8e5cec21_fk_personnel")
+//   personnel_area     personnel_area     @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_area_area_id_64c21925_fk_personnel_area_id")
+
+//   @@unique([employee_id, area_id], map: "personnel_employee_area_employee_id_area_id_00b3d777_uniq")
+//   @@index([area_id], map: "personnel_employee_area_area_id_64c21925")
+//   @@index([employee_id], map: "personnel_employee_area_employee_id_8e5cec21")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_employee_flow_role {
+//   id                    Int                   @id @default(autoincrement())
+//   employee_id           Int
+//   workflowrole_id       Int
+//   personnel_employee    personnel_employee    @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_f_employee_id_c27f8a56_fk_personnel")
+//   workflow_workflowrole workflow_workflowrole @relation(fields: [workflowrole_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employee_f_workflowrole_id_4704db32_fk_workflow_")
+
+//   @@unique([employee_id, workflowrole_id], map: "personnel_employee_flow__employee_id_workflowrole_46b0e5e0_uniq")
+//   @@index([employee_id], map: "personnel_employee_flow_role_employee_id_c27f8a56")
+//   @@index([workflowrole_id], map: "personnel_employee_flow_role_workflowrole_id_4704db32")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_employeecertification {
+//   id                      Int                     @id @default(autoincrement())
+//   expire_on               DateTime?               @db.Date
+//   email_alert             Boolean
+//   before                  Int?
+//   file_name               String?                 @db.VarChar(200)
+//   file                    String?                 @db.VarChar(200)
+//   certification_id        Int
+//   employee_id             Int
+//   personnel_certification personnel_certification @relation(fields: [certification_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employeece_certification_id_faabed40_fk_personnel")
+//   personnel_employee      personnel_employee      @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employeece_employee_id_b7bd3867_fk_personnel")
+
+//   @@unique([employee_id, certification_id], map: "personnel_employeecertif_employee_id_certificatio_7bcf4c7d_uniq")
+//   @@index([certification_id], map: "personnel_employeecertification_certification_id_faabed40")
+//   @@index([employee_id], map: "personnel_employeecertification_employee_id_b7bd3867")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_employeeprofile {
+//   id                 Int                @id @default(autoincrement())
+//   column_order       String
+//   disabled_fields    String
+//   preferences        String
+//   pwd_update_time    DateTime?          @db.Timestamptz(6)
+//   emp_id             Int                @unique
+//   personnel_employee personnel_employee @relation(fields: [emp_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_employeepr_emp_id_3a69c313_fk_personnel")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_position {
+//   id                       Int                       @id @default(autoincrement())
+//   position_code            String                    @unique @db.VarChar(50)
+//   position_name            String                    @db.VarChar(100)
+//   is_default               Boolean
+//   company_id               Int?
+//   parent_position_id       Int?
+//   personnel_employee       personnel_employee[]
+//   personnel_company        personnel_company?        @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_position_company_id_f06c5d2a_fk_personnel_company_id")
+//   personnel_position       personnel_position?       @relation("personnel_positionTopersonnel_position", fields: [parent_position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_position_parent_position_id_a496a36b_fk_personnel")
+//   other_personnel_position personnel_position[]      @relation("personnel_positionTopersonnel_position")
+//   workflow_workflowengine  workflow_workflowengine[]
+
+//   @@index([company_id], map: "personnel_position_company_id_f06c5d2a")
+//   @@index([parent_position_id], map: "personnel_position_parent_position_id_a496a36b")
+//   @@index([position_code], map: "personnel_position_position_code_4ff57828_like")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model personnel_resign {
+//   id                 Int                @id @default(autoincrement())
+//   resign_date        DateTime           @db.Date
+//   resign_type        Int?
+//   disableatt         Boolean
+//   reason             String?            @db.VarChar(200)
+//   company_id         Int?
+//   employee_id        Int                @unique
+//   personnel_company  personnel_company? @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_resign_company_id_a02da327_fk_personnel_company_id")
+//   personnel_employee personnel_employee @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "personnel_resign_employee_id_dd9b7e08_fk_personnel_employee_id")
+
+//   @@index([company_id], map: "personnel_resign_company_id_a02da327")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model staff_stafftoken {
+//   key                String             @id @db.VarChar(40)
+//   created            DateTime           @db.Timestamptz(6)
+//   user_id            Int                @unique
+//   personnel_employee personnel_employee @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "staff_stafftoken_user_id_39c937fa_fk_personnel_employee_id")
+
+//   @@index([key], map: "staff_stafftoken_key_af7789a4_like")
+// }
+
+// model sync_area {
+//   id          Int       @id @default(autoincrement())
+//   post_time   DateTime? @db.Timestamptz(6)
+//   flag        Int       @db.SmallInt
+//   update_time DateTime? @db.Timestamptz(6)
+//   sync_ret    String?   @db.VarChar(200)
+//   area_code   String    @db.VarChar(30)
+//   area_name   String    @db.VarChar(100)
+
+//   @@unique([area_code, area_name], map: "sync_area_area_code_area_name_200046d1_uniq")
+// }
+
+// model sync_department {
+//   id          Int       @id @default(autoincrement())
+//   post_time   DateTime? @db.Timestamptz(6)
+//   flag        Int       @db.SmallInt
+//   update_time DateTime? @db.Timestamptz(6)
+//   sync_ret    String?   @db.VarChar(200)
+//   dept_code   String    @db.VarChar(50)
+//   dept_name   String    @db.VarChar(100)
+
+//   @@unique([dept_code, dept_name], map: "sync_department_dept_code_dept_name_93923213_uniq")
+// }
+
+// model sync_employee {
+//   id            Int       @id @default(autoincrement())
+//   post_time     DateTime? @db.Timestamptz(6)
+//   flag          Int       @db.SmallInt
+//   update_time   DateTime? @db.Timestamptz(6)
+//   sync_ret      String?   @db.VarChar(200)
+//   emp_code      String    @unique(map: "sync_employee_emp_code_521bf06d_uniq") @db.VarChar(20)
+//   first_name    String?   @db.VarChar(50)
+//   last_name     String?   @db.VarChar(25)
+//   dept_code     String?   @db.VarChar(50)
+//   dept_name     String?   @db.VarChar(100)
+//   job_code      String?   @db.VarChar(50)
+//   job_name      String?   @db.VarChar(100)
+//   area_code     String?   @db.VarChar(30)
+//   area_name     String?   @db.VarChar(100)
+//   card_no       String?   @db.VarChar(20)
+//   multi_area    Boolean
+//   hire_date     DateTime? @db.Date
+//   gender        String?   @db.VarChar(2)
+//   birthday      DateTime? @db.Date
+//   email         String?   @db.VarChar(100)
+//   active_status Boolean
+// }
+
+// model sync_job {
+//   id          Int       @id @default(autoincrement())
+//   post_time   DateTime? @db.Timestamptz(6)
+//   flag        Int       @db.SmallInt
+//   update_time DateTime? @db.Timestamptz(6)
+//   sync_ret    String?   @db.VarChar(200)
+//   job_code    String    @db.VarChar(50)
+//   job_name    String    @db.VarChar(100)
+
+//   @@unique([job_code, job_name], map: "sync_job_job_code_job_name_4ec5619e_uniq")
+// }
+
+// model workflow_abstractexception {
+//   id                        Int                        @id @default(autoincrement())
+//   audit_status              Int                        @db.SmallInt
+//   revoke_reason             String?
+//   att_changeschedule        att_changeschedule?
+//   att_leave                 att_leave?
+//   att_manuallog             att_manuallog?
+//   att_overtime              att_overtime?
+//   att_training              att_training?
+//   workflow_workflowinstance workflow_workflowinstance?
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_nodeinstance {
+//   id                        Int                        @id @default(autoincrement())
+//   name                      String                     @db.VarChar(200)
+//   order                     Int                        @db.SmallInt
+//   state                     Int                        @db.SmallInt
+//   is_last_node              Boolean
+//   is_next_node              Boolean
+//   remark                    String?                    @db.VarChar(255)
+//   apply_time                DateTime?                  @db.Timestamptz(6)
+//   approver_admin_id         Int?
+//   approver_employee_id      Int?
+//   departments_id            Int?
+//   node_engine_id            Int?
+//   workflow_instance_id      Int?
+//   auth_user                 auth_user?                 @relation(fields: [approver_admin_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_nodeinstanc_approver_admin_id_dff58806_fk_auth_user")
+//   personnel_employee        personnel_employee?        @relation(fields: [approver_employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_nodeinstanc_approver_employee_id_d36cd45d_fk_personnel")
+//   personnel_department      personnel_department?      @relation(fields: [departments_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_nodeinstanc_departments_id_b0dc2bdb_fk_personnel")
+//   workflow_workflownode     workflow_workflownode?     @relation(fields: [node_engine_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_nodeinstanc_node_engine_id_4533f12d_fk_workflow_")
+//   workflow_workflowinstance workflow_workflowinstance? @relation(fields: [workflow_instance_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_nodeinstanc_workflow_instance_id_afe84fe4_fk_workflow_")
+
+//   @@index([approver_admin_id], map: "workflow_nodeinstance_approver_admin_id_dff58806")
+//   @@index([approver_employee_id], map: "workflow_nodeinstance_approver_employee_id_d36cd45d")
+//   @@index([departments_id], map: "workflow_nodeinstance_departments_id_b0dc2bdb")
+//   @@index([node_engine_id], map: "workflow_nodeinstance_node_engine_id_4533f12d")
+//   @@index([workflow_instance_id], map: "workflow_nodeinstance_workflow_instance_id_afe84fe4")
+// }
+
+// model workflow_state {
+//   id   Int    @id @default(autoincrement())
+//   name String @db.VarChar(255)
+//   code String @db.VarChar(255)
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflowengine {
+//   id                               Int                                @id @default(autoincrement())
+//   create_time                      DateTime?                          @db.Timestamptz(6)
+//   create_user                      String?                            @db.VarChar(150)
+//   change_time                      DateTime?                          @db.Timestamptz(6)
+//   change_user                      String?                            @db.VarChar(150)
+//   status                           Int                                @db.SmallInt
+//   workflow_code                    String                             @db.VarChar(50)
+//   workflow_name                    String                             @db.VarChar(50)
+//   start_date                       DateTime                           @db.Date
+//   end_date                         DateTime                           @db.Date
+//   description                      String                             @db.VarChar(50)
+//   workflow_type                    Int                                @db.SmallInt
+//   inform_type                      Int                                @db.SmallInt
+//   del_flag                         Int?                               @db.SmallInt
+//   applicant_position_id            Int?
+//   company_id                       Int?
+//   content_type_id                  Int?
+//   departments_id                   Int?
+//   personnel_position               personnel_position?                @relation(fields: [applicant_position_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workfloweng_applicant_position_i_8a65e03a_fk_personnel")
+//   personnel_company                personnel_company?                 @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workfloweng_company_id_c42adcb0_fk_personnel")
+//   django_content_type              django_content_type?               @relation(fields: [content_type_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workfloweng_content_type_id_f7345c20_fk_django_co")
+//   personnel_department             personnel_department?              @relation(fields: [departments_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workfloweng_departments_id_0f06d4c7_fk_personnel")
+//   workflow_workflowengine_employee workflow_workflowengine_employee[]
+//   workflow_workflowinstance        workflow_workflowinstance[]
+
+//   @@unique([workflow_code, company_id], map: "workflow_workflowengine_workflow_code_company_id_8f99f5dd_uniq")
+//   @@index([applicant_position_id], map: "workflow_workflowengine_applicant_position_id_8a65e03a")
+//   @@index([company_id], map: "workflow_workflowengine_company_id_c42adcb0")
+//   @@index([content_type_id], map: "workflow_workflowengine_content_type_id_f7345c20")
+//   @@index([departments_id], map: "workflow_workflowengine_departments_id_0f06d4c7")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflowengine_employee {
+//   id                      Int                     @id @default(autoincrement())
+//   workflowengine_id       Int
+//   employee_id             Int
+//   personnel_employee      personnel_employee      @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workfloweng_employee_id_803a409e_fk_personnel")
+//   workflow_workflowengine workflow_workflowengine @relation(fields: [workflowengine_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workfloweng_workflowengine_id_6ebcc5f2_fk_workflow_")
+
+//   @@unique([workflowengine_id, employee_id], map: "workflow_workflowengine__workflowengine_id_employ_8128deb2_uniq")
+//   @@index([employee_id], map: "workflow_workflowengine_employee_employee_id_803a409e")
+//   @@index([workflowengine_id], map: "workflow_workflowengine_employee_workflowengine_id_6ebcc5f2")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflowinstance {
+//   id                         Int                         @id @default(autoincrement())
+//   workflow_code              String                      @db.VarChar(255)
+//   workflow_name              String                      @db.VarChar(255)
+//   start_date                 DateTime                    @db.Date
+//   end_date                   DateTime                    @db.Date
+//   issue_date                 DateTime                    @db.Date
+//   description                String                      @db.VarChar(255)
+//   content_type               Int
+//   inform_type                Int                         @db.SmallInt
+//   del_flag                   Boolean
+//   employee_id                Int
+//   exception_id               Int?                        @unique
+//   workflow_engine_id         Int?
+//   workflow_nodeinstance      workflow_nodeinstance[]
+//   personnel_employee         personnel_employee          @relation(fields: [employee_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflowins_employee_id_c7cff08e_fk_personnel")
+//   workflow_abstractexception workflow_abstractexception? @relation(fields: [exception_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflowins_exception_id_6c82a5d8_fk_workflow_")
+//   workflow_workflowengine    workflow_workflowengine?    @relation(fields: [workflow_engine_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflowins_workflow_engine_id_1e6ac40f_fk_workflow_")
+
+//   @@index([employee_id], map: "workflow_workflowinstance_employee_id_c7cff08e")
+//   @@index([workflow_engine_id], map: "workflow_workflowinstance_workflow_engine_id_1e6ac40f")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflownode {
+//   id                             Int                              @id @default(autoincrement())
+//   create_time                    DateTime?                        @db.Timestamptz(6)
+//   create_user                    String?                          @db.VarChar(150)
+//   change_time                    DateTime?                        @db.Timestamptz(6)
+//   change_user                    String?                          @db.VarChar(150)
+//   status                         Int                              @db.SmallInt
+//   node_code                      String                           @db.VarChar(30)
+//   node_name                      String                           @db.VarChar(30)
+//   order_id                       Int
+//   approver_type                  Int?                             @db.SmallInt
+//   notifier_type                  Int?                             @db.SmallInt
+//   approver_by_overall            Boolean
+//   notify_by_overall              Boolean
+//   workflow_engine                Int
+//   workflow_engine_name           String                           @db.VarChar(50)
+//   company_id                     Int?
+//   workflow_nodeinstance          workflow_nodeinstance[]
+//   personnel_company              personnel_company?               @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflownod_company_id_44989997_fk_personnel")
+//   workflow_workflownode_approver workflow_workflownode_approver[]
+//   workflow_workflownode_notifier workflow_workflownode_notifier[]
+
+//   @@index([company_id], map: "workflow_workflownode_company_id_44989997")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflownode_approver {
+//   id                    Int                   @id @default(autoincrement())
+//   workflownode_id       Int
+//   workflowrole_id       Int
+//   workflow_workflownode workflow_workflownode @relation(fields: [workflownode_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflownod_workflownode_id_d814c941_fk_workflow_")
+//   workflow_workflowrole workflow_workflowrole @relation(fields: [workflowrole_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflownod_workflowrole_id_c8e00d42_fk_workflow_")
+
+//   @@unique([workflownode_id, workflowrole_id], map: "workflow_workflownode_ap_workflownode_id_workflow_7543ba37_uniq")
+//   @@index([workflownode_id], map: "workflow_workflownode_approver_workflownode_id_d814c941")
+//   @@index([workflowrole_id], map: "workflow_workflownode_approver_workflowrole_id_c8e00d42")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflownode_notifier {
+//   id                    Int                   @id @default(autoincrement())
+//   workflownode_id       Int
+//   workflowrole_id       Int
+//   workflow_workflownode workflow_workflownode @relation(fields: [workflownode_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflownod_workflownode_id_57298016_fk_workflow_")
+//   workflow_workflowrole workflow_workflowrole @relation(fields: [workflowrole_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflownod_workflowrole_id_73de7fc2_fk_workflow_")
+
+//   @@unique([workflownode_id, workflowrole_id], map: "workflow_workflownode_no_workflownode_id_workflow_cac02b37_uniq")
+//   @@index([workflownode_id], map: "workflow_workflownode_notifier_workflownode_id_57298016")
+//   @@index([workflowrole_id], map: "workflow_workflownode_notifier_workflowrole_id_73de7fc2")
+// }
+
+// /// This model has constraints using non-default deferring rules and requires additional setup for migrations. Visit https://pris.ly/d/constraint-deferring for more info.
+// model workflow_workflowrole {
+//   id                             Int                              @id @default(autoincrement())
+//   create_time                    DateTime?                        @db.Timestamptz(6)
+//   create_user                    String?                          @db.VarChar(150)
+//   change_time                    DateTime?                        @db.Timestamptz(6)
+//   change_user                    String?                          @db.VarChar(150)
+//   status                         Int                              @db.SmallInt
+//   role_code                      String                           @db.VarChar(30)
+//   role_name                      String                           @db.VarChar(50)
+//   description                    String?                          @db.VarChar(200)
+//   company_id                     Int?
+//   personnel_employee_flow_role   personnel_employee_flow_role[]
+//   workflow_workflownode_approver workflow_workflownode_approver[]
+//   workflow_workflownode_notifier workflow_workflownode_notifier[]
+//   personnel_company              personnel_company?               @relation(fields: [company_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "workflow_workflowrol_company_id_bbb75590_fk_personnel")
+
+//   @@unique([role_code, company_id], map: "workflow_workflowrole_role_code_company_id_b3f06ba6_uniq")
+//   @@unique([role_name, company_id], map: "workflow_workflowrole_role_name_company_id_0270d4c3_uniq")
+//   @@index([company_id], map: "workflow_workflowrole_company_id_bbb75590")
+// }

@@ -29,6 +29,8 @@ import { BloodTypeModule } from './blood-type/blood-type.module';
 import { JustificationModule } from './justification/justification.module';
 import { JustificationFileModule } from './justification-file/justification-file.module';
 import { JustificationSupabaseModule } from './justification-supabase/justification-supabase.module';
+import { PrismaBiotimeModule } from './prisma-biotime/prisma-biotime.module';
+// import { BiotimeModule } from './biotime/biotime.module';
 
 @Module({
   imports: [
@@ -63,6 +65,8 @@ import { JustificationSupabaseModule } from './justification-supabase/justificat
     JustificationModule,
     JustificationFileModule,
     JustificationSupabaseModule,
+    PrismaBiotimeModule,
+    // BiotimeModule,
   ],
   controllers: [],
   providers: [],
