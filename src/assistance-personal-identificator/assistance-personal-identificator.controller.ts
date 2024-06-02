@@ -43,4 +43,14 @@ export class AssistancePersonalIdentificatorController {
   async delete(@Param('id', ParseIntPipe) id: number): Promise<any> {
     return this.assistancePersonalIdentificatorService.delete(id);
   }
+
+  // Get by personalId
+  @Get('personal/:personalId')
+  async findByPersonalId(
+    @Param('personalId', ParseIntPipe) personalId: number,
+  ): Promise<any[]> {
+    return this.assistancePersonalIdentificatorService.findByPersonalId(
+      personalId,
+    );
+  }
 }

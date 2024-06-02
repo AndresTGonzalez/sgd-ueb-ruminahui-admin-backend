@@ -162,7 +162,7 @@ model JustificationFile {
   id              Int           @id @default(autoincrement())
   justificationId Int
   Justification   Justification @relation(fields: [justificationId], references: [id])
-  documentRout    String
+  documentRoute   String
 }
 
 model JustificationStatus {
@@ -240,5 +240,12 @@ model Assistance {
   clockCheck                        DateTime
   assistancePersonalIdentificatorId Int
   AssistancePersonalIdentificator   AssistancePersonalIdentificator @relation(fields: [assistancePersonalIdentificatorId], references: [id])
-  onTime                            Boolean
+  AssistanceStatus                  AssistanceStatus?               @relation(fields: [assistanceStatusId], references: [id])
+  assistanceStatusId                Int?
+}
+
+model AssistanceStatus {
+  id         Int          @id @default(autoincrement())
+  name       String
+  Assistance Assistance[]
 }

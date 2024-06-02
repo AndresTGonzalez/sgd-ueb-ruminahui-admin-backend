@@ -39,6 +39,20 @@ export class AssistancePersonalIdentificatorService {
     });
   }
 
+  async findByPersonalId(personalId: number) {
+    const records =
+      await this.prismaService.assistancePersonalIdentificator.findMany({
+        where: { personalId },
+        include: { AssistanceDispositive: true },
+      });
+
+    return records.map((record) => ({
+      id: record.id,
+      code: record.code,
+      dispositive: record.AssistanceDispositive.name,
+    }));
+  }
+
   // Delete by personalId
   async deleteByPersonalId(personalId: number) {
     return this.prismaService.assistancePersonalIdentificator.deleteMany({

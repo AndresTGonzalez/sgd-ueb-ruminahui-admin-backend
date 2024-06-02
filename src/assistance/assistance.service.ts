@@ -40,7 +40,8 @@ export class AssistanceService {
       names: record.AssistancePersonalIdentificator.Personal.names,
       lastNames: record.AssistancePersonalIdentificator.Personal.lastNames,
       clockCheck: record.clockCheck,
-      onTime: record.onTime,
+      // onTime: record.onTime,
+      assistanceStatusId: record.assistanceStatusId,
     }));
   }
 
@@ -175,109 +176,228 @@ export class AssistanceService {
 
   async sync() {
     await this.syncFromSupabase();
-    await this.syncFromZKTeco();
-    await this.syncFromHikvision();
+    // await this.syncFromZKTeco();
+    // await this.syncFromHikvision();
   }
 
-  async syncFromSupabase(): Promise<Boolean> {
+  async syncFromSupabase(): Promise<any> {
     const supabase = createClient(
-      this.configService.get('SUPABASE_URL'),
-      this.configService.get('SUPABASE_KEY'),
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_KEY!,
     );
+
     const { data, error } = await supabase
       .from('assistance')
       .select('*')
       .eq('sync_status', false);
 
     if (error) {
-      throw new Error('Error al obtener los registros de asistencias' + error);
+      throw new Error(
+        'Error al obtener los registros de asistencias: ' + error.message,
+      );
     }
-    console.log(data);
-    const assistances: AssistanceSupabaseFetch[] = data;
+
+    const assistances = data;
+
+    if (assistances.length === 0) {
+      console.log('No hay registros de asistencia para sincronizar.');
+      return true;
+    }
+
+    let startDate: Date | null = null;
+    const endDate = new Date();
 
     for (const assistance of assistances) {
       const assistancePersonalIdentificator =
-        await this.assistancePersonalIdentificatorService.findByCode(
-          assistance.user_uuid,
-        );
-      console.log(assistancePersonalIdentificator);
+        await this.prismaService.assistancePersonalIdentificator.findFirst({
+          where: { code: assistance.user_uuid },
+        });
+
+      if (!assistancePersonalIdentificator) continue;
+
+      const clockCheckDate = new Date(assistance.clock_check);
+
+      if (!startDate || clockCheckDate < startDate) {
+        startDate = clockCheckDate;
+      }
+
       const newAssistance = {
         assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
-        clockCheck: new Date(assistance.clock_check),
-        onTime: await this.verifyOnTime(
-          new Date(assistance.clock_check),
+        clockCheck: clockCheckDate,
+        // onTime: await this.verifyOnTime(
+        //   clockCheckDate,
+        //   assistancePersonalIdentificator.personalId,
+        // ),
+        assistanceStatusId: await this.verifyOnTime(
+          clockCheckDate,
           assistancePersonalIdentificator.personalId,
-        ),
+        ), // Código para asistencia
       };
-      const response = await this.create(newAssistance);
 
-      const updatedAssistance = await supabase
+      await this.prismaService.assistance.create({ data: newAssistance });
+
+      await supabase
         .from('assistance')
         .update({ sync_status: true })
         .eq('id', assistance.id);
     }
+    if (startDate) {
+      await this.checkForAbsences(startDate, endDate);
+    }
     return true;
   }
 
-  // TODO: Implementar
-  async syncFromZKTeco() {}
-
-  // TODO: Implementar
-  async syncFromHikvision() {}
-
-  async verifyOnTime(clockCheck: Date, personalId: number) {
+  async verifyOnTime(clockCheck: Date, personalId: number): Promise<any> {
     const clockCheckDate = new Date(clockCheck);
-
     const clockCheckHour = clockCheckDate.getUTCHours();
     const clockCheckMinutes = clockCheckDate.getMinutes();
-
     const clockCheckDay = clockCheckDate.getDay();
 
-    // Obtener el horario del personal para el día de la semana
     const personalSchedule =
-      await this.personalScheduleService.findByPersonalIdAndDay(
-        personalId,
-        clockCheckDay,
-      );
+      await this.prismaService.personalSchedule.findFirst({
+        where: {
+          personalId,
+          dayOfWeek: clockCheckDay,
+        },
+      });
 
-    console.log(personalSchedule);
-    console.log(clockCheck);
-    // Obtener la hora de entrada y salida del personal
-    const entryTime = personalSchedule[0].start;
-    const departureTime = personalSchedule[0].end;
+    if (!personalSchedule) {
+      console.log('No schedule found for this day.');
+      return 4;
+    }
 
-    // Seoarar la hora, minutos y segundos de la hora de entrada
-    const [entryHour, entryMinutes, entrySeconds] = entryTime.split(':');
-    const [departureHour, departureMinutes, departureSeconds] =
-      departureTime.split(':');
+    const [entryHour, entryMinutes] = personalSchedule.start
+      .split(':')
+      .map(Number);
+    const [departureHour, departureMinutes] = personalSchedule.end
+      .split(':')
+      .map(Number);
 
-    // Pasear a entero la hora, minutos y segundos de la hora de entrada
-    const entryHourInt = parseInt(entryHour);
-    const entryMinutesInt = parseInt(entryMinutes);
-
-    // Pasear a entero la hora, minutos y segundos de la hora de salida
-    const departureHourInt = parseInt(departureHour);
-    const departureMinutesInt = parseInt(departureMinutes);
-
-    if (clockCheckHour === entryHourInt) {
-      if (Math.abs(clockCheckMinutes - entryMinutesInt) <= 2) {
+    if (clockCheckHour === entryHour) {
+      if (Math.abs(clockCheckMinutes - entryMinutes) <= 2) {
         console.log('Entrada a tiempo');
-        return true;
+        return 1; // Código para a tiempo
       } else {
         console.log('Entrada tarde');
-        return false;
+        return 2; // Código para tarde
       }
-    } else if (clockCheckHour === departureHourInt) {
-      if (Math.abs(clockCheckMinutes - departureMinutesInt) <= 2) {
+    } else if (clockCheckHour === departureHour) {
+      if (Math.abs(clockCheckMinutes - departureMinutes) <= 2) {
         console.log('Salida a tiempo');
-        return true;
+        return 1; // Código para a tiempo
       } else {
         console.log('Salida a deshora');
-        return false;
+        return 2; // Código para tarde
       }
     } else {
       console.log('Fuera de horario');
-      return false;
+      return 4; // Código para inconsistencia
     }
+  }
+
+  async checkForAbsences(startDate: Date, endDate: Date): Promise<any> {
+    const employees = await this.prismaService.personal.findMany();
+
+    for (const employee of employees) {
+      let currentDate = new Date(startDate);
+
+      while (currentDate <= endDate) {
+        const clockCheckDay = currentDate.getDay();
+
+        const personalSchedule =
+          await this.prismaService.personalSchedule.findFirst({
+            where: {
+              personalId: employee.id,
+              dayOfWeek: clockCheckDay,
+            },
+          });
+        if (!personalSchedule) {
+          currentDate.setDate(currentDate.getDate() + 1);
+          continue; // Si no hay horario programado, saltar al siguiente día
+        }
+
+        const startOfDay = new Date(currentDate);
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date(currentDate);
+        // endOfDay.setHours(23, 59, 59, 999);
+        // Establecer la hora de endOfDay a la hora actual
+        endOfDay.setHours(
+          currentDate.getHours(),
+          currentDate.getMinutes(),
+          0,
+          0,
+        );
+
+        const assistances = await this.prismaService.assistance.findMany({
+          where: {
+            AssistancePersonalIdentificator: {
+              personalId: employee.id,
+            },
+            clockCheck: {
+              gte: startOfDay,
+              lt: endOfDay,
+            },
+          },
+        });
+
+        const entryHour = parseInt(personalSchedule.start.split(':')[0]);
+        const entryMinutes = parseInt(personalSchedule.start.split(':')[1]);
+
+        const departureHour = parseInt(personalSchedule.end.split(':')[0]);
+        const departureMinutes = parseInt(personalSchedule.end.split(':')[1]);
+
+        const entryRecords = assistances.filter((a) => {
+          const checkTime = new Date(a.clockCheck);
+          return (
+            checkTime.getUTCHours() === entryHour &&
+            Math.abs(checkTime.getUTCMinutes() - entryMinutes) <= 2
+          );
+        });
+
+        const exitRecords = assistances.filter((a) => {
+          const checkTime = new Date(a.clockCheck);
+          return (
+            checkTime.getUTCHours() === departureHour &&
+            Math.abs(checkTime.getUTCMinutes() - departureMinutes) <= 2
+          );
+        });
+
+        if (entryRecords.length === 0 || exitRecords.length === 0) {
+          console.log(
+            `El empleado ${employee.id} no ha registrado su asistencia correctamente el ${currentDate.toDateString()}.`,
+          );
+          await this.registerNoAssistance(employee.id, currentDate);
+        }
+
+        currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
+      }
+    }
+  }
+
+  async registerNoAssistance(personalId: number, date: Date): Promise<any> {
+    const assistancePersonalIdentificator =
+      await this.prismaService.assistancePersonalIdentificator.findFirst({
+        where: { personalId },
+      });
+
+    if (!assistancePersonalIdentificator) {
+      console.log(
+        `No se encontró el identificador de asistencia para el empleado ${personalId}.`,
+      );
+      return;
+    }
+
+    const newAssistance = {
+      assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
+      clockCheck: date, // Utilizamos la fecha proporcionada como el momento de no registro de asistencia
+      assistanceStatusId: 3, // Código para falta de asistencia
+    };
+
+    await this.prismaService.assistance.create({ data: newAssistance });
+
+    console.log(
+      `Se ha registrado la falta de asistencia del empleado ${personalId} el ${date.toDateString()}.`,
+    );
   }
 }

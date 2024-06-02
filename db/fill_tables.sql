@@ -386,3 +386,12 @@ VALUES
   (1, 'pendiente'),
   (2, 'aprobada'),
   (3, 'rechazada');
+
+-- Assistance Status
+INSERT INTO
+  public."AssistanceStatus"(id, name)
+VALUES
+  (1, 'a tiempo'),
+  (2, 'tarde'),
+  (3, 'falta'),
+  (4, 'inconsistencia');
