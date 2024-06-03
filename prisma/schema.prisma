@@ -82,8 +82,6 @@ model Personal {
   phone                           String?
   email                           String?
   birthdate                       DateTime?
-  childrens                       Int?
-  hasMinorChildren                Boolean?
   address                         String?
   genderId                        Int?
   Gender                          Gender?                           @relation(fields: [genderId], references: [id])
@@ -98,6 +96,16 @@ model Personal {
   Title                           Title[]
   Certification                   Certification[]
   MedicalPersonalData             MedicalPersonalData[]
+  PersonalChildren                PersonalChildren[]
+}
+
+model PersonalChildren {
+  id         Int      @id @default(autoincrement())
+  personalId Int
+  Personal   Personal @relation(fields: [personalId], references: [id])
+  names      String
+  lastNames  String
+  birthdate  DateTime
 }
 
 model InstitutionalPersonalData {

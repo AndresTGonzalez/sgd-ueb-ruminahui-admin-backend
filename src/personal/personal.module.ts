@@ -12,6 +12,7 @@ import { PersonalSupabaseModule } from 'src/personal-supabase/personal-supabase.
 import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.module';
 import { JustificationModule } from 'src/justification/justification.module';
 import { JustificationSupabaseModule } from 'src/justification-supabase/justification-supabase.module';
+import { PersonalChildrenModule } from 'src/personal-children/personal-children.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { JustificationSupabaseModule } from 'src/justification-supabase/justific
     PersonalSupabaseModule,
     PersonalScheduleModule,
     JustificationModule,
+    PersonalChildrenModule,
     forwardRef(() => JustificationSupabaseModule),
   ],
   exports: [PersonalService],

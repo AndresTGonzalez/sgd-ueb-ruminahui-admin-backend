@@ -11,6 +11,7 @@ import { PersonalSupabaseService } from 'src/personal-supabase/personal-supabase
 import { PersonalScheduleService } from 'src/personal-schedule/personal-schedule.service';
 import { JustificationService } from 'src/justification/justification.service';
 import { JustificationSupabaseService } from 'src/justification-supabase/justification-supabase.service';
+import { PersonalChildrenService } from 'src/personal-children/personal-children.service';
 
 @Injectable()
 export class PersonalService {
@@ -27,6 +28,7 @@ export class PersonalService {
     private readonly personalSupabaseService: PersonalSupabaseService,
     private readonly personalScheduleService: PersonalScheduleService,
     private readonly justificationService: JustificationService,
+    private readonly personalChildrenService: PersonalChildrenService,
   ) {}
 
   async findAll(): Promise<Personal[]> {
@@ -85,6 +87,7 @@ export class PersonalService {
       employee.id,
     );
     await this.institutionalPersonalDataService.deleteByPersonalId(employee.id);
+    await this.personalChildrenService.removeByPersonalId(employee.id);
     await this.medicalPersonalDataService.deleteByPersonalId(employee.id);
     await this.titleService.deleteByPersonalId(employee.id);
     await this.certificationService.deleteByPersonalId(employee.id);
