@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Justification } from '@prisma/client';
+import { JustificationFileService } from 'src/justification-file/justification-file.service';
 import { JustificationSupabaseService } from 'src/justification-supabase/justification-supabase.service';
-import { application } from 'express';
 
 @Injectable()
 export class JustificationService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly justificationFileService: JustificationFileService,
     private readonly justificationSupabase: JustificationSupabaseService,
   ) {}
 
@@ -71,12 +72,20 @@ export class JustificationService {
     return this.prisma.justification.update({ where: { id }, data });
   }
 
-  async remove(id: number) {
-    return this.prisma.justification.delete({ where: { id } });
-  }
+  async remove(id: number) {}
 
   // Sync Justifications from Supabase
   async syncJustifications() {
     return this.justificationSupabase.syncJustifications();
+  }
+
+  // Eliminar todas las justificaciones de un empleado
+  async deleteJustificationsByPersonalId(personalId: number) {
+    // Elimino todos los archivos de las justificaciones
+    await this.justificationFileService.deleteJustificationFilesByPersonalId(
+      personalId,
+    );
+    // Elimino todas las justificaciones
+    return this.prisma.justification.deleteMany({ where: { personalId } });
   }
 }

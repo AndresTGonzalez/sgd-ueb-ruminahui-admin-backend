@@ -123,7 +123,7 @@ export class PersonalSupabaseService {
       .delete()
       .eq('uuid', uuid);
     if (error) {
-      throw new Error('Error eliminando en Supabase' + error);
+      throw new Error('Error eliminando en Supabase' + error.message);
     }
     return true;
   }

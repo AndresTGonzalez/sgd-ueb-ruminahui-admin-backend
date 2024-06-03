@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PersonalService } from './personal.service';
 import { PersonalController } from './personal.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
@@ -9,6 +9,9 @@ import { AssistanceModule } from 'src/assistance/assistance.module';
 import { TitleModule } from 'src/title/title.module';
 import { CertificationModule } from 'src/certification/certification.module';
 import { PersonalSupabaseModule } from 'src/personal-supabase/personal-supabase.module';
+import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.module';
+import { JustificationModule } from 'src/justification/justification.module';
+import { JustificationSupabaseModule } from 'src/justification-supabase/justification-supabase.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { PersonalSupabaseModule } from 'src/personal-supabase/personal-supabase.
     TitleModule,
     CertificationModule,
     PersonalSupabaseModule,
+    PersonalScheduleModule,
+    JustificationModule,
+    forwardRef(() => JustificationSupabaseModule),
   ],
   exports: [PersonalService],
   providers: [PersonalService],

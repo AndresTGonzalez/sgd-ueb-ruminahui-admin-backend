@@ -1,17 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createClient } from '@supabase/supabase-js';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Justification } from '@prisma/client';
 import { JustificationSupabaseFetch } from './justification-supabase.model';
 import { PersonalService } from 'src/personal/personal.service';
 
 @Injectable()
 export class JustificationSupabaseService {
   constructor(
+    @Inject(forwardRef(() => PersonalService))
+    private readonly personalService: PersonalService,
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
-    private readonly personalService: PersonalService,
+    // private readonly personalService: PersonalService,
   ) {}
 
   // Sync Justifications from Supabase
@@ -66,5 +67,24 @@ export class JustificationSupabaseService {
         .update({ syncStatus: true })
         .eq('id', justification.id);
     }
+  }
+
+  // Delete Justifications by UUID de solo de supabase
+  async deleteJustifications(uuid: string) {
+    const supabase = createClient(
+      this.configService.get('SUPABASE_URL'),
+      this.configService.get('SUPABASE_KEY'),
+    );
+
+    const { data, error } = await supabase
+      .from('justification')
+      .delete()
+      .eq('uuid', uuid);
+
+    if (error) {
+      throw new Error('Error eliminando justificación' + error.message);
+    }
+
+    return data;
   }
 }

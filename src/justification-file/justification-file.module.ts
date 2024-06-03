@@ -7,5 +7,6 @@ import { PrismaModule } from 'src/prisma/prisma.module';
   imports: [PrismaModule],
   providers: [JustificationFileService],
   controllers: [JustificationFileController],
+  exports: [JustificationFileService],
 })
 export class JustificationFileModule {}
