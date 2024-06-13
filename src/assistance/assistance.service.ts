@@ -224,10 +224,6 @@ export class AssistanceService {
       const newAssistance = {
         assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
         clockCheck: clockCheckDate,
-        // onTime: await this.verifyOnTime(
-        //   clockCheckDate,
-        //   assistancePersonalIdentificator.personalId,
-        // ),
         assistanceStatusId: await this.verifyOnTime(
           clockCheckDate,
           assistancePersonalIdentificator.personalId,

@@ -1,0 +1,24 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma-ivms/prisma/client"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_IVMS_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model logs {
+  ID           String?   @db.NVarChar(100)
+  AuthDateTime DateTime? @db.DateTime
+  AuthDate     DateTime? @db.Date
+  AuthTime     DateTime? @db.Time
+  Direction    String?   @db.NVarChar(100)
+  DeviceName   String?   @db.NVarChar(100)
+  DeviceSerial String?   @db.NVarChar(100)
+  PersonName   String?   @db.NVarChar(100)
+  CardNo       String?   @db.NVarChar(100)
+
+  @@ignore
+}
