@@ -8,8 +8,8 @@ datasource db {
   url      = env("DATABASE_IVMS_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model logs {
+  LogId        Int       @id(map: "PK__NewLogs__5E548648D7A3FC09") @default(autoincrement())
   ID           String?   @db.NVarChar(100)
   AuthDateTime DateTime? @db.DateTime
   AuthDate     DateTime? @db.Date
@@ -19,6 +19,5 @@ model logs {
   DeviceSerial String?   @db.NVarChar(100)
   PersonName   String?   @db.NVarChar(100)
   CardNo       String?   @db.NVarChar(100)
-
-  @@ignore
+  SyncStatus   Int?
 }

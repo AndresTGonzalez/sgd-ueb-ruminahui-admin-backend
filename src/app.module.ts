@@ -32,6 +32,8 @@ import { JustificationSupabaseModule } from './justification-supabase/justificat
 import { PersonalChildrenModule } from './personal-children/personal-children.module';
 import { PrismaBiotimeModule } from './prisma-biotime/prisma-biotime.module';
 import { AssistanceBiotimeModule } from './assistance-biotime/assistance-biotime.module';
+import { PrismaIvmsModule } from './prisma-ivms/prisma-ivms.module';
+import { AssistanceIvmsModule } from './assistance-ivms/assistance-ivms.module';
 
 @Module({
   imports: [
@@ -69,6 +71,8 @@ import { AssistanceBiotimeModule } from './assistance-biotime/assistance-biotime
     PersonalChildrenModule,
     PrismaBiotimeModule,
     AssistanceBiotimeModule,
+    PrismaIvmsModule,
+    AssistanceIvmsModule,
   ],
   controllers: [],
   providers: [],

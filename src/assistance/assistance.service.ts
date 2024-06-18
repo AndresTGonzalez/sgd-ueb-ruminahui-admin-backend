@@ -19,7 +19,11 @@ export class AssistanceService {
 
   async findAll(): Promise<any[]> {
     const records = await this.prismaService.assistance.findMany({
+      orderBy: {
+        clockCheck: 'desc',
+      },
       include: {
+        AssistanceStatus: true,
         AssistancePersonalIdentificator: {
           include: {
             Personal: {
@@ -40,8 +44,8 @@ export class AssistanceService {
       names: record.AssistancePersonalIdentificator.Personal.names,
       lastNames: record.AssistancePersonalIdentificator.Personal.lastNames,
       clockCheck: record.clockCheck,
-      // onTime: record.onTime,
       assistanceStatusId: record.assistanceStatusId,
+      assistanceStatusTag: record.AssistanceStatus.name.toUpperCase(),
     }));
   }
 

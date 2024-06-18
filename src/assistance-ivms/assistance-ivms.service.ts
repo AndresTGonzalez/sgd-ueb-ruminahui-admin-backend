@@ -1,32 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { AssistancePersonalIdentificator } from '@prisma/client';
-import { PrismaBiotimeService } from 'src/prisma-biotime/prisma-biotime.service';
+import { PrismaIvmsService } from 'src/prisma-ivms/prisma-ivms.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
-export class AssistanceBiotimeService {
+export class AssistanceIvmsService {
   constructor(
-    private readonly prismaBiotime: PrismaBiotimeService,
     private readonly prisma: PrismaService,
+    private readonly prismaIvms: PrismaIvmsService,
   ) {}
 
-  async getAssistanceBiotime() {
-    return await this.prismaBiotime.iclock_transaction.findMany();
+  async getAssistanceIvms() {
+    return await this.prismaIvms.logs.findMany();
   }
 
-  // Get assistance by emp_code
-  async getAssistanceByEmpCode(emp_code: string) {
-    return await this.prismaBiotime.iclock_transaction.findMany({
+  async syncAssistance() {
+    // Primero se obtiene los registros de asistencia de la base de datos de biotime que tengan Null en el SyncStatus
+    const assistances = await this.prismaIvms.logs.findMany({
       where: {
-        emp_code: emp_code,
+        SyncStatus: null,
       },
     });
-  }
-
-  // Sincronizar en base de datos los registros que se tiene de un docente
-  async syncAssistance() {
-    // Primero se obtiene los registros de asistencia de la base de datos de biotime
-    const assistances = await this.prismaBiotime.iclock_transaction.findMany();
 
     let startDate: Date | null = null;
     const endDate = new Date();
@@ -36,13 +29,18 @@ export class AssistanceBiotimeService {
       // Obtener el empleado con el codigo de empleado
       const assistancePersonalIdentificator =
         await this.prisma.assistancePersonalIdentificator.findFirst({
-          where: { code: assistances[assistance].emp_code },
+          where: { code: assistances[assistance].ID },
         });
 
       // Si no se encuentra el empleado se continua al siguiente
-      if (!assistancePersonalIdentificator) continue;
+      if (!assistancePersonalIdentificator) {
+        console.log(
+          `No se encontró el empleado con el código ${assistances[assistance].ID}.`,
+        );
+        continue;
+      }
 
-      const clockCheckDate = new Date(assistances[assistance].punch_time);
+      const clockCheckDate = new Date(assistances[assistance].AuthDateTime);
 
       if (!startDate || clockCheckDate < startDate) {
         startDate = clockCheckDate;
@@ -61,13 +59,13 @@ export class AssistanceBiotimeService {
       await this.prisma.assistance.create({ data: newAssistance });
 
       // Actualizar el sync_status del registro de asistencia
-      await this.prismaBiotime.iclock_transaction.update({
-        where: { id: assistances[assistance].id },
-        data: { sync_status: 1 },
+      await this.prismaIvms.logs.update({
+        where: { LogId: assistances[assistance].LogId },
+        data: { SyncStatus: 1 },
       });
     }
     if (startDate) {
-      await this.checkForAbsences(startDate, endDate);
+      // await this.checkForAbsences(startDate, endDate);
     }
   }
 
@@ -85,7 +83,7 @@ export class AssistanceBiotimeService {
     });
 
     if (!personalSchedule) {
-      console.log('No schedule found for this day.');
+      // console.log('No schedule found for this day.');
       return 4;
     }
 
@@ -96,24 +94,30 @@ export class AssistanceBiotimeService {
       .split(':')
       .map(Number);
 
+    // Si la hora de registro es igual o menor a 1 hora entrada se debe agregar un rango
+    if (clockCheckHour === entryHour - 1) return 1;
+
+    if (clockCheckHour === departureHour + 1) return 1;
+
     if (clockCheckHour === entryHour) {
-      if (Math.abs(clockCheckMinutes - entryMinutes) <= 2) {
-        console.log('Entrada a tiempo');
+      const diff = Math.abs(clockCheckMinutes - entryMinutes);
+      if (diff <= 2) {
+        // console.log('Entrada a tiempo');
         return 1; // Código para a tiempo
       } else {
-        console.log('Entrada tarde');
+        // console.log('Entrada tarde');
         return 2; // Código para tarde
       }
     } else if (clockCheckHour === departureHour) {
-      if (Math.abs(clockCheckMinutes - departureMinutes) <= 2) {
-        console.log('Salida a tiempo');
+      if (Math.abs(clockCheckMinutes - departureMinutes) <= 59) {
+        // console.log('Salida a tiempo');
         return 1; // Código para a tiempo
       } else {
-        console.log('Salida a deshora');
+        // console.log('Salida a deshora');
         return 2; // Código para tarde
       }
     } else {
-      console.log('Fuera de horario');
+      // console.log('Fuera de horario');
       return 4; // Código para inconsistencia
     }
   }
@@ -212,7 +216,7 @@ export class AssistanceBiotimeService {
 
     const newAssistance = {
       assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
-      // Se registra en clockCheck la fecha en la que se detectó la falta de asistencia para poder hacer seguimiento
+      // clockCheck: new Date('1970-01-01T00:00:00.000Z'), // Utilizamos la siguiente fecha para registrar la falta de asistencia 01/01/1970
       clockCheck: date,
       assistanceStatusId: 3, // Código para falta de asistencia
     };

@@ -10,8 +10,15 @@ export class PersonalSupabaseService {
   async registerInSupabase(employee: Personal): Promise<string> {
     const supabase = createClient(
       this.configService.get('SUPABASE_URL'),
-      this.configService.get('SUPABASE_KEY'),
+      this.configService.get('SUPABASE_SERVICE_ROLE_KEY'),
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false,
+        },
+      },
     );
+
     const user = this.removeAccents(
       employee.names.charAt(0) + employee.lastNames.split(' ')[0],
     );
@@ -27,7 +34,8 @@ export class PersonalSupabaseService {
     });
 
     if (error) {
-      throw new Error('Error registrando en Supabase' + error);
+      console.log(error);
+      throw new Error('Error registrando usuario en Supabase' + error.message);
     }
     return data.user.id;
   }
