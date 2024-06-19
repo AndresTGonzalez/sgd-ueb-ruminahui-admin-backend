@@ -30,6 +30,11 @@ import { JustificationModule } from './justification/justification.module';
 import { JustificationFileModule } from './justification-file/justification-file.module';
 import { JustificationSupabaseModule } from './justification-supabase/justification-supabase.module';
 import { PersonalChildrenModule } from './personal-children/personal-children.module';
+import { PrismaBiotimeModule } from './prisma-biotime/prisma-biotime.module';
+import { AssistanceBiotimeModule } from './assistance-biotime/assistance-biotime.module';
+import { PrismaIvmsModule } from './prisma-ivms/prisma-ivms.module';
+import { AssistanceIvmsModule } from './assistance-ivms/assistance-ivms.module';
+import { AssistanceUtilsModule } from './assistance-utils/assistance-utils.module';
 
 @Module({
   imports: [
@@ -65,6 +70,11 @@ import { PersonalChildrenModule } from './personal-children/personal-children.mo
     JustificationFileModule,
     JustificationSupabaseModule,
     PersonalChildrenModule,
+    PrismaBiotimeModule,
+    AssistanceBiotimeModule,
+    PrismaIvmsModule,
+    AssistanceIvmsModule,
+    AssistanceUtilsModule,
   ],
   controllers: [],
   providers: [],
