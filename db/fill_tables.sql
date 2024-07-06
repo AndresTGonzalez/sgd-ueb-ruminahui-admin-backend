@@ -393,5 +393,7 @@ INSERT INTO
 VALUES
   (1, 'a tiempo'),
   (2, 'tarde'),
-  (3, 'falta'),
-  (4, 'inconsistencia');
+  (3, 'no registro'),
+  (4, 'inconsistencia'),
+  (5, 'falta');
+  ;

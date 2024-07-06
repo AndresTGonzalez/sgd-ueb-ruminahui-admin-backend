@@ -77,14 +77,7 @@ export class AssistanceUtilsService {
         startOfDay.setHours(0, 0, 0, 0);
 
         const endOfDay = new Date(currentDate);
-        // endOfDay.setHours(23, 59, 59, 999);
-        // Establecer la hora de endOfDay a la hora actual
-        endOfDay.setHours(
-          currentDate.getHours(),
-          currentDate.getMinutes(),
-          0,
-          0,
-        );
+        endOfDay.setHours(23, 59, 59, 999);
 
         const assistances = await this.prisma.assistance.findMany({
           where: {
@@ -120,9 +113,9 @@ export class AssistanceUtilsService {
           );
         });
 
-        if (entryRecords.length === 0 || exitRecords.length === 0) {
+        if (entryRecords.length === 0 && exitRecords.length === 0) {
           console.log(
-            `El empleado ${employee.id} no ha registrado su asistencia correctamente el ${currentDate.toDateString()}.`,
+            `El empleado ${employee.id} no ha registrado ni su entrada ni su salida el ${currentDate.toDateString()}.`,
           );
 
           const noAssistanceRecord = await this.prisma.assistance.findFirst({
@@ -131,23 +124,73 @@ export class AssistanceUtilsService {
                 personalId: employee.id,
               },
               clockCheck: currentDate,
+              assistanceStatusId: 5, // Tipo para salida no registrada
             },
           });
 
           if (!noAssistanceRecord) {
-            await this.registerNoAssistance(employee.id, currentDate);
+            await this.registerNoAssistance(employee.id, currentDate, 5);
           } else {
             console.log(
-              `Ya existe un registro de no asistencia para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
+              `Ya existe un registro de no asistencia para todo el día para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
+            );
+          }
+        } else if (entryRecords.length === 0) {
+          console.log(
+            `El empleado ${employee.id} no ha registrado su entrada el ${currentDate.toDateString()}.`,
+          );
+
+          const noAssistanceRecord = await this.prisma.assistance.findFirst({
+            where: {
+              AssistancePersonalIdentificator: {
+                personalId: employee.id,
+              },
+              clockCheck: currentDate,
+              assistanceStatusId: 3, // Tipo para salida no registrada
+            },
+          });
+
+          if (!noAssistanceRecord) {
+            await this.registerNoAssistance(employee.id, currentDate, 1);
+          } else {
+            console.log(
+              `Ya existe un registro de no asistencia (entrada) para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
+            );
+          }
+        } else if (exitRecords.length === 0) {
+          console.log(
+            `El empleado ${employee.id} no ha registrado su salida el ${currentDate.toDateString()}.`,
+          );
+
+          const noAssistanceRecord = await this.prisma.assistance.findFirst({
+            where: {
+              AssistancePersonalIdentificator: {
+                personalId: employee.id,
+              },
+              clockCheck: currentDate,
+              assistanceStatusId: 3, // Tipo para salida no registrada
+            },
+          });
+
+          if (!noAssistanceRecord) {
+            await this.registerNoAssistance(employee.id, currentDate, 2);
+          } else {
+            console.log(
+              `Ya existe un registro de no asistencia (salida) para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
             );
           }
         }
+
         currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
       }
     }
   }
 
-  async registerNoAssistance(personalId: number, date: Date): Promise<any> {
+  async registerNoAssistance(
+    personalId: number,
+    date: Date,
+    statusId: number,
+  ): Promise<any> {
     const assistancePersonalIdentificator =
       await this.prisma.assistancePersonalIdentificator.findFirst({
         where: { personalId },
@@ -164,7 +207,7 @@ export class AssistanceUtilsService {
       assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
       // clockCheck: new Date('1970-01-01T00:00:00.000Z'), // Utilizamos la siguiente fecha para registrar la falta de asistencia 01/01/1970
       clockCheck: date,
-      assistanceStatusId: 3, // Código para falta de asistencia
+      assistanceStatusId: statusId, // Código para falta de asistencia
     };
 
     await this.prisma.assistance.create({ data: newAssistance });

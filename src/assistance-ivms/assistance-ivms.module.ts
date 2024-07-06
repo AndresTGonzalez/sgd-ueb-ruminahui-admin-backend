@@ -9,5 +9,6 @@ import { AssistanceUtilsModule } from 'src/assistance-utils/assistance-utils.mod
   imports: [PrismaIvmsModule, PrismaModule, AssistanceUtilsModule],
   providers: [AssistanceIvmsService],
   controllers: [AssistanceIvmsController],
+  exports: [AssistanceIvmsService],
 })
 export class AssistanceIvmsModule {}

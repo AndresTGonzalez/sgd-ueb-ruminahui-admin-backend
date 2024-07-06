@@ -56,14 +56,16 @@ export class AssistanceController {
     const worksheet = workbook.addWorksheet('Assistance Report');
 
     // Agregar encabezados de columna
-    worksheet.addRow(['CÉDULA', 'NOMBRE', 'REGISTRO']);
+    worksheet.addRow(['CÉDULA', 'NOMBRE', 'FECHA', 'HORA', 'ESTADO']);
 
     // Agregar filas de datos
     assistances.forEach((assistance) => {
       worksheet.addRow([
         assistance.identificationCard,
         assistance.fullName,
-        assistance.clockCheck,
+        assistance.dateCheck,
+        assistance.hourCheck,
+        assistance.status,
       ]);
     });
 
@@ -115,13 +117,5 @@ export class AssistanceController {
   @Post('/sync')
   async syncFromSupabase() {
     return this.assistanceService.sync();
-  }
-
-  @Get('test/:clockCheck/:personalId')
-  async test(
-    @Param('clockCheck') clockCheck: Date,
-    @Param('personalId', ParseIntPipe) personalId: number,
-  ) {
-    return this.assistanceService.verifyOnTime(clockCheck, personalId);
   }
 }

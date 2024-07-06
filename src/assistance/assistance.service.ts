@@ -7,18 +7,60 @@ import { AssistancePersonalIdentificatorService } from 'src/assistance-personal-
 import { AssistanceSupabaseFetch } from './assistance-supabase.model';
 import { createAssistance } from './assistance.model';
 import { PersonalScheduleService } from 'src/personal-schedule/personal-schedule.service';
+import { AssistanceIvmsService } from 'src/assistance-ivms/assistance-ivms.service';
+import { AssistanceBiotimeService } from 'src/assistance-biotime/assistance-biotime.service';
+import { AssistanceUtilsService } from 'src/assistance-utils/assistance-utils.service';
 
 @Injectable()
 export class AssistanceService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly configService: ConfigService,
     private readonly assistancePersonalIdentificatorService: AssistancePersonalIdentificatorService,
-    private readonly personalScheduleService: PersonalScheduleService,
+    private readonly assistanceIvmsService: AssistanceIvmsService,
+    private readonly assistanceBiotimeService: AssistanceBiotimeService,
+    private readonly assistanceUtilsService: AssistanceUtilsService,
   ) {}
 
   async findAll(): Promise<any[]> {
     const records = await this.prismaService.assistance.findMany({
+      orderBy: {
+        clockCheck: 'desc',
+      },
+      include: {
+        AssistanceStatus: true,
+        AssistancePersonalIdentificator: {
+          include: {
+            Personal: {
+              select: {
+                identificationCard: true,
+                names: true,
+                lastNames: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return records.map((record) => ({
+      id: record.id,
+      identificationCard:
+        record.AssistancePersonalIdentificator.Personal.identificationCard,
+      names: record.AssistancePersonalIdentificator.Personal.names,
+      lastNames: record.AssistancePersonalIdentificator.Personal.lastNames,
+      clockCheck: record.clockCheck,
+      assistanceStatusId: record.assistanceStatusId,
+      assistanceStatusTag: record.AssistanceStatus.name.toUpperCase(),
+    }));
+  }
+
+  async getAssistancesWithinDateRangeForTable(startDate: Date, endDate: Date) {
+    const records = await this.prismaService.assistance.findMany({
+      where: {
+        clockCheck: {
+          gte: startDate, // Fecha de inicio del rango
+          lte: endDate, // Fecha de fin del rango
+        },
+      },
       orderBy: {
         clockCheck: 'desc',
       },
@@ -56,7 +98,58 @@ export class AssistanceService {
   }
 
   async getAssistancesWithinDateRange(startDate: Date, endDate: Date) {
+    const records = await this.prismaService.assistance.findMany({
+      where: {
+        clockCheck: {
+          gte: startDate, // Fecha de inicio del rango
+          lte: endDate, // Fecha de fin del rango
+        },
+      },
+      orderBy: {
+        clockCheck: 'desc',
+      },
+      include: {
+        AssistanceStatus: true,
+        AssistancePersonalIdentificator: {
+          include: {
+            Personal: {
+              select: {
+                identificationCard: true,
+                names: true,
+                lastNames: true,
+              },
+            },
+          },
+        },
+      },
+    });
+    return records.map((record) => ({
+      id: record.id,
+      identificationCard:
+        record.AssistancePersonalIdentificator.Personal.identificationCard,
+      names: record.AssistancePersonalIdentificator.Personal.names,
+      lastNames: record.AssistancePersonalIdentificator.Personal.lastNames,
+      clockCheck: record.clockCheck,
+      assistanceStatusId: record.assistanceStatusId,
+      assistanceStatusTag: record.AssistanceStatus.name.toUpperCase(),
+    }));
+  }
+
+  async getAssistancesDataWithinDateRangeForExcel(
+    startDate: Date,
+    endDate: Date,
+  ) {
     return this.prismaService.assistance.findMany({
+      orderBy: {
+        clockCheck: 'desc',
+      },
+      select: {
+        clockCheck: true,
+        id: true,
+        assistanceStatusId: true,
+        assistancePersonalIdentificatorId: true,
+        AssistanceStatus: true,
+      },
       where: {
         clockCheck: {
           gte: startDate, // Fecha de inicio del rango
@@ -69,7 +162,7 @@ export class AssistanceService {
   async getAssistancesWithinDateRangeForExcel(startDate: Date, endDate: Date) {
     let assistancesList = [];
 
-    const assistances = await this.getAssistancesWithinDateRange(
+    const assistances = await this.getAssistancesDataWithinDateRangeForExcel(
       startDate,
       endDate,
     );
@@ -90,10 +183,18 @@ export class AssistanceService {
 
       const clockCheck = assistance.clockCheck;
 
+      const dateCheck = new Date(clockCheck);
+      const hourCheck = dateCheck.getHours();
+      const minuteCheck = dateCheck.getMinutes();
+      const secondCheck = dateCheck.getSeconds();
+      const status = assistance.AssistanceStatus.name.toUpperCase();
+
       assistancesList.push({
         identificationCard,
-        fullName,
-        clockCheck,
+        fullName: fullName.toUpperCase(),
+        dateCheck: dateCheck.toLocaleDateString(),
+        hourCheck: hourCheck + ':' + minuteCheck + ':' + secondCheck,
+        status,
       });
     }
     return assistancesList;
@@ -179,9 +280,20 @@ export class AssistanceService {
   }
 
   async sync() {
-    await this.syncFromSupabase();
-    // await this.syncFromZKTeco();
-    // await this.syncFromHikvision();
+    // await this.syncFromSupabase();
+    await this.assistanceIvmsService.syncAssistance();
+    await this.assistanceBiotimeService.syncAssistance();
+    // Get the current date
+    let currentDate = new Date();
+
+    // Subtract 7 days from the current date
+    let dateOneWeekAgo = new Date();
+    dateOneWeekAgo.setDate(currentDate.getDate() - 7);
+
+    await this.assistanceUtilsService.checkForAbsences(
+      dateOneWeekAgo,
+      currentDate,
+    );
   }
 
   async syncFromSupabase(): Promise<any> {
@@ -228,7 +340,7 @@ export class AssistanceService {
       const newAssistance = {
         assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
         clockCheck: clockCheckDate,
-        assistanceStatusId: await this.verifyOnTime(
+        assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
           clockCheckDate,
           assistancePersonalIdentificator.personalId,
         ), // Código para asistencia
@@ -241,163 +353,5 @@ export class AssistanceService {
         .update({ sync_status: true })
         .eq('id', assistance.id);
     }
-    if (startDate) {
-      await this.checkForAbsences(startDate, endDate);
-    }
-    return true;
-  }
-
-  async verifyOnTime(clockCheck: Date, personalId: number): Promise<any> {
-    const clockCheckDate = new Date(clockCheck);
-    const clockCheckHour = clockCheckDate.getUTCHours();
-    const clockCheckMinutes = clockCheckDate.getMinutes();
-    const clockCheckDay = clockCheckDate.getDay();
-
-    const personalSchedule =
-      await this.prismaService.personalSchedule.findFirst({
-        where: {
-          personalId,
-          dayOfWeek: clockCheckDay,
-        },
-      });
-
-    if (!personalSchedule) {
-      console.log('No schedule found for this day.');
-      return 4;
-    }
-
-    const [entryHour, entryMinutes] = personalSchedule.start
-      .split(':')
-      .map(Number);
-    const [departureHour, departureMinutes] = personalSchedule.end
-      .split(':')
-      .map(Number);
-
-    if (clockCheckHour === entryHour) {
-      if (Math.abs(clockCheckMinutes - entryMinutes) <= 2) {
-        console.log('Entrada a tiempo');
-        return 1; // Código para a tiempo
-      } else {
-        console.log('Entrada tarde');
-        return 2; // Código para tarde
-      }
-    } else if (clockCheckHour === departureHour) {
-      if (Math.abs(clockCheckMinutes - departureMinutes) <= 2) {
-        console.log('Salida a tiempo');
-        return 1; // Código para a tiempo
-      } else {
-        console.log('Salida a deshora');
-        return 2; // Código para tarde
-      }
-    } else {
-      console.log('Fuera de horario');
-      return 4; // Código para inconsistencia
-    }
-  }
-
-  async checkForAbsences(startDate: Date, endDate: Date): Promise<any> {
-    const employees = await this.prismaService.personal.findMany();
-
-    for (const employee of employees) {
-      let currentDate = new Date(startDate);
-
-      while (currentDate <= endDate) {
-        const clockCheckDay = currentDate.getDay();
-
-        const personalSchedule =
-          await this.prismaService.personalSchedule.findFirst({
-            where: {
-              personalId: employee.id,
-              dayOfWeek: clockCheckDay,
-            },
-          });
-        if (!personalSchedule) {
-          currentDate.setDate(currentDate.getDate() + 1);
-          continue; // Si no hay horario programado, saltar al siguiente día
-        }
-
-        const startOfDay = new Date(currentDate);
-        startOfDay.setHours(0, 0, 0, 0);
-
-        const endOfDay = new Date(currentDate);
-        // endOfDay.setHours(23, 59, 59, 999);
-        // Establecer la hora de endOfDay a la hora actual
-        endOfDay.setHours(
-          currentDate.getHours(),
-          currentDate.getMinutes(),
-          0,
-          0,
-        );
-
-        const assistances = await this.prismaService.assistance.findMany({
-          where: {
-            AssistancePersonalIdentificator: {
-              personalId: employee.id,
-            },
-            clockCheck: {
-              gte: startOfDay,
-              lt: endOfDay,
-            },
-          },
-        });
-
-        const entryHour = parseInt(personalSchedule.start.split(':')[0]);
-        const entryMinutes = parseInt(personalSchedule.start.split(':')[1]);
-
-        const departureHour = parseInt(personalSchedule.end.split(':')[0]);
-        const departureMinutes = parseInt(personalSchedule.end.split(':')[1]);
-
-        const entryRecords = assistances.filter((a) => {
-          const checkTime = new Date(a.clockCheck);
-          return (
-            checkTime.getUTCHours() === entryHour &&
-            Math.abs(checkTime.getUTCMinutes() - entryMinutes) <= 2
-          );
-        });
-
-        const exitRecords = assistances.filter((a) => {
-          const checkTime = new Date(a.clockCheck);
-          return (
-            checkTime.getUTCHours() === departureHour &&
-            Math.abs(checkTime.getUTCMinutes() - departureMinutes) <= 2
-          );
-        });
-
-        if (entryRecords.length === 0 || exitRecords.length === 0) {
-          console.log(
-            `El empleado ${employee.id} no ha registrado su asistencia correctamente el ${currentDate.toDateString()}.`,
-          );
-          await this.registerNoAssistance(employee.id, currentDate);
-        }
-
-        currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
-      }
-    }
-  }
-
-  async registerNoAssistance(personalId: number, date: Date): Promise<any> {
-    const assistancePersonalIdentificator =
-      await this.prismaService.assistancePersonalIdentificator.findFirst({
-        where: { personalId },
-      });
-
-    if (!assistancePersonalIdentificator) {
-      console.log(
-        `No se encontró el identificador de asistencia para el empleado ${personalId}.`,
-      );
-      return;
-    }
-
-    const newAssistance = {
-      assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
-      clockCheck: date, // Utilizamos la fecha proporcionada como el momento de no registro de asistencia
-      assistanceStatusId: 3, // Código para falta de asistencia
-    };
-
-    await this.prismaService.assistance.create({ data: newAssistance });
-
-    console.log(
-      `Se ha registrado la falta de asistencia del empleado ${personalId} el ${date.toDateString()}.`,
-    );
   }
 }

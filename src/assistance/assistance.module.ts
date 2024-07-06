@@ -4,16 +4,21 @@ import { AssistanceController } from './assistance.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { AssistancePersonalIdentificatorModule } from 'src/assistance-personal-identificator/assistance-personal-identificator.module';
 import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.module';
+import { AssistanceIvmsModule } from 'src/assistance-ivms/assistance-ivms.module';
+import { AssistanceBiotimeModule } from 'src/assistance-biotime/assistance-biotime.module';
+import { AssistanceUtilsModule } from 'src/assistance-utils/assistance-utils.module';
 
 @Module({
   imports: [
     PrismaModule,
     AssistancePersonalIdentificatorModule,
     PersonalScheduleModule,
+    AssistanceIvmsModule,
+    AssistanceBiotimeModule,
+    AssistanceUtilsModule,
   ],
   exports: [AssistanceService],
   providers: [AssistanceService],
   controllers: [AssistanceController],
 })
 export class AssistanceModule {}
-

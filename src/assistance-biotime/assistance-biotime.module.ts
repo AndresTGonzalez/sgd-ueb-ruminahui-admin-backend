@@ -9,5 +9,6 @@ import { AssistanceUtilsModule } from 'src/assistance-utils/assistance-utils.mod
   imports: [PrismaBiotimeModule, PrismaModule, AssistanceUtilsModule],
   providers: [AssistanceBiotimeService],
   controllers: [AssistanceBiotimeController],
+  exports: [AssistanceBiotimeService],
 })
 export class AssistanceBiotimeModule {}
