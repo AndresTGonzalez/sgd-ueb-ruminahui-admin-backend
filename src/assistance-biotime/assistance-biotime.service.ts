@@ -28,7 +28,11 @@ export class AssistanceBiotimeService {
   // Sincronizar en base de datos los registros que se tiene de un docente
   async syncAssistance() {
     // Primero se obtiene los registros de asistencia de la base de datos de biotime
-    const assistances = await this.prismaBiotime.iclock_transaction.findMany();
+    const assistances = await this.prismaBiotime.iclock_transaction.findMany(
+      {
+        where: { sync_status: null },
+      }
+    );
 
     let startDate: Date | null = null;
     const endDate = new Date();
@@ -45,10 +49,13 @@ export class AssistanceBiotimeService {
       if (!assistancePersonalIdentificator) continue;
 
       const clockCheckDate = new Date(assistances[assistance].punch_time);
+      // Sumar 5 horas a la fecha de asistencia
+      clockCheckDate.setHours(clockCheckDate.getHours() - 5);
 
       if (!startDate || clockCheckDate < startDate) {
         startDate = clockCheckDate;
       }
+
 
       // Se crea un nuevo registro de asistencia
       const newAssistance = {
@@ -59,6 +66,8 @@ export class AssistanceBiotimeService {
           assistancePersonalIdentificator.personalId,
         ), // Código para asistencia
       };
+
+      console.log(newAssistance);
 
       await this.prisma.assistance.create({ data: newAssistance });
 

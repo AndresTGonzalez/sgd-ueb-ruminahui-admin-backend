@@ -79,7 +79,7 @@ export class JustificationSupabaseService {
     const { data, error } = await supabase
       .from('justification')
       .delete()
-      .eq('uuid', uuid);
+      .eq('userId', uuid);
 
     if (error) {
       throw new Error('Error eliminando justificación' + error.message);

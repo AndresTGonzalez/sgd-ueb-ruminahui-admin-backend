@@ -1842,7 +1842,6 @@ model iclock_transaction {
   temperature                                                      Decimal?            @db.Decimal(4, 1)
   emp_id                                                           Int?
   terminal_id                                                      Int?
-  sync_status_sgd                                                  Boolean?            @db.Boolean
   att_payloadbase_att_payloadbase_trans_in_idToiclock_transaction  att_payloadbase[]   @relation("att_payloadbase_trans_in_idToiclock_transaction")
   att_payloadbase_att_payloadbase_trans_out_idToiclock_transaction att_payloadbase[]   @relation("att_payloadbase_trans_out_idToiclock_transaction")
   att_payloadpunch                                                 att_payloadpunch[]

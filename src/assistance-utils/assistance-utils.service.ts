@@ -77,7 +77,7 @@ export class AssistanceUtilsService {
         startOfDay.setHours(0, 0, 0, 0);
 
         const endOfDay = new Date(currentDate);
-        endOfDay.setHours(23, 59, 59, 999);
+        endOfDay.setHours(23, 59, 59, 999); // Corregido para capturar todo el día
 
         const assistances = await this.prisma.assistance.findMany({
           where: {
@@ -113,26 +113,27 @@ export class AssistanceUtilsService {
           );
         });
 
-        if (entryRecords.length === 0 && exitRecords.length === 0) {
-          console.log(
-            `El empleado ${employee.id} no ha registrado ni su entrada ni su salida el ${currentDate.toDateString()}.`,
-          );
+        const inconsistencyRecords = assistances.filter((a) => {
+          // Verificar si hay registros con id 3
+          return a.assistanceStatusId === 4;
+        });
 
+        if (entryRecords.length === 0 && exitRecords.length === 0) {
           const noAssistanceRecord = await this.prisma.assistance.findFirst({
             where: {
               AssistancePersonalIdentificator: {
                 personalId: employee.id,
               },
               clockCheck: currentDate,
-              assistanceStatusId: 5, // Tipo para salida no registrada
+              assistanceStatusId: 5, // Tipo para no asistencia registrada
             },
           });
 
-          if (!noAssistanceRecord) {
+          if (!noAssistanceRecord && inconsistencyRecords.length === 0) {
             await this.registerNoAssistance(employee.id, currentDate, 5);
           } else {
             console.log(
-              `Ya existe un registro de no asistencia para todo el día para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
+              `Ya existe un registro de no asistencia o inconsistencia para todo el día para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
             );
           }
         } else if (entryRecords.length === 0) {
@@ -146,7 +147,7 @@ export class AssistanceUtilsService {
                 personalId: employee.id,
               },
               clockCheck: currentDate,
-              assistanceStatusId: 3, // Tipo para salida no registrada
+              assistanceStatusId: 1, // Tipo para entrada no registrada
             },
           });
 
@@ -168,7 +169,7 @@ export class AssistanceUtilsService {
                 personalId: employee.id,
               },
               clockCheck: currentDate,
-              assistanceStatusId: 3, // Tipo para salida no registrada
+              assistanceStatusId: 2, // Tipo para salida no registrada
             },
           });
 
