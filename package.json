@@ -7,6 +7,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
+    "postbuild": "cp -r ./src/notification-mail/templates ./dist/src/notification-mail",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -20,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^10.3.7",
     "@nestjs/config": "^3.2.2",
     "@nestjs/core": "^10.0.0",
@@ -30,6 +32,7 @@
     "@supabase/supabase-js": "^2.42.3",
     "class-validator": "^0.14.1",
     "exceljs": "^4.4.0",
+    "nodemailer": "^6.9.14",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "serve-static": "^1.15.0"

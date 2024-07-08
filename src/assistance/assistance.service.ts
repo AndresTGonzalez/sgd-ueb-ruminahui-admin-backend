@@ -10,6 +10,7 @@ import { PersonalScheduleService } from 'src/personal-schedule/personal-schedule
 import { AssistanceIvmsService } from 'src/assistance-ivms/assistance-ivms.service';
 import { AssistanceBiotimeService } from 'src/assistance-biotime/assistance-biotime.service';
 import { AssistanceUtilsService } from 'src/assistance-utils/assistance-utils.service';
+import { NotificationMailService } from 'src/notification-mail/notification-mail.service';
 
 @Injectable()
 export class AssistanceService {
@@ -19,6 +20,7 @@ export class AssistanceService {
     private readonly assistanceIvmsService: AssistanceIvmsService,
     private readonly assistanceBiotimeService: AssistanceBiotimeService,
     private readonly assistanceUtilsService: AssistanceUtilsService,
+    private readonly notificationMailService: NotificationMailService,
   ) {}
 
   async findAll(): Promise<any[]> {
@@ -353,5 +355,30 @@ export class AssistanceService {
         .update({ sync_status: true })
         .eq('id', assistance.id);
     }
+  }
+
+  async sendEmailsForUnCheck() {
+    // Obtengo las asistencias que tengan el estado 3 (sin marcar)
+    const assistances = await this.prismaService.assistance.findMany({
+      where: {
+        assistanceStatusId: 3,
+      },
+      include: {
+        AssistancePersonalIdentificator: {
+          include: {
+            Personal: {
+              select: {
+                email: true,
+                names: true,
+                lastNames: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    // Recorro las asistencias y envío el correo
+
   }
 }

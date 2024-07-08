@@ -7,6 +7,7 @@ import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.
 import { AssistanceIvmsModule } from 'src/assistance-ivms/assistance-ivms.module';
 import { AssistanceBiotimeModule } from 'src/assistance-biotime/assistance-biotime.module';
 import { AssistanceUtilsModule } from 'src/assistance-utils/assistance-utils.module';
+import { NotificationMailModule } from 'src/notification-mail/notification-mail.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { AssistanceUtilsModule } from 'src/assistance-utils/assistance-utils.mod
     AssistanceIvmsModule,
     AssistanceBiotimeModule,
     AssistanceUtilsModule,
+    NotificationMailModule
   ],
   exports: [AssistanceService],
   providers: [AssistanceService],

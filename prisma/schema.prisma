@@ -171,6 +171,7 @@ model JustificationFile {
   justificationId Int
   Justification   Justification @relation(fields: [justificationId], references: [id])
   documentRoute   String
+  documentName    String
 }
 
 model JustificationStatus {

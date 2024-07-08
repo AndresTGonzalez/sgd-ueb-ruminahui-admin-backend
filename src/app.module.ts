@@ -35,6 +35,7 @@ import { AssistanceBiotimeModule } from './assistance-biotime/assistance-biotime
 import { PrismaIvmsModule } from './prisma-ivms/prisma-ivms.module';
 import { AssistanceIvmsModule } from './assistance-ivms/assistance-ivms.module';
 import { AssistanceUtilsModule } from './assistance-utils/assistance-utils.module';
+import { NotificationMailModule } from './notification-mail/notification-mail.module';
 
 @Module({
   imports: [
@@ -75,6 +76,7 @@ import { AssistanceUtilsModule } from './assistance-utils/assistance-utils.modul
     PrismaIvmsModule,
     AssistanceIvmsModule,
     AssistanceUtilsModule,
+    NotificationMailModule,
   ],
   controllers: [],
   providers: [],

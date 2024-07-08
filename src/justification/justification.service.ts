@@ -65,7 +65,37 @@ export class JustificationService {
   }
 
   async findOne(id: number) {
-    return this.prisma.justification.findUnique({ where: { id } });
+    // return this.prisma.justification.findUnique({ where: { id } });
+    const data = await this.prisma.justification.findUnique({
+      where: { id },
+      include: { Personal: true, JustificationStatus: true, Type: true },
+    });
+
+    // Castear extraInfo a un objeto JSON
+    // data.extraInfo = JSON.parse(data.extraInfo);
+    if (data.extraInfo) {
+      data.extraInfo = JSON.parse(data.extraInfo);
+    }
+
+    // Armar el JSON de respuesta
+    const response = {
+      id: data.id,
+      identificationCard: data.Personal.identificationCard,
+      names: data.Personal.names,
+      lastNames: data.Personal.lastNames,
+      applicationDate: data.applicationDate,
+      fromDate: data.fromDate,
+      toDate: data.toDate,
+      exitHour: data.exitHour,
+      returnHour: data.returnHour,
+      justificationStatusId: data.statusId,
+      justificationStatus: data.JustificationStatus.name,
+      type: data.Type.type,
+      affair: data.affair,
+      extraInfo: data.extraInfo,
+    };
+
+    return response;
   }
 
   async update(id: number, data: Justification) {

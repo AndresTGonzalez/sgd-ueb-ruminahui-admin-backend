@@ -46,6 +46,7 @@ export class JustificationFileController {
     const data = {
       justificationId: justificationId,
       documentRoute: `/justification-docs/${file.originalname}`,
+      documentName: file.originalname,
     };
 
     return this.justificationFileService.createJustificationFile(
