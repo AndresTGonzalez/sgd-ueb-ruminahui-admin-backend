@@ -3,15 +3,12 @@ import {
   UseGuards,
   Get,
   Post,
-  Put,
-  Delete,
   Param,
   Body,
   ParseIntPipe,
   Query,
   Res,
 } from '@nestjs/common';
-import { Assistance } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { AssistanceService } from './assistance.service';

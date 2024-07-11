@@ -145,4 +145,115 @@ export class PersonalService {
 
     return employee;
   }
+
+  async getPersonalForExcelReport() {
+    const data = await this.prismaService.personal.findMany({
+      select: {
+        identificationCard: true,
+        names: true,
+        lastNames: true,
+        birthdate: true,
+        Gender: {
+          select: {
+            name: true,
+          },
+        },
+        City: {
+          select: {
+            name: true,
+            Province: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
+        phone: true,
+        email: true,
+        address: true,
+        InstitutionalPersonalData: {
+          select: {
+            Journal: true,
+            Category: {
+              select: {
+                name: true,
+              },
+            },
+            Function: {
+              select: {
+                name: true,
+              },
+            },
+            CampusPersonal: {
+              select: {
+                Campus: {
+                  select: {
+                    name: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        MedicalPersonalData: {
+          select: {
+            BloodType: true,
+            personalAllergy: true,
+            personalMedication: true,
+          },
+        },
+        MaritalStatus: true,
+        _count: {
+          select: {
+            PersonalChildren: true,
+          },
+        },
+      },
+    });
+
+    // Construir la salida
+    return data.map((item) => {
+      const institutionalData = item.InstitutionalPersonalData?.[0] ?? null;
+      const medicalData = item.MedicalPersonalData?.[0] ?? null;
+
+      return {
+        identificationCard: item.identificationCard ?? 'Sin cédula',
+        names: item.names ?? 'Sin nombres',
+        lastNames: item.lastNames ?? 'Sin apellidos',
+        birthdate: item.birthdate ?? 'Sin fecha de nacimiento',
+        gender: item.Gender?.name ?? 'Sin género',
+        maritalStatus: item.MaritalStatus.name ?? 'Sin estado civil',
+        province: item.City?.Province?.name ?? 'Sin provincia',
+        city: item.City?.name ?? 'Sin ciudad',
+        phone: item.phone ?? 'Sin teléfono',
+        children: item._count?.PersonalChildren ?? 0,
+        email: item.email ?? 'Sin correo',
+        address: item.address ?? 'Sin dirección',
+
+        category: institutionalData
+          ? institutionalData.Category.name
+          : 'Sin categoría',
+        function: institutionalData
+          ? institutionalData.Function.name
+          : 'Sin función',
+        journal: institutionalData
+          ? institutionalData.Journal.name
+          : 'Sin jornada',
+        bloodType: medicalData
+          ? medicalData.BloodType.name
+          : 'Sin tipo de sangre',
+        personalAllergy: medicalData
+          ? medicalData.personalAllergy
+          : 'Sin alergias',
+        personalMedication: medicalData
+          ? medicalData.personalMedication
+          : 'Sin medicamentos',
+
+        campusPersonal:
+          (institutionalData ?? { CampusPersonal: [] }).CampusPersonal.map(
+            (campus) => campus.Campus?.name,
+          ).join(', ') ?? 'Sin campus',
+      };
+    });
+  }
 }
