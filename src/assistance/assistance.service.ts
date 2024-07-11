@@ -151,6 +151,15 @@ export class AssistanceService {
         assistanceStatusId: true,
         assistancePersonalIdentificatorId: true,
         AssistanceStatus: true,
+        AssistancePersonalIdentificator: {
+          select: {
+            AssistanceDispositive: {
+              select: {
+                name: true,
+              },
+            },
+          },
+        },
       },
       where: {
         clockCheck: {
@@ -197,6 +206,8 @@ export class AssistanceService {
         dateCheck: dateCheck.toLocaleDateString(),
         hourCheck: hourCheck + ':' + minuteCheck + ':' + secondCheck,
         status,
+        bimetricDispositive:
+          assistance.AssistancePersonalIdentificator.AssistanceDispositive.name,
       });
     }
     return assistancesList;
@@ -379,6 +390,46 @@ export class AssistanceService {
     });
 
     // Recorro las asistencias y envío el correo
+  }
 
+  // Asistencia manual
+  async manualAssistance(personalId: number, date: Date, time: string) {
+    // Agrero la hora a la fecha
+    date = this.addHoursToDate(date, time);
+
+    // Obtengo el identificador de asistencia de la persona con el personalId
+    const assistancePersonalIdentificator =
+      await this.assistancePersonalIdentificatorService.findByPersonalIdAndDispositiveId(
+        personalId,
+        2,
+      );
+
+    // Verifico si el identificador de asistencia existe
+    if (!assistancePersonalIdentificator) {
+      throw new Error('No se encontró el identificador de asistencia');
+    }
+
+    // Creo la asistencia
+    const newAssistance = {
+      assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
+      clockCheck: date,
+      assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
+        date,
+        personalId,
+      ), // Código para asistencia
+    };
+
+    // Guardo la asistencia
+    await this.prismaService.assistance.create({ data: newAssistance });
+
+    // Retorno la asistencia creada
+    return newAssistance;
+  }
+
+  private addHoursToDate(date: Date, time: string): Date {
+    const [hours, minutes] = time.split(':').map(Number);
+    const newDate = new Date(date);
+    newDate.setUTCHours(hours, minutes, 0, 0);
+    return newDate;
   }
 }

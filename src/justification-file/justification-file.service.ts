@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { JustificationFile } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class JustificationFileService {
@@ -20,21 +22,32 @@ export class JustificationFileService {
 
   // Eliminar la ruta de un archivo en la base de datos
   async deleteJustificationFile(id: number) {
-    // Eliminar el archivo de la carpeta public
-    this.deleteFile(id);
+    // Obtengo el archivo por su id
+    const file = await this.prisma.justificationFile.findUnique({
+      where: { id },
+    });
+
+    // Elimino el archivo del servidor
+    this.deleteFile(file.documentName);
 
     return this.prisma.justificationFile.delete({ where: { id } });
   }
 
   // Eliminar el archivo de la carpeta public dentro del servidor
-  private async deleteFile(id: number) {
-    const file = await this.prisma.justificationFile.findUnique({
-      where: { id },
-    });
+  private async deleteFile(fileName: string) {
+    const publicFolder = path.join(
+      __dirname,
+      '../..',
+      'public/justification-docs',
+    );
 
-    if (file) {
-      const fs = require('fs');
-      fs.unlinkSync(file.documentRoute);
+    const filePath = path.join(publicFolder, fileName);
+
+    try {
+      // Elimina el archivo sincrónicamente
+      fs.unlinkSync(filePath);
+    } catch (err) {
+      throw new Error(`No se pudo eliminar el archivo ${fileName}`);
     }
   }
 
@@ -45,7 +58,7 @@ export class JustificationFileService {
     });
 
     files.forEach((file) => {
-      console.log(this.deleteFile(file.id));
+      console.log(this.deleteFile(file.documentName));
     });
 
     return this.prisma.justificationFile.deleteMany({
@@ -64,7 +77,7 @@ export class JustificationFileService {
     });
 
     files.forEach((file) => {
-      console.log(this.deleteFile(file.id));
+      this.deleteFile(file.documentName);
     });
 
     return this.prisma.justificationFile.deleteMany({
@@ -73,6 +86,13 @@ export class JustificationFileService {
           personalId,
         },
       },
+    });
+  }
+
+  // Obtener un archivo por su id
+  async getJustificationFileById(id: number) {
+    return this.prisma.justificationFile.findUnique({
+      where: { id },
     });
   }
 }

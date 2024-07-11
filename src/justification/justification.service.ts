@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { Justification } from '@prisma/client';
 import { JustificationFileService } from 'src/justification-file/justification-file.service';
 import { JustificationSupabaseService } from 'src/justification-supabase/justification-supabase.service';
+import { AssistanceUtilsService } from 'src/assistance-utils/assistance-utils.service';
 
 @Injectable()
 export class JustificationService {
@@ -10,6 +11,7 @@ export class JustificationService {
     private readonly prisma: PrismaService,
     private readonly justificationFileService: JustificationFileService,
     private readonly justificationSupabase: JustificationSupabaseService,
+    private readonly assistanceUtilsService: AssistanceUtilsService,
   ) {}
 
   async create(data: Justification) {
@@ -71,8 +73,6 @@ export class JustificationService {
       include: { Personal: true, JustificationStatus: true, Type: true },
     });
 
-    // Castear extraInfo a un objeto JSON
-    // data.extraInfo = JSON.parse(data.extraInfo);
     if (data.extraInfo) {
       data.extraInfo = JSON.parse(data.extraInfo);
     }
@@ -117,5 +117,106 @@ export class JustificationService {
     );
     // Elimino todas las justificaciones
     return this.prisma.justification.deleteMany({ where: { personalId } });
+  }
+
+  // Cambiar el estado de una justificación
+  async changeStatus(id: number, statusId: number) {
+    const justification = await this.prisma.justification.findUnique({
+      where: { id },
+    });
+
+    if (!justification) {
+      return { error: 'La justificación no existe.' };
+    }
+
+    // Obtener la fecha salida y retorno de la justificación
+    let fromDate = new Date(justification.fromDate);
+    let toDate = new Date(justification.toDate);
+
+    // Obtener las horas de salida y retorno de la justificación
+    const exitHour = justification.exitHour;
+    const returnHour = justification.returnHour;
+
+    fromDate = this.addHoursToDate(fromDate, exitHour);
+    toDate = this.addHoursToDate(toDate, returnHour);
+
+    const personalId = justification.personalId;
+
+    if (statusId === 2) {
+      let assistance =
+        await this.assistanceUtilsService.findAssistancesBetweenDatesPersonalIdAndAssistanceStatusId(
+          fromDate,
+          toDate,
+          personalId,
+          5,
+        );
+      if (assistance.length === 0) {
+        assistance =
+          await this.assistanceUtilsService.findAssistancesBetweenDatesPersonalIdAndAssistanceStatusId(
+            fromDate,
+            toDate,
+            personalId,
+            4,
+          );
+        if (assistance.length === 0) {
+          assistance =
+            await this.assistanceUtilsService.findAssistancesBetweenDatesPersonalIdAndAssistanceStatusId(
+              fromDate,
+              toDate,
+              personalId,
+              3,
+            );
+          if (assistance.length === 0) {
+            assistance =
+              await this.assistanceUtilsService.findAssistancesBetweenDatesPersonalIdAndAssistanceStatusId(
+                fromDate,
+                toDate,
+                personalId,
+                2,
+              );
+          }
+        }
+      }
+      console.log(assistance);
+      // Cambiar el estado de la asistencia
+      const changeAssistanceStatus =
+        await this.assistanceUtilsService.changeAssistanceStatus(
+          assistance[0].id,
+          6,
+        );
+    }
+
+    if (statusId === 3) {
+      const assistance =
+        await this.assistanceUtilsService.findAssistancesBetweenDatesPersonalIdAndAssistanceStatusId(
+          fromDate,
+          toDate,
+          personalId,
+          6,
+        );
+      // Cambiar el estado de la asistencia
+      const changeAssistanceStatus =
+        await this.assistanceUtilsService.changeAssistanceStatus(
+          assistance[0].id,
+          4,
+        );
+    }
+
+    return this.prisma.justification.update({
+      where: { id },
+      data: { statusId },
+    });
+  }
+
+  private addHoursToDate(date: Date, time: string): Date {
+    const [hours, minutes] = time.split(':').map(Number);
+    const newDate = new Date(date);
+    newDate.setUTCHours(hours, minutes, 0, 0);
+    return newDate;
+  }
+
+  // Obtener los estados de las justificaciones
+  async getJustificationStatus() {
+    return this.prisma.justificationStatus.findMany();
   }
 }

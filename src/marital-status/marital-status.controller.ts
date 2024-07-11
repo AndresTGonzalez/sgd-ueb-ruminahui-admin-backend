@@ -3,7 +3,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { MaritalStatusService } from './marital-status.service';
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @ApiTags('Marital Statuses')
 @Controller('marital-status')
 export class MaritalStatusesController {

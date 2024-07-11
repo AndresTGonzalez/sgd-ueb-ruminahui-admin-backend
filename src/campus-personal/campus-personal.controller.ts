@@ -14,7 +14,7 @@ import { CampusPersonal } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 
-@UseGuards(AuthGuard)
+// @UseGuards(AuthGuard)
 @ApiTags('Campus Personal')
 @Controller('campus-personal')
 export class CampusPersonalController {
@@ -42,13 +42,16 @@ export class CampusPersonalController {
   @Get('personal/:personalId')
   async findByPersonalId(
     @Param('personalId', ParseIntPipe) personalId: number,
-  ): Promise<CampusPersonal[]> {
+  ): Promise<number[]> {
     return this.campusPersonalService.findByPersonalId(personalId);
   }
 
-  @Post()
-  async create(@Body() data: CampusPersonal): Promise<CampusPersonal> {
-    return this.campusPersonalService.create(data);
+  @Post(':personalId')
+  async create(
+    @Param('personalId', ParseIntPipe) personalId: number,
+    @Body('campusIds') campusIds: number[],
+  ) {
+    return this.campusPersonalService.create(campusIds, personalId);
   }
 
   @Put(':id')

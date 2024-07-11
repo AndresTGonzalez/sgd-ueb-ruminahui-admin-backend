@@ -13,6 +13,8 @@ import { PersonalScheduleModule } from 'src/personal-schedule/personal-schedule.
 import { JustificationModule } from 'src/justification/justification.module';
 import { JustificationSupabaseModule } from 'src/justification-supabase/justification-supabase.module';
 import { PersonalChildrenModule } from 'src/personal-children/personal-children.module';
+import { PersonalDocumentsModule } from 'src/personal-documents/personal-documents.module';
+import { PersonalPhotoModule } from 'src/personal-photo/personal-photo.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { PersonalChildrenModule } from 'src/personal-children/personal-children.
     PersonalScheduleModule,
     JustificationModule,
     PersonalChildrenModule,
+    PersonalDocumentsModule,
+    PersonalPhotoModule,
     forwardRef(() => JustificationSupabaseModule),
   ],
   exports: [PersonalService],

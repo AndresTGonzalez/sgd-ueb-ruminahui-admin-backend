@@ -395,5 +395,5 @@ VALUES
   (2, 'tarde'),
   (3, 'no registro'),
   (4, 'inconsistencia'),
-  (5, 'falta');
-  ;
+  (5, 'falta'),
+  (6, 'justificada');

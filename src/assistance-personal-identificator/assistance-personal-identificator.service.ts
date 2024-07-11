@@ -65,4 +65,13 @@ export class AssistancePersonalIdentificatorService {
       where: { id },
     });
   }
+
+  async findByPersonalIdAndDispositiveId(
+    personalId: number,
+    assistanceDispositiveId: number,
+  ) {
+    return this.prismaService.assistancePersonalIdentificator.findFirst({
+      where: { personalId, assistanceDispositiveId },
+    });
+  }
 }

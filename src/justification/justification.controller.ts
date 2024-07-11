@@ -39,6 +39,12 @@ export class JustificationController {
     );
   }
 
+  // Obtener los estados de las justificaciones
+  @Get('status')
+  getStatus() {
+    return this.justificationService.getJustificationStatus();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.justificationService.findOne(id);
@@ -62,5 +68,14 @@ export class JustificationController {
   @Post('sync')
   syncJustifications() {
     return this.justificationService.syncJustifications();
+  }
+
+  // Cambiar el estado de una justificación
+  @Put(':id/status')
+  changeStatus(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('statusId') statusId: number,
+  ) {
+    return this.justificationService.changeStatus(id, statusId);
   }
 }

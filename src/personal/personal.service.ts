@@ -12,6 +12,8 @@ import { PersonalScheduleService } from 'src/personal-schedule/personal-schedule
 import { JustificationService } from 'src/justification/justification.service';
 import { JustificationSupabaseService } from 'src/justification-supabase/justification-supabase.service';
 import { PersonalChildrenService } from 'src/personal-children/personal-children.service';
+import { PersonalDocumentsService } from 'src/personal-documents/personal-documents.service';
+import { PersonalPhotoService } from 'src/personal-photo/personal-photo.service';
 
 @Injectable()
 export class PersonalService {
@@ -29,6 +31,8 @@ export class PersonalService {
     private readonly personalScheduleService: PersonalScheduleService,
     private readonly justificationService: JustificationService,
     private readonly personalChildrenService: PersonalChildrenService,
+    private readonly personalDocumentsService: PersonalDocumentsService,
+    private readonly personalPhotoService: PersonalPhotoService,
   ) {}
 
   async findAll(): Promise<Personal[]> {
@@ -47,6 +51,7 @@ export class PersonalService {
     return this.prismaService.personal.findUnique({
       where: { id },
       include: {
+        PersonalPhoto: true,
         City: {
           include: {
             Province: true,
@@ -71,15 +76,6 @@ export class PersonalService {
     if (!employee) {
       throw new Error('Empleado no encontrado');
     }
-    // Eliminar en Supabase
-    await this.personalSupabaseService.deleteAssistanceInSupabase(
-      employee.uuid,
-    );
-    await this.justificationSupabaseService.deleteJustifications(employee.uuid);
-    await this.personalSupabaseService.deleteUserPersonalUserInSupabase(
-      employee.uuid,
-    );
-    await this.personalSupabaseService.deletePersonalInSupabase(employee.uuid);
 
     // Eliminar en cascada en Backend
     await this.assistanceService.deleteByPersonalId(employee.id);
@@ -95,6 +91,21 @@ export class PersonalService {
     await this.justificationService.deleteJustificationsByPersonalId(
       employee.id,
     );
+    await this.personalChildrenService.removeByPersonalId(employee.id);
+    await this.personalDocumentsService.deletePersonalDocumentsByPersonalId(
+      employee.id,
+    );
+    await this.personalPhotoService.deletePhoto(employee.id);
+
+    // Eliminar en Supabase
+    await this.personalSupabaseService.deleteAssistanceInSupabase(
+      employee.uuid,
+    );
+    await this.justificationSupabaseService.deleteJustifications(employee.uuid);
+    await this.personalSupabaseService.deleteUserPersonalUserInSupabase(
+      employee.uuid,
+    );
+    await this.personalSupabaseService.deletePersonalInSupabase(employee.uuid);
 
     return this.prismaService.personal.delete({ where: { id } });
   }
@@ -121,6 +132,16 @@ export class PersonalService {
       personalId: employee.id,
     };
     await this.assistancePersonalIdentificatorService.create(identificator);
+
+    const personalIdentificator = {
+      assistanceDispositiveId: 2,
+      code: employee.identificationCard,
+      personalId: employee.id,
+    };
+
+    await this.assistancePersonalIdentificatorService.create(
+      personalIdentificator,
+    );
 
     return employee;
   }

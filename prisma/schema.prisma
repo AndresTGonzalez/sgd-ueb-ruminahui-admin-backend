@@ -31,9 +31,10 @@ model City {
 }
 
 model Gender {
-  id       Int        @id @default(autoincrement())
-  name     String
-  Personal Personal[]
+  id               Int                @id @default(autoincrement())
+  name             String
+  Personal         Personal[]
+  PersonalChildren PersonalChildren[]
 }
 
 model MaritalStatus {
@@ -97,6 +98,8 @@ model Personal {
   Certification                   Certification[]
   MedicalPersonalData             MedicalPersonalData[]
   PersonalChildren                PersonalChildren[]
+  PersonalFile                    PersonalFile[]
+  PersonalPhoto                   PersonalPhoto?
 }
 
 model PersonalChildren {
@@ -106,6 +109,24 @@ model PersonalChildren {
   names      String
   lastNames  String
   birthdate  DateTime
+  genderId   Int
+  Gender     Gender   @relation(fields: [genderId], references: [id])
+}
+
+model PersonalFile {
+  id            Int      @id @default(autoincrement())
+  personalId    Int
+  Personal      Personal @relation(fields: [personalId], references: [id])
+  documentRoute String
+  documentName  String
+}
+
+model PersonalPhoto {
+  id         Int      @id @default(autoincrement())
+  personalId Int      @unique
+  Personal   Personal @relation(fields: [personalId], references: [id])
+  photoRoute String
+  photoName  String
 }
 
 model InstitutionalPersonalData {

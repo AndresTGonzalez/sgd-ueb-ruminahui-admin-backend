@@ -36,6 +36,8 @@ import { PrismaIvmsModule } from './prisma-ivms/prisma-ivms.module';
 import { AssistanceIvmsModule } from './assistance-ivms/assistance-ivms.module';
 import { AssistanceUtilsModule } from './assistance-utils/assistance-utils.module';
 import { NotificationMailModule } from './notification-mail/notification-mail.module';
+import { PersonalDocumentsModule } from './personal-documents/personal-documents.module';
+import { PersonalPhotoModule } from './personal-photo/personal-photo.module';
 
 @Module({
   imports: [
@@ -77,6 +79,8 @@ import { NotificationMailModule } from './notification-mail/notification-mail.mo
     AssistanceIvmsModule,
     AssistanceUtilsModule,
     NotificationMailModule,
+    PersonalDocumentsModule,
+    PersonalPhotoModule,
   ],
   controllers: [],
   providers: [],

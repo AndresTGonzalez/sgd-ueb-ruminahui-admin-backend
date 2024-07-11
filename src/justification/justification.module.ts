@@ -4,11 +4,13 @@ import { JustificationController } from './justification.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
 import { JustificationSupabaseModule } from 'src/justification-supabase/justification-supabase.module';
 import { JustificationFileModule } from 'src/justification-file/justification-file.module';
+import { AssistanceUtilsModule } from 'src/assistance-utils/assistance-utils.module';
 
 @Module({
   imports: [
     PrismaModule,
     JustificationFileModule,
+    AssistanceUtilsModule,
     forwardRef(() => JustificationSupabaseModule),
   ],
   providers: [JustificationService],

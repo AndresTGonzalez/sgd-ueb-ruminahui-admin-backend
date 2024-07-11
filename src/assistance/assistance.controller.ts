@@ -17,6 +17,7 @@ import { AuthGuard } from 'src/auth/auth.guard';
 import { AssistanceService } from './assistance.service';
 import * as ExcelJS from 'exceljs';
 import { Response } from 'express';
+import { manualAssitance } from './assistance.model';
 
 // @UseGuards(AuthGuard)
 @ApiTags('assistance')
@@ -53,10 +54,20 @@ export class AssistanceController {
       );
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Assistance Report');
+
+    const filename = `reporte-asistencia-${startDate}-${endDate}.xlsx`;
+
+    const worksheet = workbook.addWorksheet('Reporte de asistencia');
 
     // Agregar encabezados de columna
-    worksheet.addRow(['CÉDULA', 'NOMBRE', 'FECHA', 'HORA', 'ESTADO']);
+    worksheet.addRow([
+      'CÉDULA',
+      'NOMBRE',
+      'FECHA',
+      'HORA',
+      'ESTADO',
+      'BIOMETRICO',
+    ]);
 
     // Agregar filas de datos
     assistances.forEach((assistance) => {
@@ -66,6 +77,7 @@ export class AssistanceController {
         assistance.dateCheck,
         assistance.hourCheck,
         assistance.status,
+        assistance.bimetricDispositive,
       ]);
     });
 
@@ -76,7 +88,8 @@ export class AssistanceController {
     );
     res.setHeader(
       'Content-Disposition',
-      'attachment; filename=assistance-report.xlsx',
+      // 'attachment; filename=assistance-report.xlsx',
+      `attachment; filename=${filename}`,
     );
 
     await workbook.xlsx.write(res);
@@ -110,8 +123,13 @@ export class AssistanceController {
   }
 
   @Post()
-  async create(@Body() data: Assistance) {
-    return this.assistanceService.create(data);
+  async create(@Body() data: manualAssitance) {
+    // return this.assistanceService.create(data);
+    return this.assistanceService.manualAssistance(
+      data.personalId,
+      data.date,
+      data.time,
+    );
   }
 
   @Post('/sync')

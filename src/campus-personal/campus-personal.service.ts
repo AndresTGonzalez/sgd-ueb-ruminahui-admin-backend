@@ -23,15 +23,30 @@ export class CampusPersonalService {
     });
   }
 
-  async findByPersonalId(personalId: number): Promise<CampusPersonal[]> {
-    return this.prismaService.campusPersonal.findMany({
-      where: { personalId },
-      orderBy: { personalId: 'asc' },
-    });
+  async findByPersonalId(personalId: number): Promise<number[]> {
+    // Devolve un array de numeros de campusId
+    return this.prismaService.campusPersonal
+      .findMany({
+        where: { personalId },
+        select: { campusId: true },
+      })
+      .then((data) => data.map((item) => item.campusId));
   }
 
-  async create(data: CampusPersonal): Promise<CampusPersonal> {
-    return this.prismaService.campusPersonal.create({ data });
+  async create(campusIds: number[], personalId: number) {
+    const insertData = campusIds.map((campusId) => ({
+      campusId,
+      personalId,
+    }));
+
+    // ELiminar los campus anteriores
+    await this.deleteByPersonalId(personalId);
+
+    const insertedRecords = await this.prismaService.campusPersonal.createMany({
+      data: insertData,
+    });
+
+    return insertedRecords;
   }
 
   async update(id: number, data: CampusPersonal): Promise<CampusPersonal> {
@@ -44,6 +59,13 @@ export class CampusPersonalService {
   async delete(id: number): Promise<CampusPersonal> {
     return this.prismaService.campusPersonal.delete({
       where: { id },
+    });
+  }
+
+  // Eliminar los campus de un personal
+  async deleteByPersonalId(personalId: number) {
+    return this.prismaService.campusPersonal.deleteMany({
+      where: { personalId },
     });
   }
 }

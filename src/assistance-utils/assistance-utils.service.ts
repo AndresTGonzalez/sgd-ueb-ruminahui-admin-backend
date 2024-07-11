@@ -217,4 +217,48 @@ export class AssistanceUtilsService {
       `Se ha registrado la falta de asistencia del empleado ${personalId} el ${date.toDateString()}.`,
     );
   }
+
+  async findAssistancesBetweenDatesPersonalIdAndAssistanceStatusId(
+    startDate: Date,
+    endDate: Date,
+    personalId: number,
+    assistanceStatusId: number,
+  ): Promise<any> {
+
+    console.log('startDate', startDate);
+    console.log('endDate', endDate);
+
+    const assistances = await this.prisma.assistance.findMany({
+      where: {
+        AssistancePersonalIdentificator: {
+          personalId,
+        },
+        clockCheck: {
+          gte: startDate,
+          lt: endDate,
+        },
+        assistanceStatusId,
+      },
+    });
+
+    return assistances;
+  }
+
+  // Cambiar el estado de la asistencia
+  async changeAssistanceStatus(id: number, statusId: number) {
+    // Obtengo la asistencia
+    const assistance = await this.prisma.assistance.findUnique({
+      where: { id },
+    });
+
+    // Si la asistencia no existe, retorno un error
+    if (!assistance) {
+      return { error: 'La asistencia no existe.' };
+    }
+
+    return this.prisma.assistance.update({
+      where: { id },
+      data: { assistanceStatusId: statusId },
+    });
+  }
 }

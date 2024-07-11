@@ -17,6 +17,9 @@ export class PersonalChildrenService {
   }
 
   async create(data: PersonalChildren) {
+
+    data.personalId = Number(data.personalId);
+
     return this.prismaService.personalChildren.create({ data });
   }
 
