@@ -25,11 +25,28 @@ export class AssistanceBiotimeService {
     });
   }
 
+  private convertUTCToEcuadorTime(date: Date): Date {
+    // Ecuador is UTC-5
+    const ecuadorOffset = -5;
+    const ecuadorTime = new Date(
+      date.getTime() + ecuadorOffset * 60 * 60 * 1000,
+    );
+    return ecuadorTime;
+  }
+
   // Sincronizar en base de datos los registros que se tiene de un docente
   async syncAssistance() {
     // Primero se obtiene los registros de asistencia de la base de datos de biotime
     const assistances = await this.prismaBiotime.iclock_transaction.findMany({
-      where: { sync_status: null },
+      where: {
+        sync_status: null,
+
+        // Solo registros del ultimo mes
+        punch_time: {
+          gte: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+          lte: new Date(),
+        },
+      },
     });
 
     let startDate: Date | null = null;
@@ -55,9 +72,9 @@ export class AssistanceBiotimeService {
       // Si no se encuentra el empleado se continua al siguiente
       if (!assistancePersonalIdentificator) continue;
 
-      const clockCheckDate = new Date(assistances[assistance].punch_time);
+      let clockCheckDate = new Date(assistances[assistance].punch_time);
       // Sumar 5 horas a la fecha de asistencia
-      clockCheckDate.setHours(clockCheckDate.getHours() - 5);
+      clockCheckDate= this.convertUTCToEcuadorTime(clockCheckDate);
 
       if (!startDate || clockCheckDate < startDate) {
         startDate = clockCheckDate;

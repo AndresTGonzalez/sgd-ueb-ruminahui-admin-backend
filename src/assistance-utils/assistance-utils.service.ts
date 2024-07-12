@@ -17,10 +17,6 @@ export class AssistanceUtilsService {
     const clockCheckMinutes = clockCheckDate.getMinutes();
     const clockCheckDay = clockCheckDate.getDay();
 
-    const personal = await this.prisma.personal.findUnique({
-      where: { id: personalId },
-    });
-
     const personalSchedule = await this.prisma.personalSchedule.findFirst({
       where: {
         personalId,
@@ -30,10 +26,10 @@ export class AssistanceUtilsService {
 
     if (!personalSchedule) {
       // console.log('No schedule found for this day.');
-      await this.notificationService.sendRecordatory(
-        personal.names + ' ' + personal.lastNames,
-        personal.email,
-      );
+      // await this.notificationService.sendRecordatory(
+      //   personal.names + ' ' + personal.lastNames,
+      //   personal.email,
+      // );
       return 4;
     }
 
@@ -47,18 +43,25 @@ export class AssistanceUtilsService {
     // Si la hora de registro es igual o menor a 1 hora entrada se debe agregar un rango
     if (clockCheckHour === entryHour - 1) return 1;
 
-    if (clockCheckHour === departureHour + 1) return 1;
+    if (clockCheckHour > departureHour) return 1;
+
+    if (
+      clockCheckHour === departureHour &&
+      clockCheckMinutes - departureMinutes > 0
+    ) {
+      return 1;
+    }
 
     if (clockCheckHour === entryHour) {
-      const diff = Math.abs(clockCheckMinutes - entryMinutes);
-      if (diff <= 2) {
+      const diff = clockCheckMinutes - entryMinutes;
+      if (diff < 0) {
         return 1; // Código para a tiempo
       } else {
         // Aqui se envia el correo
-        await this.notificationService.sendRecordatory(
-          personal.names + ' ' + personal.lastNames,
-          personal.email,
-        );
+        // await this.notificationService.sendRecordatory(
+        //   personal.names + ' ' + personal.lastNames,
+        //   personal.email,
+        // );
         return 2; // Código para tarde
       }
     } else if (clockCheckHour === departureHour) {
@@ -66,20 +69,51 @@ export class AssistanceUtilsService {
         return 1; // Código para a tiempo
       } else {
         // Aqui se envia el correo
-        await this.notificationService.sendRecordatory(
-          personal.names + ' ' + personal.lastNames,
-          personal.email,
-        );
+        // await this.notificationService.sendRecordatory(
+        //   personal.names + ' ' + personal.lastNames,
+        //   personal.email,
+        // );
         return 2; // Código para tarde
       }
     } else {
       // Aqui se envia el correo
-      await this.notificationService.sendRecordatory(
-        personal.names + ' ' + personal.lastNames,
-        personal.email,
-      );
+      // await this.notificationService.sendRecordatory(
+      //   personal.names + ' ' + personal.lastNames,
+      //   personal.email,
+      // );
       return 4; // Código para inconsistencia
     }
+  }
+
+  private convertUTCToEcuadorTime(date: Date): Date {
+    // Ecuador is UTC-5
+    const ecuadorOffset = -5;
+    const ecuadorTime = new Date(
+      date.getTime() + ecuadorOffset * 60 * 60 * 1000,
+    );
+    return ecuadorTime;
+  }
+
+  private isActualDate(date: Date): boolean {
+    const fechaActual = new Date();
+
+    return (
+      date.getFullYear() === fechaActual.getFullYear() &&
+      date.getMonth() === fechaActual.getMonth() &&
+      date.getDate() === fechaActual.getDate()
+    );
+  }
+
+  private isActualHourMinuteAndSecond(date: Date): boolean {
+    const fechaActual = new Date();
+
+    return (
+      date.getFullYear() === fechaActual.getFullYear() &&
+      date.getMonth() === fechaActual.getMonth() &&
+      date.getDate() === fechaActual.getDate() &&
+      date.getHours() === fechaActual.getHours() &&
+      date.getMinutes() === fechaActual.getMinutes()
+    );
   }
 
   async checkForAbsences(startDate: Date, endDate: Date): Promise<any> {
@@ -97,17 +131,32 @@ export class AssistanceUtilsService {
             dayOfWeek: clockCheckDay,
           },
         });
+
         if (!personalSchedule) {
           currentDate.setDate(currentDate.getDate() + 1);
           continue; // Si no hay horario programado, saltar al siguiente día
         }
 
+        // Si el current date es igual al dia en el que me encuentro
+
         const startOfDay = new Date(currentDate);
         startOfDay.setHours(0, 0, 0, 0);
 
         const endOfDay = new Date(currentDate);
-        endOfDay.setHours(23, 59, 59, 999); // Corregido para capturar todo el día
+        if (!this.isActualDate(currentDate)) {
+          endOfDay.setHours(23, 59, 59, 999);
+        } else {
+          // Se asigna la hora actual en formato ecuador al endOfDay
+          const ecuadorTime = this.convertUTCToEcuadorTime(currentDate);
+          endOfDay.setHours(
+            ecuadorTime.getHours(),
+            ecuadorTime.getMinutes(),
+            ecuadorTime.getSeconds(),
+            ecuadorTime.getMilliseconds(),
+          );
+        }
 
+        // Capturar todo el día
         const assistances = await this.prisma.assistance.findMany({
           where: {
             AssistancePersonalIdentificator: {
@@ -126,88 +175,121 @@ export class AssistanceUtilsService {
         const departureHour = parseInt(personalSchedule.end.split(':')[0]);
         const departureMinutes = parseInt(personalSchedule.end.split(':')[1]);
 
-        const entryRecords = assistances.filter((a) => {
-          const checkTime = new Date(a.clockCheck);
-          return (
-            checkTime.getUTCHours() === entryHour &&
-            Math.abs(checkTime.getUTCMinutes() - entryMinutes) <= 2
-          );
-        });
+        const entryRecords = [];
+        const exitRecords = [];
+        const inconsistencyRecords = [];
+        const lateRecords = [];
 
-        const exitRecords = assistances.filter((a) => {
-          const checkTime = new Date(a.clockCheck);
-          return (
-            checkTime.getUTCHours() === departureHour &&
-            Math.abs(checkTime.getUTCMinutes() - departureMinutes) <= 2
-          );
-        });
+        // Itero sobre asistencias
+        for (const assistance of assistances) {
+          const checkTime = new Date(assistance.clockCheck);
 
-        const inconsistencyRecords = assistances.filter((a) => {
-          // Verificar si hay registros con id 3
-          return a.assistanceStatusId === 4;
-        });
+          const diffHourEntry = checkTime.getUTCHours() - entryHour;
+          const diffMinutesEntry = checkTime.getMinutes() - entryMinutes;
 
-        if (entryRecords.length === 0 && exitRecords.length === 0) {
-          const noAssistanceRecord = await this.prisma.assistance.findFirst({
-            where: {
-              AssistancePersonalIdentificator: {
-                personalId: employee.id,
-              },
-              clockCheck: currentDate,
-              assistanceStatusId: 5, // Tipo para no asistencia registrada
-            },
-          });
+          const diffHourExit = checkTime.getUTCHours() - departureHour;
+          const diffMinutesExit = checkTime.getMinutes() - departureMinutes;
 
-          if (!noAssistanceRecord && inconsistencyRecords.length === 0) {
-            await this.registerNoAssistance(employee.id, currentDate, 5);
-          } else {
-            console.log(
-              `Ya existe un registro de no asistencia o inconsistencia para todo el día para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
-            );
+          if (
+            (diffHourEntry === 0 && diffMinutesEntry <= 2) ||
+            diffHourEntry < 0
+          ) {
+            entryRecords.push(assistance);
           }
-        } else if (entryRecords.length === 0) {
-          console.log(
-            `El empleado ${employee.id} no ha registrado su entrada el ${currentDate.toDateString()}.`,
-          );
 
-          const noAssistanceRecord = await this.prisma.assistance.findFirst({
-            where: {
-              AssistancePersonalIdentificator: {
-                personalId: employee.id,
-              },
-              clockCheck: currentDate,
-              assistanceStatusId: 1, // Tipo para entrada no registrada
-            },
-          });
-
-          if (!noAssistanceRecord) {
-            await this.registerNoAssistance(employee.id, currentDate, 1);
-          } else {
-            console.log(
-              `Ya existe un registro de no asistencia (entrada) para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
-            );
+          if (diffHourExit > 0 || (diffHourExit === 0 && diffMinutesExit > 0)) {
+            exitRecords.push(assistance);
           }
-        } else if (exitRecords.length === 0) {
-          console.log(
-            `El empleado ${employee.id} no ha registrado su salida el ${currentDate.toDateString()}.`,
-          );
 
-          const noAssistanceRecord = await this.prisma.assistance.findFirst({
-            where: {
-              AssistancePersonalIdentificator: {
-                personalId: employee.id,
+          if (assistance.assistanceStatusId === 4) {
+            inconsistencyRecords.push(assistance);
+          }
+
+          if (assistance.assistanceStatusId === 2) {
+            lateRecords.push(assistance);
+          }
+        }
+
+        // Obtengo el empleado
+        const personal = await this.prisma.personal.findUnique({
+          where: { id: employee.id },
+        });
+
+        if (personal.isActived) {
+          // Falta
+          if (
+            entryRecords.length === 0 &&
+            exitRecords.length === 0 &&
+            lateRecords.length === 0 &&
+            inconsistencyRecords.length === 0
+          ) {
+            // Se verifica que no tiene registro previamente cargado
+            const noAssistanceRecord = await this.prisma.assistance.findFirst({
+              where: {
+                AssistancePersonalIdentificator: {
+                  personalId: employee.id,
+                },
+                clockCheck: {
+                  // Filtrar por la misma fecha ignorando la hora
+                  gte: new Date(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate(),
+                  ),
+                  lt: new Date(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate() + 1,
+                  ),
+                },
+                assistanceStatusId: 5, // Falta
               },
-              clockCheck: currentDate,
-              assistanceStatusId: 2, // Tipo para salida no registrada
-            },
-          });
+            });
+            if (!noAssistanceRecord) {
+              await this.registerNoAssistance(employee.id, currentDate, 5); // Falta
+            }
+          }
 
-          if (!noAssistanceRecord) {
-            await this.registerNoAssistance(employee.id, currentDate, 2);
-          } else {
-            console.log(
-              `Ya existe un registro de no asistencia (salida) para el empleado ${employee.id} el ${currentDate.toDateString()}.`,
-            );
+          if (
+            entryRecords.length === 0 &&
+            exitRecords.length === 0 &&
+            lateRecords.length == 0 &&
+            inconsistencyRecords.length === 0 &&
+            !this.isActualHourMinuteAndSecond(currentDate)
+          ) {
+            const noAssistanceRecord = await this.prisma.assistance.findFirst({
+              where: {
+                AssistancePersonalIdentificator: {
+                  personalId: employee.id,
+                },
+                clockCheck: currentDate,
+                assistanceStatusId: 3, // No registro entrada
+              },
+            });
+            if (!noAssistanceRecord) {
+              await this.registerNoAssistance(employee.id, currentDate, 3); // No registro entrada
+            }
+          }
+
+          if (
+            exitRecords.length === 0 &&
+            lateRecords.length === 0 &&
+            inconsistencyRecords.length == 0 &&
+            entryRecords.length == 0 &&
+            !this.isActualHourMinuteAndSecond(currentDate)
+          ) {
+            const noAssistanceRecord = await this.prisma.assistance.findFirst({
+              where: {
+                AssistancePersonalIdentificator: {
+                  personalId: employee.id,
+                },
+                clockCheck: currentDate,
+                assistanceStatusId: 3, // No registro salida
+              },
+            });
+            if (!noAssistanceRecord) {
+              await this.registerNoAssistance(employee.id, currentDate, 3); // No registro salida
+            }
           }
         }
 
