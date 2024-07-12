@@ -134,7 +134,7 @@ export class PersonalService {
     await this.assistancePersonalIdentificatorService.create(identificator);
 
     const personalIdentificator = {
-      assistanceDispositiveId: 2,
+      assistanceDispositiveId: 5,
       code: employee.identificationCard,
       personalId: employee.id,
     };

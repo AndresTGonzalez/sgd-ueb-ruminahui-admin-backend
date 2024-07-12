@@ -25,8 +25,8 @@ model Province {
 model City {
   id         Int        @id @default(autoincrement())
   name       String
-  Province   Province   @relation(fields: [provinceId], references: [id])
   provinceId Int
+  Province   Province   @relation(fields: [provinceId], references: [id])
   Personal   Personal[]
 }
 
@@ -86,76 +86,76 @@ model Personal {
   address                         String?
   isActived                       Boolean                           @default(true)
   genderId                        Int?
-  Gender                          Gender?                           @relation(fields: [genderId], references: [id])
   maritalStatusId                 Int?
-  MaritalStatus                   MaritalStatus?                    @relation(fields: [maritalStatusId], references: [id])
   cityId                          Int?
-  City                            City?                             @relation(fields: [cityId], references: [id])
   AssistancePersonalIdentificator AssistancePersonalIdentificator[]
-  PersonalSchedule                PersonalSchedule[]
-  Justification                   Justification[]
-  InstitutionalPersonalData       InstitutionalPersonalData[]
-  Title                           Title[]
   Certification                   Certification[]
+  InstitutionalPersonalData       InstitutionalPersonalData[]
+  Justification                   Justification[]
   MedicalPersonalData             MedicalPersonalData[]
+  City                            City?                             @relation(fields: [cityId], references: [id])
+  Gender                          Gender?                           @relation(fields: [genderId], references: [id])
+  MaritalStatus                   MaritalStatus?                    @relation(fields: [maritalStatusId], references: [id])
   PersonalChildren                PersonalChildren[]
   PersonalFile                    PersonalFile[]
   PersonalPhoto                   PersonalPhoto?
+  PersonalSchedule                PersonalSchedule[]
+  Title                           Title[]
 }
 
 model PersonalChildren {
   id         Int      @id @default(autoincrement())
   personalId Int
-  Personal   Personal @relation(fields: [personalId], references: [id])
   names      String
   lastNames  String
   birthdate  DateTime
   genderId   Int
   Gender     Gender   @relation(fields: [genderId], references: [id])
+  Personal   Personal @relation(fields: [personalId], references: [id])
 }
 
 model PersonalFile {
   id            Int      @id @default(autoincrement())
   personalId    Int
-  Personal      Personal @relation(fields: [personalId], references: [id])
   documentRoute String
   documentName  String
+  Personal      Personal @relation(fields: [personalId], references: [id])
 }
 
 model PersonalPhoto {
   id         Int      @id @default(autoincrement())
   personalId Int      @unique
-  Personal   Personal @relation(fields: [personalId], references: [id])
   photoRoute String
   photoName  String
+  Personal   Personal @relation(fields: [personalId], references: [id])
 }
 
 model InstitutionalPersonalData {
   id                    Int                  @id @default(autoincrement())
   personalId            Int
-  Personal              Personal             @relation(fields: [personalId], references: [id])
-  Category              Category?            @relation(fields: [categoryId], references: [id])
   categoryId            Int?
   functionId            Int?
-  Function              Function?            @relation(fields: [functionId], references: [id])
-  LaboralRegime         LaboralRegime?       @relation(fields: [laboralRegimeId], references: [id])
   laboralRegimeId       Int?
-  LaboralRelationship   LaboralRelationship? @relation(fields: [laboralRelationshipId], references: [id])
   laboralRelationshipId Int?
-  Journal               Journal?             @relation(fields: [journalId], references: [id])
   journalId             Int?
   CampusPersonal        CampusPersonal[]
+  Category              Category?            @relation(fields: [categoryId], references: [id])
+  Function              Function?            @relation(fields: [functionId], references: [id])
+  Journal               Journal?             @relation(fields: [journalId], references: [id])
+  LaboralRegime         LaboralRegime?       @relation(fields: [laboralRegimeId], references: [id])
+  LaboralRelationship   LaboralRelationship? @relation(fields: [laboralRelationshipId], references: [id])
+  Personal              Personal             @relation(fields: [personalId], references: [id])
 }
 
 model MedicalPersonalData {
   id                 Int        @id @default(autoincrement())
   personalId         Int
-  Personal           Personal   @relation(fields: [personalId], references: [id])
   bloodTypeId        Int?
-  BloodType          BloodType? @relation(fields: [bloodTypeId], references: [id])
   personalMedication String?
   personalDisease    String?
   personalAllergy    String?
+  BloodType          BloodType? @relation(fields: [bloodTypeId], references: [id])
+  Personal           Personal   @relation(fields: [personalId], references: [id])
 }
 
 model BloodType {
@@ -167,7 +167,6 @@ model BloodType {
 model Justification {
   id                  Int                 @id @default(autoincrement())
   personalId          Int
-  Personal            Personal            @relation(fields: [personalId], references: [id])
   affair              String
   fromDate            String
   toDate              String
@@ -175,11 +174,12 @@ model Justification {
   exitHour            String
   returnHour          String
   extraInfo           String
-  Type                JustificationType   @relation(fields: [justificationTypeId], references: [id])
   justificationTypeId Int
-  JustificationFile   JustificationFile[]
   statusId            Int
+  Type                JustificationType   @relation(fields: [justificationTypeId], references: [id])
+  Personal            Personal            @relation(fields: [personalId], references: [id])
   JustificationStatus JustificationStatus @relation(fields: [statusId], references: [id])
+  JustificationFile   JustificationFile[]
 }
 
 model JustificationType {
@@ -191,9 +191,9 @@ model JustificationType {
 model JustificationFile {
   id              Int           @id @default(autoincrement())
   justificationId Int
-  Justification   Justification @relation(fields: [justificationId], references: [id])
   documentRoute   String
   documentName    String
+  Justification   Justification @relation(fields: [justificationId], references: [id])
 }
 
 model JustificationStatus {
@@ -205,19 +205,19 @@ model JustificationStatus {
 model Title {
   id               Int      @id @default(autoincrement())
   personalId       Int
-  Personal         Personal @relation(fields: [personalId], references: [id])
   title            String
   institution      String
   completitionYear Int
+  Personal         Personal @relation(fields: [personalId], references: [id])
 }
 
 model Certification {
   id               Int      @id @default(autoincrement())
   personalId       Int
-  Personal         Personal @relation(fields: [personalId], references: [id])
   certification    String
   institution      String
   completitionYear Int
+  Personal         Personal @relation(fields: [personalId], references: [id])
 }
 
 model Campus {
@@ -232,47 +232,47 @@ model Campus {
 model CampusPersonal {
   id                          Int                        @id @default(autoincrement())
   campusId                    Int
-  Campus                      Campus                     @relation(fields: [campusId], references: [id])
   personalId                  Int
-  InstitutionalPersonalData   InstitutionalPersonalData? @relation(fields: [institutionalPersonalDataId], references: [id])
   institutionalPersonalDataId Int?
+  Campus                      Campus                     @relation(fields: [campusId], references: [id])
+  InstitutionalPersonalData   InstitutionalPersonalData? @relation(fields: [institutionalPersonalDataId], references: [id])
 }
 
 model PersonalSchedule {
   id         Int      @id @default(autoincrement())
   personalId Int
-  Personal   Personal @relation(fields: [personalId], references: [id])
   dayOfWeek  Int
   start      String
   end        String
+  Personal   Personal @relation(fields: [personalId], references: [id])
 }
 
 model AssistanceDispositive {
   id                              Int                               @id @default(autoincrement())
   name                            String
   campusId                        Int
-  Campus                          Campus                            @relation(fields: [campusId], references: [id])
   serial                          String                            @unique
+  Campus                          Campus                            @relation(fields: [campusId], references: [id])
   AssistancePersonalIdentificator AssistancePersonalIdentificator[]
 }
 
 model AssistancePersonalIdentificator {
-  id                      Int                    @id @default(autoincrement())
+  id                      Int                   @id @default(autoincrement())
   code                    String
   personalId              Int
-  Personal                Personal?              @relation(fields: [personalId], references: [id])
   assistanceDispositiveId Int
-  AssistanceDispositive   AssistanceDispositive? @relation(fields: [assistanceDispositiveId], references: [id])
   Assistance              Assistance[]
+  AssistanceDispositive   AssistanceDispositive @relation(fields: [assistanceDispositiveId], references: [id])
+  Personal                Personal              @relation(fields: [personalId], references: [id])
 }
 
 model Assistance {
   id                                Int                             @id @default(autoincrement())
   clockCheck                        DateTime
   assistancePersonalIdentificatorId Int
+  assistanceStatusId                Int?
   AssistancePersonalIdentificator   AssistancePersonalIdentificator @relation(fields: [assistancePersonalIdentificatorId], references: [id])
   AssistanceStatus                  AssistanceStatus?               @relation(fields: [assistanceStatusId], references: [id])
-  assistanceStatusId                Int?
 }
 
 model AssistanceStatus {

@@ -310,16 +310,16 @@ VALUES
   (1, 'Matutina'),
   (2, 'Vespertina');
 
--- Add Campus
-INSERT INTO
-  public."Campus"(id, name, address, "secondaryName")
-VALUES
-  (
-    1,
-    'Campus Principal',
-    'Av. Rodrigo Pachano',
-    'Colegio Rumiñahui'
-  );
+-- -- Add Campus
+-- INSERT INTO
+--   public."Campus"(id, name, address, "secondaryName")
+-- VALUES
+--   (
+--     1,
+--     'Campus Principal',
+--     'Av. Rodrigo Pachano',
+--     'Colegio Rumiñahui'
+--   );
 
 INSERT INTO
   public."AssistanceDispositive"(name, "campusId", serial)
