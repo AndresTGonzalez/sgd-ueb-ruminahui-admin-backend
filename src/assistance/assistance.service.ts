@@ -1,12 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { Assistance, AssistancePersonalIdentificator } from '@prisma/client';
-import { ConfigService } from '@nestjs/config';
+import { Assistance } from '@prisma/client';
 import { createClient } from '@supabase/supabase-js';
 import { AssistancePersonalIdentificatorService } from 'src/assistance-personal-identificator/assistance-personal-identificator.service';
-import { AssistanceSupabaseFetch } from './assistance-supabase.model';
-import { createAssistance } from './assistance.model';
-import { PersonalScheduleService } from 'src/personal-schedule/personal-schedule.service';
 import { AssistanceIvmsService } from 'src/assistance-ivms/assistance-ivms.service';
 import { AssistanceBiotimeService } from 'src/assistance-biotime/assistance-biotime.service';
 import { AssistanceUtilsService } from 'src/assistance-utils/assistance-utils.service';
@@ -309,6 +305,48 @@ export class AssistanceService {
     );
   }
 
+  async changeStatusNoPresencialAssistance(status: boolean) {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_KEY!,
+    );
+
+    const { data, error } = await supabase
+      .from('config')
+      .update({ assistance_activate: status })
+      .eq('id', 1);
+
+    if (error) {
+      throw new Error(
+        'Error al actualizar el estado de la asistencia no presencial: ' +
+          error.message,
+      );
+    }
+
+    return data;
+  }
+
+  async getStatusNoPresencialAssistance() {
+    const supabase = createClient(
+      process.env.SUPABASE_URL!,
+      process.env.SUPABASE_KEY!,
+    );
+
+    const { data, error } = await supabase
+      .from('config')
+      .select('*')
+      .eq('id', 1);
+
+    if (error) {
+      throw new Error(
+        'Error al obtener el estado de la asistencia no presencial: ' +
+          error.message,
+      );
+    }
+
+    return data;
+  }
+
   async syncFromSupabase(): Promise<any> {
     const supabase = createClient(
       process.env.SUPABASE_URL!,
@@ -342,6 +380,14 @@ export class AssistanceService {
           where: { code: assistance.user_uuid },
         });
 
+      const personal = await this.prismaService.personal.findFirst({
+        where: {
+          AssistancePersonalIdentificator: {
+            some: { code: assistance.user_uuid },
+          },
+        },
+      });
+
       if (!assistancePersonalIdentificator) continue;
 
       const clockCheckDate = new Date(assistance.clock_check);
@@ -350,46 +396,23 @@ export class AssistanceService {
         startDate = clockCheckDate;
       }
 
-      const newAssistance = {
-        assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
-        clockCheck: clockCheckDate,
-        assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
-          clockCheckDate,
-          assistancePersonalIdentificator.personalId,
-        ), // Código para asistencia
-      };
-
-      await this.prismaService.assistance.create({ data: newAssistance });
-
       await supabase
         .from('assistance')
         .update({ sync_status: true })
         .eq('id', assistance.id);
+
+      if (personal.isActived) {
+        const newAssistance = {
+          assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
+          clockCheck: clockCheckDate,
+          assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
+            clockCheckDate,
+            assistancePersonalIdentificator.personalId,
+          ), // Código para asistencia
+        };
+        await this.prismaService.assistance.create({ data: newAssistance });
+      }
     }
-  }
-
-  async sendEmailsForUnCheck() {
-    // Obtengo las asistencias que tengan el estado 3 (sin marcar)
-    const assistances = await this.prismaService.assistance.findMany({
-      where: {
-        assistanceStatusId: 3,
-      },
-      include: {
-        AssistancePersonalIdentificator: {
-          include: {
-            Personal: {
-              select: {
-                email: true,
-                names: true,
-                lastNames: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    // Recorro las asistencias y envío el correo
   }
 
   // Asistencia manual

@@ -120,4 +120,9 @@ export class PersonalController {
   async delete(@Param('id', ParseIntPipe) id: number) {
     return this.personalService.delete(id);
   }
+
+  @Put('change-status/:id')
+  async changeStatus(@Param('id', ParseIntPipe) id: number, @Body() data) {
+    return this.personalService.changeAssistanceStatus(id, data.status);
+  }
 }

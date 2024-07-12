@@ -84,6 +84,7 @@ model Personal {
   email                           String?
   birthdate                       DateTime?
   address                         String?
+  isActived                       Boolean                           @default(true)
   genderId                        Int?
   Gender                          Gender?                           @relation(fields: [genderId], references: [id])
   maritalStatusId                 Int?

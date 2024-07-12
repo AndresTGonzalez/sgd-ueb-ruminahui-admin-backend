@@ -27,6 +27,11 @@ export class AssistanceController {
     return this.assistanceService.findAll();
   }
 
+  @Get('assistance-no-presencial')
+  async getNoPresencialAssistance() {
+    return this.assistanceService.getStatusNoPresencialAssistance();
+  }
+
   @Get('between-dates')
   async getAssistancesWithinDateRange(
     @Query('startDate') startDate?: string,
@@ -132,5 +137,13 @@ export class AssistanceController {
   @Post('/sync')
   async syncFromSupabase() {
     return this.assistanceService.sync();
+  }
+
+  @Post('enable-no-presencial')
+  async enableNoPresencial(@Body() data: { enable: boolean }) {
+    console.log(data);
+    return this.assistanceService.changeStatusNoPresencialAssistance(
+      data.enable,
+    );
   }
 }

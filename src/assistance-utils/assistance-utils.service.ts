@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
+import { NotificationMailService } from 'src/notification-mail/notification-mail.service';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class AssistanceUtilsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificationService: NotificationMailService,
+  ) {}
 
   async verifyOnTime(clockCheck: Date, personalId: number): Promise<any> {
+    console.log('clockCheck', clockCheck);
+
     const clockCheckDate = new Date(clockCheck);
     const clockCheckHour = clockCheckDate.getUTCHours();
     const clockCheckMinutes = clockCheckDate.getMinutes();
     const clockCheckDay = clockCheckDate.getDay();
+
+    const personal = await this.prisma.personal.findUnique({
+      where: { id: personalId },
+    });
 
     const personalSchedule = await this.prisma.personalSchedule.findFirst({
       where: {
@@ -20,6 +30,10 @@ export class AssistanceUtilsService {
 
     if (!personalSchedule) {
       // console.log('No schedule found for this day.');
+      await this.notificationService.sendRecordatory(
+        personal.names + ' ' + personal.lastNames,
+        personal.email,
+      );
       return 4;
     }
 
@@ -40,15 +54,30 @@ export class AssistanceUtilsService {
       if (diff <= 2) {
         return 1; // Código para a tiempo
       } else {
+        // Aqui se envia el correo
+        await this.notificationService.sendRecordatory(
+          personal.names + ' ' + personal.lastNames,
+          personal.email,
+        );
         return 2; // Código para tarde
       }
     } else if (clockCheckHour === departureHour) {
       if (Math.abs(clockCheckMinutes - departureMinutes) <= 59) {
         return 1; // Código para a tiempo
       } else {
+        // Aqui se envia el correo
+        await this.notificationService.sendRecordatory(
+          personal.names + ' ' + personal.lastNames,
+          personal.email,
+        );
         return 2; // Código para tarde
       }
     } else {
+      // Aqui se envia el correo
+      await this.notificationService.sendRecordatory(
+        personal.names + ' ' + personal.lastNames,
+        personal.email,
+      );
       return 4; // Código para inconsistencia
     }
   }
@@ -224,7 +253,6 @@ export class AssistanceUtilsService {
     personalId: number,
     assistanceStatusId: number,
   ): Promise<any> {
-
     console.log('startDate', startDate);
     console.log('endDate', endDate);
 

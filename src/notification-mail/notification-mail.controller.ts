@@ -9,10 +9,10 @@ export class NotificationMailController {
     private readonly notificationMailService: NotificationMailService,
   ) {}
 
-  @Post()
-  async sendUserConfirmation() {
-    return await this.notificationMailService.sendRecordatory(
-      'Andres',
-    );
-  }
+  // @Post()
+  // async sendUserConfirmation() {
+  //   return await this.notificationMailService.sendRecordatory(
+  //     'Andres',
+  //   );
+  // }
 }

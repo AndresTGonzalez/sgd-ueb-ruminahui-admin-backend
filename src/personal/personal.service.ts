@@ -256,4 +256,11 @@ export class PersonalService {
       };
     });
   }
+
+  async changeAssistanceStatus(id: number, statusId: boolean) {
+    return await this.prismaService.personal.update({
+      where: { id },
+      data: { isActived: statusId },
+    });
+  }
 }

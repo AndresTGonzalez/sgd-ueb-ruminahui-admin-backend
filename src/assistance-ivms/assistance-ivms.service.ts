@@ -34,6 +34,14 @@ export class AssistanceIvmsService {
           where: { code: assistances[assistance].ID },
         });
 
+      const personal = await this.prisma.personal.findFirst({
+        where: {
+          AssistancePersonalIdentificator: {
+            some: { code: assistances[assistance].ID },
+          },
+        },
+      });
+
       // Si no se encuentra el empleado se continua al siguiente
       if (!assistancePersonalIdentificator) {
         console.log(
@@ -48,23 +56,25 @@ export class AssistanceIvmsService {
         startDate = clockCheckDate;
       }
 
-      // Se crea un nuevo registro de asistencia
-      const newAssistance = {
-        assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
-        clockCheck: clockCheckDate,
-        assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
-          clockCheckDate,
-          assistancePersonalIdentificator.personalId,
-        ), // Código para asistencia
-      };
-
-      await this.prisma.assistance.create({ data: newAssistance });
-
-      // Actualizar el sync_status del registro de asistencia
       await this.prismaIvms.logs.update({
         where: { LogId: assistances[assistance].LogId },
         data: { SyncStatus: 1 },
       });
+
+      if (personal.isActived) {
+        // Se crea un nuevo registro de asistencia
+        const newAssistance = {
+          assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
+          clockCheck: clockCheckDate,
+          assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
+            clockCheckDate,
+            assistancePersonalIdentificator.personalId,
+          ), // Código para asistencia
+        };
+        await this.prisma.assistance.create({ data: newAssistance });
+      }
+
+      // Actualizar el sync_status del registro de asistencia
     }
     // if (startDate) {
     //   // await this.checkForAbsences(startDate, endDate);

@@ -28,11 +28,9 @@ export class AssistanceBiotimeService {
   // Sincronizar en base de datos los registros que se tiene de un docente
   async syncAssistance() {
     // Primero se obtiene los registros de asistencia de la base de datos de biotime
-    const assistances = await this.prismaBiotime.iclock_transaction.findMany(
-      {
-        where: { sync_status: null },
-      }
-    );
+    const assistances = await this.prismaBiotime.iclock_transaction.findMany({
+      where: { sync_status: null },
+    });
 
     let startDate: Date | null = null;
     const endDate = new Date();
@@ -45,6 +43,15 @@ export class AssistanceBiotimeService {
           where: { code: assistances[assistance].emp_code },
         });
 
+      // Obtengo el empleado con el código de empleado
+      const personal = await this.prisma.personal.findFirst({
+        where: {
+          AssistancePersonalIdentificator: {
+            some: { code: assistances[assistance].emp_code },
+          },
+        },
+      });
+
       // Si no se encuentra el empleado se continua al siguiente
       if (!assistancePersonalIdentificator) continue;
 
@@ -56,29 +63,25 @@ export class AssistanceBiotimeService {
         startDate = clockCheckDate;
       }
 
-
       // Se crea un nuevo registro de asistencia
-      const newAssistance = {
-        assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
-        clockCheck: clockCheckDate,
-        assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
-          clockCheckDate,
-          assistancePersonalIdentificator.personalId,
-        ), // Código para asistencia
-      };
-
-      console.log(newAssistance);
-
-      await this.prisma.assistance.create({ data: newAssistance });
 
       // Actualizar el sync_status del registro de asistencia
       await this.prismaBiotime.iclock_transaction.update({
         where: { id: assistances[assistance].id },
         data: { sync_status: 1 },
       });
+
+      if (personal.isActived) {
+        const newAssistance = {
+          assistancePersonalIdentificatorId: assistancePersonalIdentificator.id,
+          clockCheck: clockCheckDate,
+          assistanceStatusId: await this.assistanceUtilsService.verifyOnTime(
+            clockCheckDate,
+            assistancePersonalIdentificator.personalId,
+          ), // Código para asistencia
+        };
+        await this.prisma.assistance.create({ data: newAssistance });
+      }
     }
-    // if (startDate) {
-    //   await this.checkForAbsences(startDate, endDate);
-    // }
   }
 }
