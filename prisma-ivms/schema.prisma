@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../node_modules/@prisma-ivms/prisma/client"
+  provider        = "prisma-client-js"
+  output          = "../node_modules/@prisma-ivms/prisma/client"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -9,7 +10,6 @@ datasource db {
 }
 
 model logs {
-  LogId        Int       @id(map: "PK__NewLogs__5E548648D7A3FC09") @default(autoincrement())
   ID           String?   @db.NVarChar(100)
   AuthDateTime DateTime? @db.DateTime
   AuthDate     DateTime? @db.Date
@@ -20,4 +20,22 @@ model logs {
   PersonName   String?   @db.NVarChar(100)
   CardNo       String?   @db.NVarChar(100)
   SyncStatus   Int?
+  idUnique     Int       @id(map: "PK_logs") @default(autoincrement())
+}
+
+/// The underlying view does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+view logs_with_unique_id {
+  UniqueID     BigInt?
+  ID           String?   @db.NVarChar(100)
+  AuthDateTime DateTime? @db.DateTime
+  AuthDate     DateTime? @db.Date
+  AuthTime     DateTime? @db.Time
+  Direction    String?   @db.NVarChar(100)
+  DeviceName   String?   @db.NVarChar(100)
+  DeviceSerial String?   @db.NVarChar(100)
+  PersonName   String?   @db.NVarChar(100)
+  CardNo       String?   @db.NVarChar(100)
+  SyncStatus   Int?
+
+  @@ignore
 }

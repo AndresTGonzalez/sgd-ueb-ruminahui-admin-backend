@@ -17,12 +17,11 @@ export class AssistanceIvmsService {
 
   async syncAssistance() {
     // Primero se obtiene los registros de asistencia de la base de datos de biotime que tengan Null en el SyncStatus
-    const assistances = await this.prismaIvms.logs.findMany({
-      where: {
-        SyncStatus: null,
-      },
-    });
+    // const assistances = await this.prismaIvms.logs.findMany();
 
+    const assistances = await this.prismaIvms.logs.findMany();
+
+    console.log(assistances);
     let startDate: Date | null = null;
     const endDate = new Date();
 
@@ -57,7 +56,7 @@ export class AssistanceIvmsService {
       }
 
       await this.prismaIvms.logs.update({
-        where: { LogId: assistances[assistance].LogId },
+        where: { idUnique: assistances[assistance].idUnique },
         data: { SyncStatus: 1 },
       });
 
@@ -73,11 +72,6 @@ export class AssistanceIvmsService {
         };
         await this.prisma.assistance.create({ data: newAssistance });
       }
-
-      // Actualizar el sync_status del registro de asistencia
     }
-    // if (startDate) {
-    //   // await this.checkForAbsences(startDate, endDate);
-    // }
   }
 }
