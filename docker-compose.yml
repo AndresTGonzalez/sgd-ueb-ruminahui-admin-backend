@@ -1,16 +1,6 @@
 version: '3.9'
 
 services:
-
-  biotime_db:
-    image: postgres
-    ports:
-      - '5433:5432'
-    environment:
-      POSTGRES_USER: sgd
-      POSTGRES_PASSWORD: Ruminahui2024.
-      POSTGRES_DB: postgres
-
   sgd_db:
     image: postgres
     ports:

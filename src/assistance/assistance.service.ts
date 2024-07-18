@@ -289,7 +289,7 @@ export class AssistanceService {
   }
 
   async sync() {
-    // await this.syncFromSupabase();
+    await this.syncFromSupabase();
     await this.assistanceIvmsService.syncAssistance();
     await this.assistanceBiotimeService.syncAssistance();
     // Get the current date

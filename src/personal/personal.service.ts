@@ -127,14 +127,14 @@ export class PersonalService {
     const employee = await this.prismaService.personal.create({ data });
     // Agregar el identificador del empleado en la base de datos
     const identificator = {
-      assistanceDispositiveId: 1,
+      assistanceDispositiveId: 3,
       code: employee.uuid,
       personalId: employee.id,
     };
     await this.assistancePersonalIdentificatorService.create(identificator);
 
     const personalIdentificator = {
-      assistanceDispositiveId: 5,
+      assistanceDispositiveId: 4,
       code: employee.identificationCard,
       personalId: employee.id,
     };

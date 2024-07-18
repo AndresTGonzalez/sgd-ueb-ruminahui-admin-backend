@@ -137,26 +137,24 @@ export class AssistanceUtilsService {
           continue; // Si no hay horario programado, saltar al siguiente día
         }
 
-        // Si el current date es igual al dia en el que me encuentro
-
         const startOfDay = new Date(currentDate);
         startOfDay.setHours(0, 0, 0, 0);
 
         const endOfDay = new Date(currentDate);
-        if (!this.isActualDate(currentDate)) {
-          endOfDay.setHours(23, 59, 59, 999);
-        } else {
-          // Se asigna la hora actual en formato ecuador al endOfDay
-          const ecuadorTime = this.convertUTCToEcuadorTime(currentDate);
-          endOfDay.setHours(
-            ecuadorTime.getHours(),
-            ecuadorTime.getMinutes(),
-            ecuadorTime.getSeconds(),
-            ecuadorTime.getMilliseconds(),
+        if (this.isActualDate(currentDate)) {
+          console.log('es la fecha actual');
+          endOfDay.setUTCHours(
+            currentDate.getHours(),
+            currentDate.getMinutes(),
+            currentDate.getSeconds(),
+            currentDate.getMilliseconds(),
           );
+          console.log('endOfDay en el dia actual', endOfDay);
+        } else {
+          endOfDay.setUTCHours(23, 59, 59, 999);
+          console.log('endOfDay en el dia anterior', endOfDay);
         }
 
-        // Capturar todo el día
         const assistances = await this.prisma.assistance.findMany({
           where: {
             AssistancePersonalIdentificator: {
@@ -179,8 +177,8 @@ export class AssistanceUtilsService {
         const exitRecords = [];
         const inconsistencyRecords = [];
         const lateRecords = [];
+        const noRegisterRecords = [];
 
-        // Itero sobre asistencias
         for (const assistance of assistances) {
           const checkTime = new Date(assistance.clockCheck);
 
@@ -208,91 +206,74 @@ export class AssistanceUtilsService {
           if (assistance.assistanceStatusId === 2) {
             lateRecords.push(assistance);
           }
+
+          if (assistance.assistanceStatusId === 3) {
+            noRegisterRecords.push(assistance);
+          }
         }
 
-        // Obtengo el empleado
         const personal = await this.prisma.personal.findUnique({
           where: { id: employee.id },
         });
 
+        const currentDateTime = this.convertUTCToEcuadorTime(new Date());
+        const entryDateTime = new Date(currentDate);
+        entryDateTime.setHours(entryHour - 5, entryMinutes, 0, 0);
+
+        const exitDateTime = new Date(currentDate);
+        exitDateTime.setHours(departureHour - 5, departureMinutes, 0, 0);
+
+        console.log('currentDateTime', currentDateTime);
+        console.log('entryDateTime', entryDateTime);
+        console.log('exitDateTime', exitDateTime);
+
         if (personal.isActived) {
-          // Falta
-          if (
-            entryRecords.length === 0 &&
-            exitRecords.length === 0 &&
-            lateRecords.length === 0 &&
-            inconsistencyRecords.length === 0
-          ) {
-            // Se verifica que no tiene registro previamente cargado
-            const noAssistanceRecord = await this.prisma.assistance.findFirst({
-              where: {
-                AssistancePersonalIdentificator: {
-                  personalId: employee.id,
+          if (currentDateTime > entryDateTime) {
+            if (entryRecords.length === 0 && lateRecords.length === 0) {
+              // No hay registro de entrada
+              console.log(
+                `Falta de registro de entrada ${employee.id} el ${currentDate.toDateString()}.`,
+              );
+              const date = new Date(currentDate);
+              date.setHours(entryHour - 5, entryMinutes, 0, 0);
+              const assistance = await this.prisma.assistance.findFirst({
+                where: {
+                  AssistancePersonalIdentificator: {
+                    personalId: employee.id,
+                  },
+                  clockCheck: date,
+                  assistanceStatusId: 3,
                 },
-                clockCheck: {
-                  // Filtrar por la misma fecha ignorando la hora
-                  gte: new Date(
-                    currentDate.getFullYear(),
-                    currentDate.getMonth(),
-                    currentDate.getDate(),
-                  ),
-                  lt: new Date(
-                    currentDate.getFullYear(),
-                    currentDate.getMonth(),
-                    currentDate.getDate() + 1,
-                  ),
-                },
-                assistanceStatusId: 5, // Falta
-              },
-            });
-            if (!noAssistanceRecord) {
-              await this.registerNoAssistance(employee.id, currentDate, 5); // Falta
+              });
+              if (!assistance) {
+                await this.registerNoAssistance(employee.id, date, 3);
+              }
             }
           }
 
-          if (
-            entryRecords.length === 0 &&
-            exitRecords.length === 0 &&
-            lateRecords.length == 0 &&
-            inconsistencyRecords.length === 0 &&
-            !this.isActualHourMinuteAndSecond(currentDate)
-          ) {
-            const noAssistanceRecord = await this.prisma.assistance.findFirst({
-              where: {
-                AssistancePersonalIdentificator: {
-                  personalId: employee.id,
+          if (currentDateTime > exitDateTime) {
+            if (exitRecords.length === 0 && lateRecords.length === 0) {
+              console.log(
+                `Falta de registro de salida ${employee.id} el ${currentDate.toDateString()}.`,
+              );
+              const date = new Date(currentDate);
+              date.setHours(departureHour - 5, departureMinutes, 0, 0);
+              const assistance = await this.prisma.assistance.findFirst({
+                where: {
+                  AssistancePersonalIdentificator: {
+                    personalId: employee.id,
+                  },
+                  clockCheck: date,
+                  assistanceStatusId: 3,
                 },
-                clockCheck: currentDate,
-                assistanceStatusId: 3, // No registro entrada
-              },
-            });
-            if (!noAssistanceRecord) {
-              await this.registerNoAssistance(employee.id, currentDate, 3); // No registro entrada
-            }
-          }
-
-          if (
-            exitRecords.length === 0 &&
-            lateRecords.length === 0 &&
-            inconsistencyRecords.length == 0 &&
-            entryRecords.length == 0 &&
-            !this.isActualHourMinuteAndSecond(currentDate)
-          ) {
-            const noAssistanceRecord = await this.prisma.assistance.findFirst({
-              where: {
-                AssistancePersonalIdentificator: {
-                  personalId: employee.id,
-                },
-                clockCheck: currentDate,
-                assistanceStatusId: 3, // No registro salida
-              },
-            });
-            if (!noAssistanceRecord) {
-              await this.registerNoAssistance(employee.id, currentDate, 3); // No registro salida
+              });
+              if (!assistance) {
+                // Registro la falta de asistencia
+                await this.registerNoAssistance(employee.id, date, 3);
+              }
             }
           }
         }
-
         currentDate.setDate(currentDate.getDate() + 1); // Avanzar al siguiente día
       }
     }
