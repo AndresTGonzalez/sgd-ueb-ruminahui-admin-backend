@@ -54,7 +54,11 @@ export class AssistanceUtilsService {
 
     if (clockCheckHour === entryHour) {
       const diff = clockCheckMinutes - entryMinutes;
-      if (diff < 0) {
+      const diffSeconds = clockCheckDate.getSeconds();
+      console.log('diff', diff);
+      console.log('diffSeconds', diffSeconds);
+      if (diff < 0 || (diff === 0 && diffSeconds <= 59)) {
+        // Verificacion de segundos se puede marcar hasta con 59 segundos despues de la hora de entrada
         return 1; // Código para a tiempo
       } else {
         // Aqui se envia el correo
